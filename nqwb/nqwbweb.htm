@@ -1,0 +1,484 @@
+<!--
+  GNU通用公共许可证(GPL)
+  这是一个自由软件，任何人或机构都可以在遵守GPL守则下使用该软件。
+  请在传播时保留此段文字。
+  版本：0.54
+  作者：亦會編程（华通输入论坛注册 http://inputclub.foruto.com/）
+  推出日期：2003-7-30
+  最后修改日期：2003-8-10
+
+  *龚永明先生要求添加大小写字母混合编码，并修正了一些漏洞。
+  *龙三先生要求添加——长字串可以省略显示。
+  *能够使用插字功能了（只是IE有效），该代码由马来西亚——阿勤提供的。
+  *修正错误：如果输入键没有对应的字词，仍会出前一个字词。
+  *添加英文模式，自订大写字母输入。
+  *可以自动上字了。
+  *修正错误：数字键不能上字的问题。
+  *已知虫子：使用 PageDown键 令到中文显示视窗不足十行时，
+            此时按 PageUp键不会返回上一页，而是返回第一页。
+  *此版本由AhMan加了Shift键功能，和改变了自动上屏的逻辑。
+
+-->
+
+<HTML><HEAD><TITLE>念青五笔在线版</TITLE>
+<META http-equiv=Content-Type content="text/html; 
+      charset=gb2312">
+<!-- 可以把 charset=gb2312 改成 charset=big5 ，
+     就成为大五码版本，当然你的编码表亦需要更换。-->
+
+<SCRIPT language=javascript src="nqwbmb.js"></SCRIPT>
+
+<SCRIPT language=javascript>
+IsShifted=false;
+LastNo=0;
+SPACECHAR=" "; // 空白字元。
+
+OutChi=new Array(); //中文的字词
+OutEng=new Array(); //显示的后码
+
+abc_Str="a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z"; //小写字母的编码。
+abc_Str=abc_Str.split(",");
+
+ABC_Str="A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z"; //大写字母的编码。
+ABC_Str=ABC_Str.split(",");
+
+CodeList=CodeList.split(',');
+
+// 设定全形时，数字输出的字元，可以更改成其他需要的字元。
+FullNo=new Array("１","２","３","４","５","６","７","８","９","０");
+
+//定义输入编码的最大限长。例如天书则要设定为10了、王码则为4等。
+MAX=4; 
+
+function FindIn(s){
+var find=-1,low=0,mid=0,high=CodeList.length;
+var sEng="";
+
+  while(low<high){
+    mid=(low+high)/2;
+    mid=Math.floor(mid);
+    sEng=CodeList[mid];
+    if(sEng.indexOf(s,0)==0){find=mid;break;}
+    if(mid>0){sEng=CodeList[mid-1];}
+    if(sEng.indexOf(s,0)==0){find=mid;break;}
+    if(sEng<s){low=mid+1;}else{high=mid-1;}
+  }
+  while(find>0){
+    sEng=CodeList[find-1];
+    if(sEng.indexOf(s,0)==0){find=find-1;}else{break;}
+  }
+  return(find);
+}
+
+function GetStr(No, s){
+var sTmp="",sChi="",sAbc="";
+
+  for(i=0;i<=9;i++){
+    if(No+i>=CodeList.length-1){break;}
+    sTmp=CodeList[No+i];
+    if(sTmp.indexOf(s)>=0){
+      sChi=CodeList[No+i];
+      OutEng[i]=sChi.substring(s.length,sChi.indexOf(SPACECHAR));
+      OutChi[i]=sChi.substr(sChi.lastIndexOf(SPACECHAR)+1);
+      if(OutChi[i].length>10){sAbc=OutChi[i].substr(0, 9)+"..";}else{sAbc=OutChi[i];}
+      if(i<=8){IME.ChiList.value+=(i+1)+"."+sAbc+" "+OutEng[i]+'\n';}
+      else{IME.ChiList.value+=(0)+"."+sAbc+" "+OutEng[i]+'\n';}
+      LastNo=No+i;
+    }else{LastNo=-1;}
+  }
+}
+
+function Grep(s){
+var No=-1;
+  for(i=0;i<=9;i++){OutChi[i]="";}
+  if(s!=""){No=FindIn(s);}
+  if(No>=0){GetStr(No, s);}
+}
+
+//以下为测试是否为IE浏览器。
+if(navigator.appName.indexOf('Microsoft')!=-1)
+  browser=1;else browser=2;
+
+// 以下定义送字串的功能
+function SendStr(n){
+  //终于部分解决了插字的问题，不过只在IE有效。
+  //以下的代码是马来西亚——阿勤提供，谢谢。
+
+  if((n>=0)&&(n<=9)){
+    if(browser==1)
+      document.selection.createRange().text=OutChi[n];
+    else
+      IME.InputData.value+=OutChi[n];
+
+  IME.EngList.value="";
+  IME.ChiList.value="";
+  }
+}
+
+// 以下定义送全形符号的功能
+function SendChiCode(s){
+  if(browser==1)
+    document.selection.createRange().text=s;
+  else
+    IME.InputData.value+=s;
+}
+
+function ImeDown(){
+var s="";
+
+  //以下定义 Backspace键 的作用。
+  if((event.keyCode==8)&&(IME.EngList.value!="")){
+    s=IME.EngList.value;
+    IME.EngList.value=s.substr(0,s.length-1);
+    IME.ChiList.value="";
+    Grep(IME.EngList.value);
+    return(false);
+  }
+
+  //以下定义 Ctrl键 的作用，切换中/英文。
+  if(event.keyCode==17){
+    if(IsEnglish.checked==true){
+      IsEnglish.checked=false;
+    }else{IsEnglish.checked=true;}
+  }
+
+  //以下定义 Shift键 的作用。...AhMan
+  if(event.keyCode==16){
+    IsShifted=true;
+    return(false);
+  }
+
+  //以下定义 F12键 的作用，自动上字。
+  if(event.keyCode==123){
+    if(AutoUp.checked==true){
+      AutoUp.checked=false;
+    }else AutoUp.checked=true;
+  }
+
+  //以下定义 Esc键 的作用。
+  //因为 Esc键 会把全部文字删除，
+  //故此，禁止 Esc键 起任何作用。
+  if(event.keyCode==27){
+    if(IME.EngList.value!=""){IME.EngList.value="";IME.ChiList.value="";}
+    return(false);
+  }
+
+  //以下定义 PageUp键 作用。
+  if(event.keyCode==33){
+    s=IME.EngList.value;
+    if(s!=""){
+      IME.ChiList.value="";
+      if(FindIn(s)==-1){return(false);}
+      if((LastNo-19)>FindIn(s)){
+        LastNo=LastNo-19;
+        GetStr(LastNo, s);
+      }else{GetStr(FindIn(s), s);}
+    }
+    return(false);
+  }
+
+  //以下定义 PageDown键 作用。
+  if(event.keyCode==34){
+    s=IME.EngList.value;
+    if(FindIn(s)==-1){return(false);}
+    if((s!="")&&(LastNo!=-1)){
+      IME.ChiList.value="";
+      GetStr(LastNo+1, s);
+    }
+    return(false);
+  }
+
+  // 中/英文
+  if(IsEnglish.checked==true){return(true);}
+
+///////////////////
+
+  //以下定义 ,键 作用。
+  if(event.keyCode==188&&IsShifted==false){
+    AutoSend();
+    SendChiCode('，'); //送全形符号'，'
+    return(false);
+  }
+
+  //以下定义 <键 作用。
+  if(event.keyCode==188&&IsShifted==true){
+    AutoSend();
+    SendChiCode('《'); //送全形符号'《'
+    return(false);
+  }
+
+  //以下定义 .键 作用。
+  if(event.keyCode==190&&IsShifted==false){
+    AutoSend();
+    SendChiCode('。'); //送全形符号'。'
+    return(false);
+  }
+
+  //以下定义 Shift->键 作用。...AhMan
+  if(event.keyCode==190&&IsShifted==true){
+    AutoSend();
+    SendChiCode('》'); //送全形符号'》'
+    return(false);
+  }
+
+  //以下定义 ?键 作用。...AhMan
+  if(event.keyCode==191&&IsShifted==true){
+    AutoSend();
+    SendChiCode('？'); //送全形符号'？'
+    return(false);
+  }
+
+  //以下定义 \键 作用。
+  if(event.keyCode==220){
+    AutoSend();
+    SendChiCode('、'); //送全形符号'、'
+    return(false);
+  }
+
+
+  // 其他键则一切正常。
+ 
+  else{return(true);}
+}
+
+function AutoSend(){
+  if((IME.EngList.value.length==MAX)&&(AutoUp.checked==true)){
+    SendStr(0);
+  }
+}
+
+function ImePress(){
+var s="";
+
+  // 英文模式
+  if(IsEnglish.checked==true){return(true);}
+
+  //以下定义 Enter键 作用。
+  if(event.keyCode==13){
+    if(IME.EngList.value!=""){
+      IME.EngList.value="";
+      IME.ChiList.value="";
+      return(false);
+    }
+  }
+
+  //以下定义 空白键 作用。
+  if(event.keyCode==32){
+    if(IME.EngList.value!=""){
+      SendStr(0);
+      return(false);
+    }else{return(true);}
+  }
+
+  //以下定义 0键 的作用。
+  if(event.keyCode==48){
+    if((IME.EngList.value!="")&&(OutChi[9]!=""))
+      SendStr(9);
+    else
+      SendChiCode(FullNo[9]); //送全形符号'０'
+    return(false);
+  }
+
+  //以下定义 1-9键 的作用。
+  if((event.keyCode>=49)&&(event.keyCode<=57)){
+    if((IME.EngList.value!="")&&(OutChi[event.keyCode-49]!=""))
+      SendStr(event.keyCode-49);
+    else
+      SendChiCode(FullNo[event.keyCode-49]); //送全形符号'１－９'
+    return(false);
+  }
+
+  //以下定义 ,键 作用。
+  if(event.keyCode==44){
+    s=IME.EngList.value;
+    if(s.length<MAX){
+      IME.ChiList.value="";
+      IME.EngList.value+=",";
+      Grep(IME.EngList.value);
+    }
+    return(false);
+  }
+
+  //以下定义 .键 作用。
+  //if(event.keyCode==46){
+    //s=IME.EngList.value;
+    //if(s.length<MAX){
+      //IME.ChiList.value="";
+      //IME.EngList.value+=".";
+      //Grep(IME.EngList.value);
+    //}
+    //return(false);
+  //}
+
+  //以下定义 /键 作用。
+  //if(event.keyCode==47){
+    //s=IME.EngList.value;
+    //if(s.length<MAX){
+      //IME.ChiList.value="";
+      //IME.EngList.value+="/";
+      //Grep(IME.EngList.value);
+    //}
+    //return(false);
+  //}
+
+  //以下定义 ;键 作用。
+  //if(event.keyCode==59){
+    //s=IME.EngList.value;
+    //if(s.length<MAX){
+      //IME.ChiList.value="";
+      //IME.EngList.value+=";";
+      //Grep(IME.EngList.value);
+    //}
+    //return(false);
+  //}
+
+///////////////////////AhMan
+  //以下为自动上字功能。
+
+  //if((IME.EngList.value.length>MAX)&&(AutoUp.checked==true)){
+    //这里定义了 a-z键
+    //if((event.keyCode>=65)&&(event.keyCode<=90)){SendStr(0);}
+    // 这里定义了 ;,./键
+    //if((event.keyCode>=186)&&(event.keyCode<=191)){SendStr(0);}
+  //}return(true);
+  // 其他键则一切正常。
+
+  if((IME.EngList.value.length==MAX)&&(AutoUp.checked==true)){
+    SendStr(0);
+  }
+
+  //以下定义 A-Z键 作用。
+  if((event.keyCode>=65)&&(event.keyCode<=90)){
+    s=IME.EngList.value;
+    if(s.length<MAX){
+      IME.ChiList.value="";
+      IME.EngList.value+=ABC_Str[event.keyCode-65];
+      Grep(IME.EngList.value);
+    }
+    return(false);
+  }
+
+  //以下定义 a-z键 作用。
+  if((event.keyCode>=97)&&(event.keyCode<=122)){
+    s=IME.EngList.value;
+    if(s.length<MAX){
+      IME.ChiList.value="";
+      IME.EngList.value+=abc_Str[event.keyCode-97];
+      Grep(IME.EngList.value);
+    }
+    return(false);
+  }
+
+  else{return(true);}
+}
+
+// 
+function ImeUp(){
+
+  //以下定义 Shift键 的作用。...AhMan
+  if(event.keyCode==16){
+    IsShifted=false;
+    return(false);
+  }
+}
+</SCRIPT>
+<link href="../font1.css" rel="stylesheet" type="text/css">
+</HEAD>
+
+
+<!-- 以下部分是网页的界面，定义出一个表格，
+     左边的文字框是输出文字的地方，
+     右上角的是显示编码输入的地方，
+     右下边的文字框是对应编码的文字串。
+     默认为自动上字。 -->
+
+<BODY OnFocus=IME.InputData.focus();  OnContextMenu="Window.Event.ReturnValue=false"
+      BACKGROUND=../assets/images/background/background.gif 
+      OnLoad=AutoUp.checked=true;>
+<div align="center">
+  <center>
+<table border="1" width="99%" cellspacing="1" bgcolor="#BEBEBE">
+  <tr>
+    <td width="11%" rowspan="2" valign="top">
+<p align="center"><br>
+          <font color="#0033FF" size="2" face="宋体">更多在线</font></p> 
+      <p align="center">   <a title="全拼形导码输入法，十万词语支持通用版。" >
+      <input type="button" value="在线导码" onClick="window.open('http://input.foruto.com/gbqpxdm/zxdm.htm', 'Sample', 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,copyhistory=yes,width=790,height=520,left=0,top=0')" name="Input" style="font-family: 宋体; font-size: 9pt"><br>
+   </a>   <a title="五笔/导码大小写字母双输入法，GB单字通用版" ><input type="button" value="五笔导码" onClick="window.open('http://input.foruto.com/gbqpxdm/wbdm.htm', 'Sample', 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,copyhistory=yes,width=790,height=520,left=0,top=0')" name="Input" style="font-family: 宋体; font-size: 9pt"><br>
+   </a><a title="导老爷二笔输入法第一代，六万词语支持通用版" ><input type="button" value="双法二笔" onClick="window.open('http://input.foruto.com/gbqpxdm/dlyeb.htm', 'Sample', 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,copyhistory=yes,width=790,height=520,left=0,top=0')" name="Input" style="font-family: 宋体; font-size: 9pt"><br>
+   </a>   <a title="一二三输入法，四万词语支持通用版" ><input type="button" value="一二三法" onClick="window.open('http://input.foruto.com/gbqpxdm/200254.htm', 'Sample', 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,copyhistory=yes,width=790,height=520,left=0,top=0')" name="Input" style="font-family: 宋体; font-size: 9pt"><br>
+   </a>   <a title="龙三文码输入法，七万词语支持通用版" ><input type="button" value="龙三文码" onClick="window.open('http://input.foruto.com/gbqpxdm/lswm.htm', 'Sample', 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,copyhistory=yes,width=790,height=520,left=0,top=0')" name="Input" style="font-family: 宋体; font-size: 9pt"><br>
+   </a><a title="第五代简体仓颉输入法，（70K丶支持七千个简体汉字）" ><input type="button" value="简体仓颉" onClick="window.open('http://www.chinesecj.com/ime/cj5-gb.html', 'Sample', 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,copyhistory=yes,width=790,height=520,left=0,top=0')" name="Input" style="font-family: 宋体; font-size: 9pt"><br>
+   </a>   <a title="第五代仓颉输入法通用版（200K丶支持二万一千个簡繁汉字）" ><input type="button" value="简繁仓颉" onClick="window.open('http://www.chinesecj.com/ime/cj5-int.html', 'Sample', 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,copyhistory=yes,width=790,height=520,left=0,top=0')" name="Input" style="font-family: 宋体; font-size: 9pt"><br>
+   </a><a title="全拼音输入法四万词语通用版" ><input type="button" value="全拼音法" onClick="window.open('http://input.foruto.com/gbqpxdm/qpy.htm', 'Sample', 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,copyhistory=yes,width=790,height=520,left=0,top=0')" name="Input" style="font-family: 宋体; font-size: 9pt"><br>
+   </a>   <a title="海峰GBK98无容错--词库版" ><input type="button" value="海峰五笔" onClick="window.open('http://input.foruto.com/gbqpxdm/hfwb.htm', 'Sample', 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,copyhistory=yes,width=790,height=520,left=0,top=0')" name="Input" style="font-family: 宋体; font-size: 9pt"><br>
+      </a></p>     
+    </td>      
+       
+    <td width="89%" colspan="2" bgcolor="#BEBEBE">      
+      <p><font size="2"><a title="海峰GBK98无容错--词库版" href="http://input.foruto.com/gbqpxdm/hfwb.htm" target="_blank"> 
+          </a> &gt;&gt;&gt;<font color="#0000FF">念青五笔</font>在线版&nbsp;V2.00.030814 
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font><font color="#000000" size="2" face="宋体"> 
+          <INPUT TYPE="CHECKBOX"; OnFocus=IME.InputData.focus();                         
+       Name=IsEnglish>英文(Ctrl)<INPUT TYPE="CHECKBOX"; OnFocus=IME.InputData.focus();                            
+       Name=AutoUp>
+          自动上字(F12)</font></td>                            
+  </tr>                            
+  <center>            
+  <tr>                            
+    <td width="59%">                                 
+<TABLE OnFocus=IME.InputData.focus() border="0" bgcolor="#BBBBBB" width="433" cellspacing="1">                                 
+<FORM Name=IME>                                 
+  <TR>                                 
+    <TH ROWSPAN=2 width="322">                                 
+      <!-- 这个是输出文字的文字框 -->                                 
+      <TEXTAREA OnKeyDown="return ImeDown();"                                 
+                OnKeyPress="return ImePress();"                                 
+                OnKeyUp="return ImeUp();"                                 
+                Name=InputData Rows=15 Cols=50 style="font-family: 宋体; font-size: 9pt; background-color: #E8E8E8"></TEXTAREA>                                 
+    </TH>                                 
+    <TH width="188">                                 
+      <!-- 这个是输入英文编码 -->                                 
+      <INPUT OnFocus=IME.InputData.focus();                                 
+             Name=EngList Size=25 style="background-color: #E8E8E8">                                 
+    </TH>                                 
+  </TR>                                 
+                                 
+  <TR>                                 
+    <TH width="188">                                 
+      <!-- 这个是显示中文字串的文字框 -->                                 
+      <TEXTAREA OnFocus=IME.InputData.focus();                                 
+                Name=ChiList Rows=13 Cols=27 style="font-family: 宋体; font-size: 9pt; background-color: #E8E8E8"></TEXTAREA>                                 
+    </TH>                                 
+  </TR>                                 
+                                 
+      </TABLE>                                 
+    </td>                            
+    <td width="30%" valign="top">                                 
+<p><font face="宋体" size="2" color="#000000"><strong>说明：</strong><br>
+          </font></p>
+        <p><font color="#000000" size="2" face="宋体">　　将系统切换至英文输入状态即可用五笔编码输入汉字，使用Ctrl+C组合键复制框选文字，Ctrl+V粘贴剪贴板内容。</font></p>
+        <p><font face="宋体" size="2" color="#000000">向后翻页：(PageDown)</font> 
+        </p>
+        <p><font face="宋体" size="2" color="#000000">向前翻页：(PageUp)</font></p>                   
+        <p><font size="2" face="宋体">版本特征词：半推半就(uruy)</font></p>                   
+        <p><font size="2" face="宋体">已知BUG：部分汉字需要全码输入</font></p>                
+        <p align="center" class="font1"><font size="2" face="宋体"><a href="http://nianqing.pcsalem.net/asp/guestbook/index.asp?username=nianqing" target="_blank" class="font1">敬请留言</a></font></p>                
+ <script src="http://nianqing.pcsalem.net/asp/stat/mystat.asp?siteid=1"></script>
+ <script language="javascript" type="text/javascript" src="../390436.js"></script>
+<noscript><iframe src="http://23.db.51.la/s.asp?id=390436" width="0" height="0"></iframe></noscript>
+    </td>                    
+  </tr>                    
+</table>                    
+  
+</div>
+<div align=center>
+  <p>&nbsp;</p>
+  <table border=0 cellpadding=0 cellspacing=0>
+
+<iframe name="nq" src="../bq.htm" width="350" height="68" frameborder="0"></iframe> 
+
+
+</table></div>
+</BODY>
+</HTML>                                                 
