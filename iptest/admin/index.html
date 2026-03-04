@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
-    <title>IPtest</title>
+    <title>IP test</title>
     <script data-cfasync="false" src="https://cdn.jsdelivr.net/npm/@keeex/qrcodejs-kx@1.0.2/qrcode.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -8286,29 +8286,6 @@
             document.title = `${currentConfig.优选订阅生成?.SUBNAME || 'edgetunnel'}设置页面 - 管理后台`;
         }
 
-        async function saveEch() {
-            // 保存ECH（如果字段存在）
-            if (currentConfig['ECH'] !== undefined) {
-                currentConfig['ECH'] = document.getElementById('enableECH').checked;
-
-                // 保存ECHConfig.DNS（如果存在）
-                if (currentConfig.ECHConfig?.DNS !== undefined) {
-                    const dnsValue = document.getElementById('echDNSValue').value;
-                    if (dnsValue) {
-                        currentConfig.ECHConfig.DNS = dnsValue;
-                    }
-                }
-
-                // 保存ECHConfig.SNI（如果存在）
-                if (currentConfig.ECHConfig?.SNI !== undefined) {
-                    const sniValue = document.getElementById('echSNIValue').value;
-                    currentConfig.ECHConfig.SNI = sniValue === '' ? null : sniValue;
-                }
-            }
-
-            await saveConfigToServer('ech');
-        }
-
         async function saveProxy() {
             const mode = document.getElementById('proxyMode').value;
             let socksEnabled = null;
@@ -8359,92 +8336,6 @@
             await saveConfigToServer('proxy');
         }
 
-        // 加载SubConfig JSON数据
-        async function loadSubConfigData() {
-            try {
-                const url = 'https://raw.githubusercontent.com/cmliu/cmliu/main/SUBCONFIG.json';
-                const text = await fetchWithAutoMirror(url, 'SubConfig');
-                subConfigData = JSON.parse(text);
-                populateSubConfigSelect();
-                console.log('[订阅转换配置列表] SUBCONFIG 数据加载成功');
-            } catch (error) {
-                console.error('Error loading SubConfig:', error);
-                // 加载失败时，仍然显示下拉框（只有自定义选项）
-                subConfigData = null;
-                populateSubConfigSelect();
-            }
-        }
-
-        // 填充SubConfig下拉框
-        function populateSubConfigSelect() {
-            const select = document.getElementById('subConfigSelect');
-            const customInput = document.getElementById('subConfigCustomInput');
-            if (!select) return; // 元素还不存在，等待后续调用
-
-            // 始终添加"自定义"选项作为第一项
-            select.innerHTML = '<option value="custom">&nbsp;&nbsp;&nbsp;&nbsp;自定义</option>';
-
-            // 如果有数据，添加分组选项
-            if (subConfigData && Array.isArray(subConfigData)) {
-                subConfigData.forEach(group => {
-                    const optgroup = document.createElement('optgroup');
-                    optgroup.label = group.label;
-
-                    if (group.options && Array.isArray(group.options)) {
-                        group.options.forEach(option => {
-                            const opt = document.createElement('option');
-                            opt.value = option.value;
-                            opt.textContent = option.label;
-                            optgroup.appendChild(opt);
-                        });
-                    }
-
-                    select.appendChild(optgroup);
-                });
-            }
-
-            // 显示下拉框
-            select.style.display = 'block';
-
-            // 如果已有保存的配置值，设置选中状态
-            const savedSubConfig = currentConfig.订阅转换配置?.SUBCONFIG || '';
-            if (savedSubConfig) {
-                // 尝试在下拉框中找到匹配的选项
-                select.value = savedSubConfig;
-
-                // 如果没有匹配到（值不在列表中），选择"自定义"并显示输入框
-                if (select.value !== savedSubConfig) {
-                    select.value = 'custom';
-                    customInput.value = savedSubConfig;
-                    customInput.style.display = 'block';
-                    document.getElementById('subConfig').value = savedSubConfig;
-                } else {
-                    // 匹配成功，隐藏自定义输入框
-                    customInput.style.display = 'none';
-                    customInput.value = '';
-                    document.getElementById('subConfig').value = savedSubConfig;
-                }
-            } else {
-                // 没有保存值，默认选择"自定义"
-                select.value = 'custom';
-                customInput.style.display = 'block';
-            }
-
-            // 设置change事件监听
-            select.onchange = function () {
-                if (this.value === 'custom') {
-                    // 选择自定义，显示输入框
-                    customInput.style.display = 'block';
-                    document.getElementById('subConfig').value = customInput.value;
-                } else {
-                    // 选择预设值，隐藏输入框并更新值
-                    customInput.style.display = 'none';
-                    customInput.value = '';
-                    document.getElementById('subConfig').value = this.value;
-                }
-                markModified('convert');
-            };
-        }
 
         // 自定义输入框变化时的处理
         function onSubConfigCustomInput() {
@@ -8453,37 +8344,6 @@
             markModified('convert');
         }
 
-        async function saveConvert() {
-            currentConfig.订阅转换配置 = {
-                SUBAPI: document.getElementById('subAPI').value,
-                SUBCONFIG: document.getElementById('subConfig').value,
-                SUBEMOJI: document.getElementById('emoji').checked
-            };
-
-            await saveConfigToServer('convert');
-        }
-
-        async function saveConfigToServer(section) {
-            try {
-                const response = await fetch('/admin/config.json', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache',
-                        'Expires': '0'
-                    },
-                    body: JSON.stringify(currentConfig)
-                });
-
-                if (!response.ok) throw new Error('保存失败');
-                showToast('✅ 配置已保存，请更新订阅，才能获取最新节点内容！', 'success');
-                modifiedSections.delete(section);
-                updateButtonStates();
-            } catch (error) {
-                showToast('😢 ' + error.message + '，请检测网络环境，或关闭代理后再试！', 'error');
-            }
-        }
 
         function cancelEdit(section) {
             currentConfig = JSON.parse(JSON.stringify(originalConfig));
@@ -8651,15 +8511,6 @@
             });
         }
 
-        async function refreshConfig() {
-            await loadConfig();
-            const loadTime = currentConfig.加载时间 || '未知';
-            showToast(`配置已刷新 (加载时间: ${loadTime})`, 'success');
-        }
-
-        function resetConfigWithConfirm() {
-            document.getElementById('resetModal').classList.add('show');
-        }
 
         function closeResetModal(event) {
             if (event && event.target.id !== 'resetModal') return;
@@ -8683,9 +8534,6 @@
             }
         }
 
-        function logout() {
-            window.location.href = '/logout';
-        }
 
         // 切换用户模式（小白模式 / 高手模式）
         function toggleUserMode() {
@@ -8750,26 +8598,6 @@
             }, 3000);
         }
 
-        // 日志类型翻译
-        function translateLogType(type, ua = '') {
-            // 如果是 Get_SUB 类型，检查 UA 是否包含 subconverter
-            if (type === 'Get_SUB') {
-                const uaLowercase = (ua || '').toLowerCase();
-                if (uaLowercase.includes('subconverter')) {
-                    return { text: '订阅转换', color: '#3b82f6' };
-                }
-                return { text: '获取订阅', color: '#10b981' };
-            }
-
-            const typeMap = {
-                'Admin_Login': { text: '登录后台', color: '#f59e0b' },
-                'Save_Config': { text: '保存配置', color: '#8b5cf6' },
-                'Init_Config': { text: '重置配置', color: '#ef4444' },
-                'Save_Custom_IPs': { text: '自定义优选', color: '#06b6d4' }
-            };
-            return typeMap[type] || { text: type, color: '#6b7280' };
-        }
-
         // 格式化时间戳为 UTC+8
         function formatTime(timestamp) {
             const date = new Date(timestamp + 8 * 3600 * 1000);
@@ -8782,123 +8610,6 @@
             return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         }
 
-        // 在展开日志模块时加载日志
-        let logsLoaded = false;
-        function loadLogsOnExpand(titleEl) {
-            const module = titleEl.parentElement;
-            const isCollapsed = module.classList.contains('collapsed');
-
-            // 如果是展开状态且还未加载过日志，则加载
-            if (!isCollapsed && !logsLoaded) {
-                loadLogs();
-            }
-        }
-
-        // 加载最近8条日志
-        async function loadLogs() {
-            try {
-                const response = await fetch('/admin/log.json?_t=' + Date.now(), {
-                    headers: {
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache',
-                        'Expires': '0'
-                    }
-                });
-                if (!response.ok) throw new Error('加载日志失败');
-                const logs = await response.json();
-                logsLoaded = true;
-
-                // 按时间从新到旧排序，取前6条
-                const recentLogs = logs.sort((a, b) => b.TIME - a.TIME).slice(0, 6);
-
-                const container = document.getElementById('logsContainer');
-                if (recentLogs.length === 0) {
-                    container.innerHTML = '<div style="text-align: center; padding: 20px; color: #6b7280;">暂无日志记录</div>';
-                    return;
-                }
-
-                // 检查是否为移动设备
-                const isMobile = window.innerWidth <= 768;
-
-                let html = '<table style="width: 100%; border-collapse: collapse;">';
-                if (isMobile) {
-                    // 移动设备：显示时间、IP、操作
-                    html += '<thead><tr style="border-bottom: 2px solid #e5e7eb;"><th style="text-align: left; padding: 10px; font-weight: 600;">时间 (UTC+8)</th><th style="text-align: left; padding: 10px; font-weight: 600;">IP</th><th style="text-align: left; padding: 10px; font-weight: 600;">操作</th></tr></thead>';
-                } else {
-                    // 桌面设备：显示时间、IP、地区、操作
-                    html += '<thead><tr style="border-bottom: 2px solid #e5e7eb;"><th style="text-align: left; padding: 10px; font-weight: 600;">时间 (UTC+8)</th><th style="text-align: left; padding: 10px; font-weight: 600;">IP</th><th style="text-align: left; padding: 10px; font-weight: 600;">地区</th><th style="text-align: left; padding: 10px; font-weight: 600;">操作</th></tr></thead>';
-                }
-                html += '<tbody>';
-
-                recentLogs.forEach(log => {
-                    const logType = translateLogType(log.TYPE, log.UA);
-                    const cc = log.CC || '未知';
-                    const timeStr = formatTime(log.TIME);
-                    const ip = log.IP || '未知';
-
-                    if (isMobile) {
-                        // 移动设备：不显示地区
-                        html += `<tr style="border-bottom: 1px solid #f3f4f6;"><td style="padding: 10px; font-size: 12px;">${timeStr}</td><td style="padding: 10px; font-family: monospace; font-size: 12px;">${ip}</td><td style="padding: 10px;"><span style="display: inline-block; padding: 4px 12px; border-radius: 4px; font-size: 12px; color: #fff; background-color: ${logType.color};">${logType.text}</span></td></tr>`;
-                    } else {
-                        // 桌面设备：显示地区
-                        html += `<tr style="border-bottom: 1px solid #f3f4f6;"><td style="padding: 10px;">${timeStr}</td><td style="padding: 10px; font-family: monospace; font-size: 12px;">${ip}</td><td style="padding: 10px;">${cc}</td><td style="padding: 10px;"><span style="display: inline-block; padding: 4px 12px; border-radius: 4px; font-size: 12px; color: #fff; background-color: ${logType.color};">${logType.text}</span></td></tr>`;
-                    }
-                });
-
-                html += '</tbody></table>';
-                container.innerHTML = html;
-            } catch (error) {
-                const container = document.getElementById('logsContainer');
-                container.innerHTML = `<div style="text-align: center; padding: 20px; color: #ef4444;">加载日志失败: ${error.message}</div>`;
-            }
-        }
-
-        // 显示全部日志
-        async function showAllLogs() {
-            try {
-                const response = await fetch('/admin/log.json?_t=' + Date.now(), {
-                    headers: {
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache',
-                        'Expires': '0'
-                    }
-                });
-                if (!response.ok) throw new Error('加载日志失败');
-                const logs = await response.json();
-
-                // 按时间从新到旧排序
-                const sortedLogs = logs.sort((a, b) => b.TIME - a.TIME);
-
-                const container = document.getElementById('allLogsContainer');
-                let html = '<table style="width: 100%; border-collapse: collapse; font-size: 12px; table-layout: auto;">';
-                html += '<thead><tr style="border-bottom: 2px solid #e5e7eb; background: #f9fafb; white-space: nowrap;"><th style="text-align: left; padding: 10px; font-weight: 600; width: 160px;">时间 (UTC+8)</th><th style="text-align: left; padding: 10px; font-weight: 600; width: 120px;">IP</th><th style="text-align: left; padding: 10px; font-weight: 600; width: 80px;">地区</th><th style="text-align: left; padding: 10px; font-weight: 600; width: 80px;">ASN</th><th style="text-align: left; padding: 10px; font-weight: 600; width: 150px;">操作</th><th style="text-align: left; padding: 10px; font-weight: 600; flex: 1; min-width: 300px;">URL</th><th style="text-align: left; padding: 10px; font-weight: 600; flex: 1; min-width: 200px;">UA</th></tr></thead>';
-                html += '<tbody>';
-
-                sortedLogs.forEach(log => {
-                    const logType = translateLogType(log.TYPE, log.UA);
-                    const cc = log.CC || '未知';
-                    const asn = log.ASN || '未知';
-                    const timeStr = formatTime(log.TIME);
-                    const ip = log.IP || '未知';
-                    const url = log.URL || '无';
-                    const ua = log.UA ? log.UA.substring(0, 60) : '无';
-
-                    html += `<tr style="border-bottom: 1px solid #f3f4f6;"><td style="text-align: left; padding: 8px; white-space: nowrap; width: 160px; font-size: 11px;">${timeStr}</td><td style="text-align: left; padding: 8px; font-family: monospace; font-size: 10px; white-space: nowrap; width: 120px; word-break: break-word;">${ip}</td><td style="text-align: left; padding: 8px; white-space: nowrap; width: 80px; font-size: 11px;">${cc}</td><td style="text-align: left; padding: 8px; white-space: nowrap; width: 80px; font-size: 11px; font-family: monospace;">${asn}</td><td style="text-align: left; padding: 8px; width: 150px;"><span style="display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 11px; color: #fff; background-color: ${logType.color}; white-space: nowrap;">${logType.text}</span></td><td style="text-align: left; padding: 8px; font-size: 11px; word-break: break-word; min-width: 300px;">${url}</td><td style="text-align: left; padding: 8px; font-size: 10px; color: #6b7280; min-width: 200px; word-break: break-word;">${ua}</td></tr>`;
-                });
-
-                html += '</tbody></table>';
-                container.innerHTML = html;
-                document.getElementById('logsModal').classList.add('show');
-            } catch (error) {
-                showToast('加载日志失败: ' + error.message, 'error');
-            }
-        }
-
-        // 关闭日志模态框
-        function closeLogsModal(event) {
-            if (event && event.target.id !== 'logsModal') return;
-            document.getElementById('logsModal').classList.remove('show');
-        }
 
         // ==================== 代理验证模态框函数 ====================
 
@@ -9183,104 +8894,6 @@
             document.getElementById(currentProxyFieldId).value = validAddress;
             markModified('proxy');
             closeProxyVerificationModal();
-        }
-
-        function openSubAPIModal() {
-            const currentValue = document.getElementById('subAPI').value;
-            document.getElementById('subAPIStatus').style.display = 'none';
-            document.getElementById('subAPIStatus').textContent = '';
-            document.getElementById('subAPIConfirmBtn').disabled = true;
-            document.getElementById('subAPIConfirmBtn').style.opacity = '0.5';
-            document.getElementById('subAPIModal').classList.add('show');
-
-            // 加载 SUBAPI 列表
-            loadSubAPIList(currentValue);
-        }
-
-        function closeSubAPIModal(event) {
-            if (event && event.target.id !== 'subAPIModal') return;
-            document.getElementById('subAPIModal').classList.remove('show');
-            document.getElementById('testSubAPIInput').value = '';
-            document.getElementById('subAPIStatus').style.display = 'none';
-        }
-
-        async function loadSubAPIList(currentValue) {
-            const selectEl = document.getElementById('subAPISelect');
-            selectEl.innerHTML = '<option value="">-- 加载中，请稍候 --</option>';
-
-            try {
-                const jsonText = await fetchWithAutoMirror(
-                    'https://raw.githubusercontent.com/cmliu/cmliu/main/SUBAPI.json',
-                    'SUBAPI 列表'
-                );
-
-                const apiList = JSON.parse(jsonText);
-
-                // 清空选项
-                selectEl.innerHTML = '';
-
-                // 添加 API 列表的选项
-                apiList.forEach(item => {
-                    const option = document.createElement('option');
-                    option.value = item.value;
-                    option.textContent = `${item.label}[${item.value}]`;
-                    selectEl.appendChild(option);
-                });
-
-                // 添加自定义选项
-                const customOption = document.createElement('option');
-                customOption.value = 'custom';
-                customOption.textContent = '🔧 自定义';
-                selectEl.appendChild(customOption);
-
-                // 尝试匹配当前值（大小写不敏感比较）
-                if (currentValue && currentValue.trim()) {
-                    const currentValueLower = currentValue.trim().toLowerCase();
-                    const matchedOption = Array.from(selectEl.options).find(
-                        opt => opt.value.toLowerCase() === currentValueLower
-                    );
-                    if (matchedOption) {
-                        // 找到了匹配的选项
-                        selectEl.value = matchedOption.value;
-                        document.getElementById('customSubAPIInputGroup').style.display = 'none';
-                        document.getElementById('testSubAPIInput').value = '';
-                    } else {
-                        // 没有找到匹配的选项，说明是自定义的
-                        selectEl.value = 'custom';
-                        document.getElementById('testSubAPIInput').value = currentValue.trim();
-                        document.getElementById('customSubAPIInputGroup').style.display = 'block';
-                    }
-                } else {
-                    // 没有当前值，显示第一个选项
-                    selectEl.value = '';
-                    document.getElementById('customSubAPIInputGroup').style.display = 'none';
-                    document.getElementById('testSubAPIInput').value = '';
-                }
-            } catch (error) {
-                console.error('加载 SUBAPI 列表失败:', error);
-                selectEl.innerHTML = '<option value="custom">🔧 自定义</option>';
-                selectEl.value = 'custom';
-                document.getElementById('customSubAPIInputGroup').style.display = 'block';
-                if (currentValue && currentValue.trim()) {
-                    document.getElementById('testSubAPIInput').value = currentValue.trim();
-                } else {
-                    document.getElementById('testSubAPIInput').value = '';
-                }
-            }
-        }
-
-        function handleSubAPISelectChange() {
-            const selectEl = document.getElementById('subAPISelect');
-            const customInputGroup = document.getElementById('customSubAPIInputGroup');
-            const testInput = document.getElementById('testSubAPIInput');
-
-            if (selectEl.value === 'custom') {
-                customInputGroup.style.display = 'block';
-                testInput.focus();
-            } else {
-                customInputGroup.style.display = 'none';
-                testInput.value = selectEl.value;
-            }
         }
 
         // ProxyIP 帮助模态框函数
@@ -9827,51 +9440,6 @@
 
         // ==================== 消息通知设置相关函数 ====================
 
-        // 更新 Telegram 按钮状态和颜色
-        function updateTelegramButtonStates(isConfigured) {
-            // 获取 Telegram 按钮元素（第一组通知按钮是 Telegram）
-            const buttons = document.querySelectorAll('.notification-controls');
-
-            if (buttons.length > 0) {
-                const telegramControls = buttons[0];
-                const configBtn = telegramControls.querySelector('.btn-notification-config');
-                const clearBtn = telegramControls.querySelector('.btn-clear-config');
-
-                if (isConfigured) {
-                    // 已配置：参数配置按钮为绿色，清除配置按钮为红色且可点击
-                    clearBtn.classList.remove('btn-not-configured');
-                    clearBtn.classList.add('btn-configured');
-                    clearBtn.disabled = false;
-                } else {
-                    // 未配置：参数配置按钮保持绿色，清除配置按钮为灰色且禁用
-                    clearBtn.classList.remove('btn-configured');
-                    clearBtn.classList.add('btn-not-configured');
-                    clearBtn.disabled = true;
-                }
-            }
-        }
-
-        // 清除 Telegram 配置
-        async function clearTelegramConfig() {
-            if (confirm('确定要清除 Telegram 配置吗？')) {
-                currentConfig.TG = {
-                    BotToken: null,
-                    ChatID: null,
-                    启用: false
-                };
-
-                try {
-                    await saveConfigToServer('notification');
-                    showToast('Telegram 配置已清除', 'success');
-                    updateTelegramButtonStates(false);
-                    const telegramCheckbox = document.getElementById('telegramEnabled');
-                    telegramCheckbox.disabled = true;
-                    telegramCheckbox.checked = false;
-                } catch (error) {
-                    showToast('清除配置失败: ' + error.message, 'error');
-                }
-            }
-        }
 
         // 更新 Cloudflare 按钮状态和颜色
         function updateCloudflareButtonStates(isConfigured) {
@@ -9911,164 +9479,6 @@
                 } catch (error) {
                     showToast('清除配置失败: ' + error.message, 'error');
                 }
-            }
-        }
-
-        // 打开 TelegramBot 配置模态框
-        function openTelegramConfigModal() {
-            document.getElementById('telegramConfigModal').classList.add('show');
-            // 只加载Chat ID，不加载Bot Token（因为Bot Token是敏感信息）
-            const chatID = currentConfig.TG?.ChatID || currentConfig.通知?.Telegram?.ChatID || '';
-            document.getElementById('telegramBotToken').value = '';
-            document.getElementById('telegramChatID').value = chatID;
-
-            // 重置状态和保存按钮
-            document.getElementById('telegramStatus').style.display = 'none';
-            document.getElementById('telegramStatus').textContent = '';
-            document.getElementById('telegramConfirmBtn').disabled = true;
-            document.getElementById('telegramConfirmBtn').style.opacity = '0.5';
-        }
-
-        // 关闭 TelegramBot 配置模态框
-        function closeTelegramConfigModal(event) {
-            if (event && event.target.id !== 'telegramConfigModal') return;
-            document.getElementById('telegramConfigModal').classList.remove('show');
-        }
-
-        // 测试 TelegramBot 连接
-        async function testTelegramConfig() {
-            const token = document.getElementById('telegramBotToken').value.trim();
-            const chatID = document.getElementById('telegramChatID').value.trim();
-            const statusEl = document.getElementById('telegramStatus');
-            const confirmBtn = document.getElementById('telegramConfirmBtn');
-            const testBtn = event.target;
-
-            if (!token || !chatID) {
-                statusEl.textContent = '❌ 请填写Bot Token和Chat ID';
-                statusEl.style.display = 'block';
-                statusEl.style.background = 'linear-gradient(135deg, #ef4444 0, #dc2626 100%)';
-                statusEl.style.color = '#fff';
-                confirmBtn.disabled = true;
-                confirmBtn.style.opacity = '0.5';
-                return;
-            }
-
-            try {
-                testBtn.disabled = true;
-                statusEl.textContent = '⏳ 验证中...';
-                statusEl.style.display = 'block';
-                statusEl.style.background = 'linear-gradient(135deg, #3b82f6 0, #1d4ed8 100%)';
-                statusEl.style.color = '#fff';
-
-                // 第一步：验证 Bot Token 的有效性
-                const getUrlParams = new URLSearchParams({
-                    access_token: token
-                });
-                const getMeUrl = `https://api.telegram.org/bot${token}/getMe`;
-
-                const getMeResponse = await fetch(getMeUrl);
-                if (!getMeResponse.ok) {
-                    throw new Error('Bot Token 无效，无法获取机器人信息');
-                }
-
-                const getMeData = await getMeResponse.json();
-                if (!getMeData.ok) {
-                    throw new Error('Bot Token 无效: ' + (getMeData.description || '未知错误'));
-                }
-
-                // 第二步：通过Bot Token向Chat ID推送测试消息
-                const sendUrlParams = new URLSearchParams({
-                    chat_id: chatID,
-                    text: '✅ Telegram 通知配置已验证成功！'
-                });
-                const sendUrl = `https://api.telegram.org/bot${token}/sendMessage?${sendUrlParams}`;
-
-                const sendResponse = await fetch(sendUrl);
-                if (!sendResponse.ok) {
-                    throw new Error('发送消息失败，请检查Chat ID是否正确');
-                }
-
-                const sendData = await sendResponse.json();
-                if (!sendData.ok) {
-                    throw new Error('Chat ID 无效: ' + (sendData.description || '未知错误'));
-                }
-
-                // 验证成功
-                statusEl.style.background = 'linear-gradient(135deg, #10b981 0, #059669 100%)';
-                statusEl.textContent = '✅ Bot Token 和 Chat ID 均有效';
-                confirmBtn.disabled = false;
-                confirmBtn.style.opacity = '1';
-
-            } catch (error) {
-                statusEl.style.background = 'linear-gradient(135deg, #ef4444 0, #dc2626 100%)';
-                statusEl.textContent = '❌ 验证失败: ' + error.message;
-                confirmBtn.disabled = true;
-                confirmBtn.style.opacity = '0.5';
-            } finally {
-                testBtn.disabled = false;
-            }
-        }
-
-        // 保存 TelegramBot 配置
-        async function confirmTelegramConfig() {
-            const token = document.getElementById('telegramBotToken').value.trim();
-            const chatID = document.getElementById('telegramChatID').value.trim();
-            const confirmBtn = document.getElementById('telegramConfirmBtn');
-
-            // 检查按钮是否禁用（必须先通过验证）
-            if (confirmBtn.disabled) {
-                showToast('请先点击"可用性验证"按钮验证配置', 'error');
-                return;
-            }
-
-            if (!token || !chatID) {
-                showToast('请填写完整的Bot Token和Chat ID', 'error');
-                return;
-            }
-
-            try {
-                confirmBtn.disabled = true;
-                confirmBtn.textContent = '保存中...';
-
-                // 提交到后端
-                const response = await fetch('/admin/tg.json', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        BotToken: token,
-                        ChatID: chatID
-                    })
-                });
-
-                if (response.ok) {
-                    const result = await response.json();
-                    showToast('✅ TelegramBot 配置已保存', 'success');
-                    closeTelegramConfigModal();
-
-                    // 更新按钮状态
-                    currentConfig.TG = {
-                        BotToken: token,
-                        ChatID: chatID,
-                        启用: true
-                    };
-                    updateTelegramButtonStates(true);
-
-                    // 1秒后刷新页面
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
-                } else {
-                    const errorData = await response.json();
-                    showToast('❌ 保存失败: ' + (errorData.error || '未知错误'), 'error');
-                    confirmBtn.disabled = false;
-                    confirmBtn.textContent = '保存';
-                }
-            } catch (error) {
-                showToast('❌ 保存失败: ' + error.message, 'error');
-                confirmBtn.disabled = false;
-                confirmBtn.textContent = '保存';
             }
         }
 
@@ -10352,41 +9762,6 @@
             }
         }
 
-        // 清除 Telegram 配置
-        // 清除 Telegram 配置
-        function clearTelegramConfig() {
-            document.getElementById('clearTelegramModal').classList.add('show');
-        }
-
-        function closeClearTelegramModal(event) {
-            if (!event || event.target.id === 'clearTelegramModal') {
-                document.getElementById('clearTelegramModal').classList.remove('show');
-            }
-        }
-
-        async function confirmClearTelegramConfig() {
-            try {
-                const response = await fetch('/admin/tg.json', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ init: true })
-                });
-
-                const data = await response.json();
-
-                if (response.ok && data.success) {
-                    closeClearTelegramModal();
-                    showToast('✅ Telegram 配置已清除，页面即将刷新...', 'success');
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
-                } else {
-                    showToast('❌ 清除失败: ' + (data.message || '未知错误'), 'error');
-                }
-            } catch (error) {
-                showToast('❌ 清除出错: ' + error.message, 'error');
-            }
-        }
 
         // 清除 Cloudflare 配置
         function clearCloudflareConfig() {
