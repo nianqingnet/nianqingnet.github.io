@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
-    <title>IP test</title>
+    <title>IPtest</title>
     <script data-cfasync="false" src="https://cdn.jsdelivr.net/npm/@keeex/qrcodejs-kx@1.0.2/qrcode.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1453,14 +1453,6 @@
             animation: slideIn .3s ease-out
         }
 
-        html.dark-mode .success-message {
-            background: linear-gradient(135deg, #059669 0, #047857 100%)
-        }
-
-        html.dark-mode .error-message {
-            background: linear-gradient(135deg, #dc2626 0, #b91c1c 100%)
-        }
-
         html.dark-mode .collapse-btn {
             color: #7c3aed
         }
@@ -1814,27 +1806,6 @@
             color: #f6821f
         }
 
-        .success-message,
-        .error-message {
-            display: none;
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            font-weight: 500;
-            animation: slideIn 0.3s ease
-        }
-
-        .success-message {
-            background: linear-gradient(135deg, #10b981 0, #059669 100%);
-            color: #fff
-        }
-
-        .error-message {
-            background: linear-gradient(135deg, #ef4444 0, #dc2626 100%);
-            color: #fff
-        }
-
         .loading {
             display: inline-block;
             width: 16px;
@@ -1932,22 +1903,6 @@
             .ech-tab-content {
                 min-height: 80px;
                 max-height: calc(100vh - 220px);
-            }
-
-            /* 📋 获取节点链接 模块移动端优化 */
-            /* 使用新增的subscription-link-wrapper class来精确控制订阅链接的移动端布局 */
-
-            .subscription-link-wrapper {
-                display: flex !important;
-                flex-direction: column !important;
-                align-items: stretch !important;
-                gap: 12px !important;
-            }
-
-            .subscription-link-wrapper input {
-                width: 100% !important;
-                flex: none !important;
-                margin: 0 !important;
             }
 
             /* 创建按钮容器div */
@@ -2854,72 +2809,6 @@
 
         html.dark-mode .skipverify-link:hover {
             color: #42a5f5;
-        }
-
-        /* 日志容器 */
-        .logs-container {
-            margin-bottom: 20px;
-        }
-
-        .logs-loading {
-            text-align: center;
-            padding: 20px;
-            color: #6b7280;
-        }
-
-        .logs-footer {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .logs-footer-text {
-            font-size: 12px;
-            color: #9ca3af;
-            margin: 0;
-        }
-
-        /* 日志模态框 */
-        .logs-modal {
-            overflow-y: auto;
-            width: 90vw;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .logs-modal-title {
-            margin-bottom: 20px;
-        }
-
-        .logs-all-container {
-            max-height: 70vh;
-            overflow-y: auto;
-            overflow-x: auto;
-        }
-
-        /* 订阅 API 弹窗 */
-        .subapi-modal-title {
-            margin-bottom: 20px;
-        }
-
-        .subapi-form-group {
-            grid-template-columns: 1fr;
-        }
-
-        .subapi-status {
-            margin: 15px 0;
-            padding: 12px 16px;
-            border-radius: 8px;
-            display: none;
-        }
-
-        .subapi-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: space-between;
-            margin-top: 20px;
         }
 
         @media (max-width: 768px) {
@@ -5345,73 +5234,18 @@
     <!-- 管理后台容器 -->
     <div class="page-wrapper">
         <div class="card-container">
-            <div class="success-message" id="successMsg"></div>
-            <div class="error-message" id="errorMsg"></div>
-
-            <div class="header">
-                <div class="header-title">
-                    <h1 id="pageTitle">加载中...</h1>
-                </div>
-                <div class="header-buttons">
-                    <button type="button" class="btn btn-mode-toggle" id="modeToggleBtn" onclick="toggleUserMode()">🐣
-                        我是小白！我想简单点！</button>
-                    <button type="button" class="btn btn-danger btn-reset"
-                        onclick="resetConfigWithConfirm()">⚠️重置配置</button>
-                    <button type="button" class="btn btn-primary" onclick="logout()">👋退出登录</button>
-                </div>
-            </div>
 
             <!-- Cloudflare Workers/Pages 使用统计模块 -->
             <div class="module cf-usage-module collapsed" id="cfUsageModule">
-                <div class="module-title" onclick="toggleModule(this)">
-                    Workers/Pages 请求使用情况
-                    <svg class="collapse-icon" viewBox="0 0 24 24">
-                        <path d="M7 10l5 5 5-5z" />
-                    </svg>
-                </div>
-                <!-- 进度条 -->
-                <div>
-                    <div class="cf-progress-bar">
-                        <!-- Workers 进度条 (绿色) -->
-                        <div class="cf-bar-segment cf-bar-green" id="cfWorkerBar" title="Workers 请求"></div>
-                        <!-- Pages 进度条 (蓝色) -->
-                        <div class="cf-bar-segment cf-bar-blue" id="cfPagesBar" title="Pages 请求"></div>
-                        <!-- 总体百分比文字 (中央) -->
-                        <div class="cf-percentage-center" id="cfPercentageCenter">0%</div>
-                    </div>
-                </div>
-                <div class="module-content">
-                    <div class="cf-usage-wrapper">
-                        <!-- 使用统计卡片 -->
-                        <div class="cf-stats-card">
-                            <div class="cf-stats-grid">
-                                <div class="cf-stat-item">
-                                    <div class="cf-stat-label">Workers 请求</div>
-                                    <div class="cf-stat-value cf-value-green" id="cfWorkerCount">-</div>
-                                </div>
-                                <div class="cf-stat-item">
-                                    <div class="cf-stat-label">Pages 请求</div>
-                                    <div class="cf-stat-value cf-value-blue" id="cfPagesCount">-</div>
-                                </div>
-                                <div class="cf-stat-item">
-                                    <div class="cf-stat-label">日配额</div>
-                                    <div class="cf-stat-value cf-value-orange" id="cfDailyQuota">100,000</div>
-                                </div>
-                            </div>
-                        </div>
+                
 
                         <!-- 信息提示 -->
-                        <div class="cf-info-box">
-                            <div class="cf-info-icon">ℹ️</div>
+                                                    
                             <div class="cf-info-text">
-                                <strong>每日请求数重置清零：</strong><br><span id="countdown" class="cf-highlight">距离重置还有 15小时24分
-                                    34秒</span>，<br>北京时间 (UTC+8) <strong
-                                    class="cf-highlight">8:00</strong>重置，<br>今日使用情况总计：<strong class="cf-highlight"
-                                    id="cfTotalDisplay">-</strong>。
+                                <span id="countdown" class="cf-highlight"></span>，
                             </div>
-                        </div>
-                    </div>
-                </div>
+                    
+
             </div>
 
             <!-- 网络信息模块 -->
@@ -5512,9 +5346,9 @@
 
 
             <!-- 模块4: 反代落地设置 -->
-            <div class="module collapsed advanced-module">
+            <div class="module advanced-module">
                 <div class="module-title" onclick="toggleModule(this)">
-                    🌐 Cloudflare CDN 访问设置
+                    🌐 反代控制
                     <svg class="collapse-icon" viewBox="0 0 24 24">
                         <path d="M7 10l5 5 5-5z" />
                     </svg>
@@ -5537,8 +5371,7 @@
                                 <input type="text" id="proxyIP" title="PROXYIP" placeholder="proxyip.cmliussss.net"
                                     onchange="processProxyIP()" oninput="processProxyIP()">
                                 <div class="checkbox-group">
-                                    <input type="checkbox" id="autoProxy" title="启用自动获取: 使用默认内置的PROXYIP"
-                                        onchange="toggleAutoProxy(); markModified('proxy')">
+                                    <input type="checkbox" id="autoProxy" title="启用自动获取: 使用默认内置的PROXYIP">
                                     <label for="autoProxy" class="checkbox-label"
                                         title="启用自动获取: 使用默认内置的PROXYIP">启用自动获取</label>
                                 </div>
@@ -5588,11 +5421,11 @@
                     <div class="module-footer">
                         <button type="button" class="btn btn-ech-help btn-path-template-config"
                             id="pathTemplateConfigBtn" onclick="showPathTemplateConfigModal()"
-                            style="display: none; padding: 10px 16px;" title="配置路径模板">
+                            title="配置路径模板">
                             ⚙️ 路径模板配置
                         </button>
                         <button type="button" class="btn btn-search-proxy" id="getMoreProxyIPBtn"
-                            onclick="showGetMoreProxyIPModal()" style="display: none; padding: 10px 16px;"
+                            onclick="showGetMoreProxyIPModal()" 
                             title="从 ProxyIP 列表中选择可用的代理">
                             🗺️ 获取更多 PROXYIP
                         </button>
@@ -5606,215 +5439,45 @@
                             title="从HTTP列表中选择可用的代理">
                             🌐 获取更多 HTTP
                         </button>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-secondary" onclick="cancelEdit('proxy')" disabled
-                                id="cancelProxyBtn">取消</button>
-                            <button type="button" class="btn btn-primary" onclick="saveProxy()" disabled
-                                id="saveProxyBtn">保存</button>
-                        </div>
                     </div>
                 </div>
             </div>
 
- 
 
-    <!-- Cloudflare 通知设置弹窗 -->
-    <div class="modal-overlay" id="cloudflareConfigModal">
-        <div class="modal" onclick="event.stopPropagation()">
-            <button type="button" class="modal-close" onclick="closeCloudflareConfigModal()">×</button>
-            <h2 class="subapi-modal-title">☁️ Workers/Pages 可用请求数统计</h2>
-
-            <!-- 请求方案选择 -->
-            <div class="form-group subapi-form-group">
-                <label>请求方案</label>
-                <select id="cloudflareAuthMethod" title="请求方案" onchange="updateCloudflareAuthMethod()">
-                    <option id="usageapiOption" value="usageapi">UsageAPI（支持多账号统计）</option>
-                    <option value="accountid">Account ID + API Token</option>
-                    <option value="email">Email + Global API Key</option>
-                </select>
-            </div>
-
-            <!-- Email + Global API Key 方案 -->
-            <div id="cloudflareEmailSection">
-                <div class="form-group subapi-form-group">
-                    <label>Email</label>
-                    <input type="text" id="cloudflareEmail" placeholder="输入Cloudflare账户邮箱">
-                </div>
-                <div class="form-group subapi-form-group">
-                    <label>Global API Key</label>
-                    <input type="password" id="cloudflareGlobalAPIKey" placeholder="输入Global API Key">
-                </div>
-            </div>
-
-            <!-- Account ID + API Token 方案 -->
-            <div id="cloudflareAccountIDSection" class="hidden-section">
-                <div class="form-group subapi-form-group">
-                    <label>Account ID</label>
-                    <input type="text" id="cloudflareAccountID" placeholder="输入Account ID">
-                </div>
-                <div class="form-group subapi-form-group">
-                    <label>API Token</label>
-                    <input type="password" id="cloudflareAPIToken" placeholder="输入API Token">
-                    <small style="font-size: 12px; color: #9ca3af; margin-top: 6px; display: block;">💡 API令牌权限 使用
-                        "阅读分析数据和日志" 模板即可</small>
-                </div>
-            </div>
-
-            <!-- UsageAPI 方案 -->
-            <div id="cloudflareUsageAPISection" class="hidden-section">
-                <div class="form-group subapi-form-group">
-                    <label>UsageAPI地址</label>
-                    <input type="text" id="cloudflareUsageAPI"
-                        placeholder="https://usagepanel.pages.dev/usage.json?token=4941477918857b30d8234ac19441ebb2">
-                    <small style="font-size: 12px; color: #9ca3af; margin-top: 6px; display: block;">💡 支持多账号汇总，可通过部署 <a
-                            href="https://github.com/cmliu/CF-Workers-UsagePanel" target="_blank" rel="noopener"
-                            style="color: #3b82f6; text-decoration: none;">UsagePanel</a> 项目获取 UsageAPI 地址</small>
-                </div>
-            </div>
-
-            <!-- 验证状态提示 -->
-            <div id="cloudflareStatus" class="subapi-status"></div>
-
-            <!-- 按钮组 -->
-            <div class="subapi-buttons">
-                <button type="button" class="btn btn-primary btn-test-api"
-                    onclick="testCloudflareConfig()">可用性验证</button>
-                <button type="button" class="btn btn-primary btn-confirm-api" id="cloudflareConfirmBtn"
-                    onclick="confirmCloudflareConfig()" disabled>保存</button>
-                <button type="button" class="btn btn-secondary btn-cancel-api"
-                    onclick="closeCloudflareConfigModal()">取消</button>
+            <div class="social-links">
+                <!-- 主题切换按钮 -->
+                <button type="button" class="social-link theme-toggle" id="themeToggle" title="切换日间模式"
+                    onclick="toggleTheme()">
+                    <!-- 太阳图标 (日间模式显示) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="theme-icon sun-icon">
+                        <circle cx="12" cy="12" r="5" fill="currentColor" />
+                        <g stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none">
+                            <line x1="12" y1="1" x2="12" y2="3" />
+                            <line x1="12" y1="21" x2="12" y2="23" />
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                            <line x1="1" y1="12" x2="3" y2="12" />
+                            <line x1="21" y1="12" x2="23" y2="12" />
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                        </g>
+                    </svg>
+                    <!-- 月亮图标 (夜间模式显示) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="theme-icon moon-icon">
+                        <path fill="currentColor" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                    </svg>
+                </button>
+                <!-- 返回顶部按钮 -->
+                <button type="button" class="social-link" title="返回顶部" onclick="scrollToTop()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" d="M12 19V5M5 12l7-7l7 7" />
+                    </svg>
+                </button>
             </div>
         </div>
     </div>
-
-    <!-- 在线优选弹窗 -->
-    <div class="modal-overlay" id="onlineOptimizeModal">
-        <div class="modal optimize-modal" onclick="event.stopPropagation()">
-            <button type="button" class="modal-close" onclick="closeOnlineOptimizeModal()">×</button>
-            <h2 class="optimize-modal-title">🚀 在线优选</h2>
-
-            <!-- IP检测信息 -->
-            <div id="ipDetectionBox" class="ip-detection-box">
-                <div class="ip-detection-info">
-                    正在检测您的网络环境...
-                </div>
-            </div>
-
-            <!-- 参数选择 -->
-            <div class="optimize-params-row">
-                <div class="form-group">
-                    <label for="optimizeIPLibrary">IP库：</label>
-                    <select id="optimizeIPLibrary">
-                        <option value="cf-official">CF官方列表</option>
-                        <option value="cm-list">CM整理列表</option>
-                        <option value="as13335">AS13335列表</option>
-                        <option value="as209242">AS209242列表</option>
-                        <option value="reverse-proxy">CM反代列表</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="optimizePort">端口：</label>
-                    <select id="optimizePort">
-                        <option value="443">443</option>
-                        <option value="2053">2053</option>
-                        <option value="2083">2083</option>
-                        <option value="2087">2087</option>
-                        <option value="2096">2096</option>
-                        <option value="8443">8443</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="optimizeConcurrency">测试线程数：</label>
-                    <input type="number" id="optimizeConcurrency" min="1" max="32" value="8"
-                        class="optimize-concurrency-input" placeholder="1-32" oninput="validateConcurrency(this)"
-                        onchange="validateConcurrency(this)">
-                </div>
-            </div>
-
-            <!-- 进度条 -->
-            <div class="optimize-progress-bar hidden-section" id="optimizeProgressBar">
-                <div class="optimize-progress-fill" id="optimizeProgressFill"></div>
-                <div class="optimize-progress-text" id="optimizeProgressText">0/512 (0.00%) - 成功: 0, 失败: 0</div>
-            </div>
-
-            <!-- 结果选项卡 -->
-            <div id="optimizeResultsTabs" class="optimize-results-tabs hidden-section"></div>
-
-            <!-- 结果内容 -->
-            <div id="optimizeResultsContent" class="optimize-results-content hidden-section"></div>
-
-            <!-- 按钮组 -->
-            <div class="optimize-buttons">
-                <span class="save-tip">💡 保存提示：仅保存延迟最低的前16个优选IP</span>
-                <button type="button" class="btn btn-start-optimize" id="btnStartOptimize"
-                    onclick="startOptimize()">开始优选</button>
-                <button type="button" class="btn btn-save-override" id="btnSaveOverride"
-                    onclick="saveOptimizeResults('override')" disabled>覆盖保存</button>
-                <button type="button" class="btn btn-save-append" id="btnSaveAppend"
-                    onclick="saveOptimizeResults('append')" disabled>追加保存</button>
-                <button type="button" class="btn btn-secondary" onclick="closeOnlineOptimizeModal()">关闭</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- API优选模态框 -->
-    <div class="modal-overlay" id="apiOptimizeModal">
-        <div class="modal api-optimize-modal" onclick="event.stopPropagation()">
-            <button type="button" class="modal-close" onclick="closeAPIOptimizeModal()">×</button>
-            <h2 class="api-optimize-modal-title">🔌 订阅接口</h2>
-
-            <!-- API URL 输入 -->
-            <div class="api-form-group">
-                <div class="api-form-row-item" style="grid-template-columns: auto 1fr;">
-                    <label>API URL:</label>
-                    <input type="text" id="apiOptimizeURL" placeholder="请输入 优选API地址 或 需要汇聚的订阅地址"
-                        title="请输入 优选API地址 或 需要汇聚的订阅地址" oninput="autoConvertGitHubURL(); autoDetectPortFromURL()">
-                </div>
-            </div>
-
-            <!-- 默认端口输入 和 将优选作为PROXYIP勾选框 -->
-            <div class="api-form-group">
-                <div class="api-form-row-dual">
-                    <div class="api-form-row-item">
-                        <label>默认端口:</label>
-                        <input type="number" id="apiOptimizePort" value="443" min="1" max="65535" placeholder="1-65535"
-                            title="默认端口(1-65535)">
-                    </div>
-                    <div class="api-form-row-item checkbox-item">
-                        <input type="checkbox" id="useProxyIPCheckbox">
-                        <label for="useProxyIPCheckbox" class="checkbox-label">将优选作为PROXYIP</label>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 结果显示区域 -->
-            <div class="api-results-container">
-                <label class="api-results-label">接口结果:</label>
-                <div class="line-editor" id="apiResultsEditor">
-                    <div class="gutter" aria-hidden="true"></div>
-                    <div class="editor-area">
-                        <pre class="mirror" aria-hidden="true"></pre>
-                        <textarea id="apiOptimizeResults" title="API接口结果" placeholder="接口返回结果将显示在这里，每行一个地址"
-                            readonly></textarea>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 按钮组 -->
-            <div class="api-buttons">
-                <button type="button" class="btn btn-verify-api" id="btnVerifyAPI"
-                    onclick="verifyAPIOptimize()">可用性验证</button>
-                <button type="button" class="btn btn-append-api" id="btnAppendAPI" onclick="appendAPIToCustom()"
-                    disabled>追加API</button>
-                <button type="button" class="btn btn-append-results" id="btnAppendResults"
-                    onclick="appendResultsToCustom()" disabled>追加结果</button>
-                <button type="button" class="btn btn-close-api" onclick="closeAPIOptimizeModal()">关闭</button>
-            </div>
-        </div>
-    </div>
-
+    
     <!-- 代理验证模态框 -->
     <div class="modal-overlay" id="proxyVerificationModal">
         <div class="modal" id="proxyVerificationContent" onclick="event.stopPropagation()">
@@ -5850,397 +5513,7 @@
             <div class="btn-append-results" style="display: none;"></div>
         </div>
     </div>
-    </div>
-
-    <!-- ProxyIP 帮助科普弹窗 -->
-    <div class="modal-overlay" id="proxyIPHelpModal" onclick="closeProxyIPHelpModal(event)">
-        <div class="modal proxyip-help-modal" onclick="event.stopPropagation()">
-            <button type="button" class="modal-close" onclick="closeProxyIPHelpModal()">×</button>
-
-            <!-- 简易模式 -->
-            <div id="proxyIPHelpSimple" style="display: none;">
-                <div class="api-docs">
-                    <h2 class="section-title">🤔 为什么需要反代模式？PROXYIP又是什么？</h2>
-
-                    <div class="simple-explanation">
-                        <strong>用最简单的话解释：</strong><br><br>
-
-                        <strong>🚀 问题是这样的：</strong><br>
-                        我们的 edgetunnel 服务部署在 Cloudflare Workers 上。但是 Cloudflare 有个限制——他们的 Workers 无法直接访问 Cloudflare
-                        自己的服务。<br><b>这就像名叫 Cloudflare 的小白永远无法从自己的眼睛里看到自己。</b><br><br>
-
-                        <strong>💡 解决方案：</strong><br>
-                        为了解决这个问题，我们需要借助外部服务器（ProxyIP、SOCKS5 或 HTTP）作为「跳板」，通过这些第三方服务器来代理访问 Cloudflare
-                        的服务。<br><b>相当于找了一面（ProxyIP/SOCKS5/HTTP）镜子，这样 Cloudflare 就能通过镜子看到了自己。</b><br><br>
-
-                        <strong>📍 实际效果：</strong>
-                        <ul style="margin: 12px 0 0 20px; padding-left: 0;">
-                            <li style="margin-bottom: 8px;">👤 访问<strong>非 Cloudflare CDN
-                                    的网站</strong>时（如<b>油管、谷歌</b>等），你的 IP 由「优选 IP」决定</li>
-                            <li>🌐 访问<strong>由 Cloudflare CDN 托管的网站</strong>时（如<b>推特、ChatGPT</b>等），你的 IP
-                                由「反代模式（PROXYIP/SOCKS5/HTTP）」决定</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 详细模式 -->
-            <div id="proxyIPHelpDetail" style="display: block;">
-                <div class="api-docs">
-                    <h2 class="section-title">🤔 为什么需要反代模式？PROXYIP又是什么？</h2>
-                    <h3 style="color: var(--text-primary); margin: 24px 0 16px;">❓ 为什么需要反代模式？</h3>
-                    <p style="margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary);">
-                        根据 Cloudflare Workers 的 <a
-                            href="https://developers.cloudflare.com/workers/runtime-apis/tcp-sockets/" target="_blank"
-                            rel="noopener" style="color: var(--primary-color); text-decoration: none;">TCP Sockets
-                            官方文档</a> 说明，存在以下技术限制：
-                    </p>
-                    <div class="code-block">
-                        ⚠️ Outbound TCP sockets to <a href="https://www.cloudflare.com/ips/" target="_blank"
-                            rel="noopener" style="color: inherit; text-decoration: underline;">Cloudflare IP ranges
-                            ↗</a> are temporarily blocked, but will be re-enabled shortly.
-                    </div>
-
-                    <p style="margin: 16px 0; line-height: 1.8; color: var(--text-secondary);">
-                        这意味着 Cloudflare Workers 无法直接连接到 Cloudflare 自有的 IP 地址段。为了解决这个限制，需要借助第三方云服务商的服务器作为「跳板」：
-                    </p>
-
-                    <p style="margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary);">
-                        而我们的 <b>edgetunnel</b> 是部署在 Cloudflare Workers 上的代理服务。根据 Cloudflare Workers 的限制政策，Workers
-                        节点无法直接连接到
-                        Cloudflare 自有的 IP 地址段。这意味着：
-                    </p>
-                    <ul style="margin: 12px 0 16px; padding-left: 20px; line-height: 1.8;">
-                        <li style="margin-bottom: 8px; color: var(--text-secondary);">✅ 可以正常访问非 Cloudflare CDN 的站点</li>
-                        <li style="color: var(--text-secondary);">❌ 无法直接访问由 Cloudflare CDN 托管的网站</li>
-                    </ul>
-                    <p style="margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary);">
-                        因此需要反代模式来解决这个问题。反代模式通过第三方服务器作为「中介」，帮助 Workers 绕过这一限制。
-                    </p>
-
-                    <div
-                        style="background: var(--bg-secondary); padding: 20px; border-radius: var(--border-radius-sm); margin: 20px 0;">
-                        <div
-                            style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 16px;">
-                            <div
-                                style="background: #e3f2fd; padding: 12px; border-radius: 8px; text-align: center; flex: 1; min-width: 120px;">
-                                <div style="font-weight: 600; color: #1976d2;">Cloudflare Workers</div>
-                                <div style="font-size: 0.9rem; color: var(--text-secondary);">发起请求</div>
-                            </div>
-                            <div style="color: var(--primary-color); font-size: 1.5rem;">→</div>
-                            <div
-                                style="background: #f3e5f5; padding: 12px; border-radius: 8px; text-align: center; flex: 1; min-width: 120px;">
-                                <div style="font-weight: 600; color: #7b1fa2;">PROXYIP/SOCKS5/HTTP 服务器</div>
-                                <div style="font-size: 0.9rem; color: var(--text-secondary);">第三方代理</div>
-                            </div>
-                            <div style="color: var(--primary-color); font-size: 1.5rem;">→</div>
-                            <div
-                                style="background: #e8f5e8; padding: 12px; border-radius: 8px; text-align: center; flex: 1; min-width: 120px;">
-                                <div style="font-weight: 600; color: #388e3c;">Cloudflare 服务</div>
-                                <div style="font-size: 0.9rem; color: var(--text-secondary);">目标服务</div>
-                            </div>
-                        </div>
-                        <p style="text-align: center; color: var(--text-secondary); font-size: 0.95rem; margin: 0;">
-                            通过第三方服务器反向代理 Cloudflare 的 443 端口，实现 Workers 对 Cloudflare 服务的访问
-                        </p>
-                    </div>
-
-                    <h3 style="color: var(--text-primary); margin: 24px 0 16px;">💡 实际应用效果</h3>
-                    <p style="margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary);">
-                        因此，你访问网络时的 IP 归属地取决于访问的目标网站类型：
-                    </p>
-                    <ul style="margin: 12px 0; padding-left: 20px; line-height: 1.8;">
-                        <li style="margin-bottom: 12px; color: var(--text-secondary);">👤 访问<strong>非 Cloudflare CDN
-                                站点</strong>时（如<b>油管、谷歌</b>等），你的 IP 归属地由「优选 IP」决定</li>
-                        <li style="color: var(--text-secondary);">🌐 访问<strong>由 Cloudflare CDN
-                                托管的网站</strong>时（如<b>推特、ChatGPT</b>等），你的 IP
-                            归属地由「ProxyIP/SOCKS5/HTTP」决定</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- 切换按钮 -->
-            <div class="toggle-switch">
-                <input type="checkbox" id="proxyIPSimpleMode" onchange="toggleProxyIPHelpMode()">
-                <label for="proxyIPSimpleMode">我是小白，我看不懂</label>
-            </div>
-
-            <button type="button" class="btn btn-primary btn-close-modal" onclick="closeProxyIPHelpModal()"
-                style="margin-top: 20px;">关闭</button>
-        </div>
-    </div>
-
-    <!-- ECH 帮助模态框 -->
-    <div class="modal-overlay" id="echHelpModal" onclick="closeECHHelpModal(event)">
-        <div class="modal ech-help-modal" onclick="event.stopPropagation()">
-            <button type="button" class="modal-close" onclick="closeECHHelpModal()">×</button>
-
-            <!-- 选项卡 -->
-            <div class="ech-tabs">
-                <button class="ech-tab active" onclick="switchECHTab(0)">什么是ECH？</button>
-                <button class="ech-tab" onclick="switchECHTab(1)">如何使用？</button>
-                <button class="ech-tab" onclick="switchECHTab(2)">如何确认 ECH 是否已经生效？</button>
-            </div>
-
-            <!-- 选项卡内容 -->
-            <div class="ech-tab-content">
-                <div class="ech-tab-pane active" id="echTab0">
-                    <div class="api-docs">
-                        <h2 class="section-title">🔐 什么是 ECH？</h2>
-
-                        <p style="margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary);">
-                            <strong>ECH（Encrypted Client Hello，加密客户端问候）</strong> 是 TLS 的一项新特性，用来
-                            <strong>将原本会明文暴露的域名信息一起加密</strong>。
-                        </p>
-
-                        <p style="margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary);">
-                            如果你希望了解更完整、偏技术细节的说明，可以参考 Cloudflare 官方博客：<br>
-                            👉 <a href="https://blog.cloudflare.com/zh-cn/announcing-encrypted-client-hello/"
-                                target="_blank" rel="noopener"
-                                style="color: var(--primary-color); text-decoration: none;">https://blog.cloudflare.com/zh-cn/announcing-encrypted-client-hello/</a>
-                        </p>
-
-                        <h3 style="color: var(--text-primary); margin: 24px 0 16px;">📖 背景说明</h3>
-
-                        <p style="margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary);">
-                            当我们使用 <strong>WS + TLS</strong> 的节点进行代理时：
-                        </p>
-
-                        <ul style="margin: 12px 0 16px; padding-left: 20px; line-height: 1.8;">
-                            <li style="margin-bottom: 8px; color: var(--text-secondary);">✅ 实际通信内容已经被 TLS 加密，GFW
-                                <strong>无法看到你访问的具体内容</strong>
-                            </li>
-                            <li style="color: var(--text-secondary);">❌ 但在 TLS 握手阶段，仍然会暴露一个关键信息：<strong>SNI</strong>
-                            </li>
-                        </ul>
-
-                        <p style="margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary);">
-                            <strong>SNI 就是节点的伪装域名（HOST）</strong>
-                        </p>
-
-                        <p style="margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary);">
-                            也就是说：
-                        </p>
-
-                        <div class="code-block"
-                            style="background: #fff3cd; color: #856404; border-left-color: #ffc107;">
-                            GFW 虽然不知道你在访问什么，但知道你在"扶墙"，并且知道你连接的是哪个域名。
-                        </div>
-
-                        <h3 style="color: var(--text-primary); margin: 24px 0 16px;">⚠️ 会带来什么问题？</h3>
-
-                        <p style="margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary);">
-                            这就是为什么在以下场景中经常出现异常情况：
-                        </p>
-
-                        <ul style="margin: 12px 0 16px; padding-left: 20px; line-height: 1.8;">
-                            <li style="margin-bottom: 8px; color: var(--text-secondary);">❌ v2rayN 批量测试真链接延迟</li>
-                            <li style="color: var(--text-secondary);">❌ Clash 策略组自动选择节点</li>
-                        </ul>
-
-                        <p style="margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary);">
-                            表现通常为：
-                        </p>
-
-                        <div class="code-block"
-                            style="background: #f8d7da; color: #721c24; border-left-color: #dc3545;">
-                            所有节点瞬间 -1，全部无法使用
-                        </div>
-
-                        <p style="margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary);">
-                            其原因并不是节点真的失效，而是 <strong>运营商 / GFW 通过阻断节点域名的访问来干扰代理连接</strong>。<br>
-                            由于这种阻断大多是自动化策略，容易误判，因此 <strong>过一段时间节点又可能恢复正常</strong>，反复循环。
-                        </p>
-
-                        <h3 style="color: var(--text-primary); margin: 24px 0 16px;">💡 ECH 的作用</h3>
-
-                        <p style="margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary);">
-                            ECH 的核心作用是：
-                        </p>
-
-                        <div class="code-block"
-                            style="background: #d1ecf1; color: #0c5460; border-left-color: #17a2b8;">
-                            将 SNI（也就是节点域名）加密
-                        </div>
-
-                        <p style="margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary);">
-                            启用 ECH 后：
-                        </p>
-
-                        <ul style="margin: 12px 0 16px; padding-left: 20px; line-height: 1.8;">
-                            <li style="margin-bottom: 8px; color: var(--text-secondary);">✅ GFW
-                                <strong>无法获取真实的节点域名</strong>
-                            </li>
-                            <li style="color: var(--text-secondary);">✅ 外部观察到的域名将统一显示为：<code
-                                    style="background: #e9ecef; padding: 2px 4px; border-radius: 3px;">cloudflare-ech.com</code>
-                            </li>
-                        </ul>
-
-                        <p style="margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary);">
-                            这从源头上 <strong>阻断了通过域名精准封锁节点的手段</strong>。
-                        </p>
-
-                        <h3 style="color: var(--text-primary); margin: 24px 0 16px;">🤔 ECH 会不会被封？</h3>
-
-                        <p style="margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary);">
-                            理论上，GFW 只需 <strong>直接阻断 <code>cloudflare-ech.com</code></strong> 即可。
-                        </p>
-
-                        <p style="margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary);">
-                            但这样会：
-                        </p>
-
-                        <ul style="margin: 12px 0 16px; padding-left: 20px; line-height: 1.8;">
-                            <li style="margin-bottom: 8px; color: var(--text-secondary);">❌ 误伤大量正常使用 ECH 的网站和服务</li>
-                            <li style="color: var(--text-secondary);">❌ 带来较高的封锁成本和副作用</li>
-                        </ul>
-
-                        <p style="margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary);">
-                            因此，<strong>ECH 能持续多久，取决于 GFW 的取舍与策略</strong>，至少在目前阶段仍然非常有效。
-                        </p>
-                    </div>
-                </div>
-
-                <div class="ech-tab-pane" id="echTab1">
-                    <div class="api-docs">
-                        <h2 class="section-title">🚀 如何使用 ECH？</h2>
-
-                        <p style="margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary);">
-                            使用 ECH 非常简单，只需要 <strong>ECH 设置</strong> 为 <strong>开启</strong> 后更新订阅即可。
-                        </p>
-
-                        <h3 style="color: var(--text-primary); margin: 24px 0 16px;">📱 支持 ECH 的客户端</h3>
-
-                        <h4 style="color: var(--text-primary); margin: 20px 0 12px;">Windows：</h4>
-                        <ul style="margin: 12px 0 16px; padding-left: 20px; line-height: 1.8;">
-                            <li style="margin-bottom: 8px; color: var(--text-secondary);">
-                                <strong>v2rayN ≥ v7.17.0</strong><br>
-                                <a href="https://github.com/2dust/v2rayN/releases" target="_blank" rel="noopener"
-                                    style="color: var(--primary-color); text-decoration: none;">https://github.com/2dust/v2rayN/releases</a>
-                            </li>
-                        </ul>
-
-                        <h4 style="color: var(--text-primary); margin: 20px 0 12px;">Android：</h4>
-                        <ul style="margin: 12px 0 16px; padding-left: 20px; line-height: 1.8;">
-                            <li style="margin-bottom: 8px; color: var(--text-secondary);">
-                                <strong>v2rayNG ≥ v2.0.0</strong><br>
-                                <a href="https://github.com/2dust/v2rayNG/releases" target="_blank" rel="noopener"
-                                    style="color: var(--primary-color); text-decoration: none;">https://github.com/2dust/v2rayNG/releases</a>
-                            </li>
-                        </ul>
-
-                        <h4 style="color: var(--text-primary); margin: 20px 0 12px;">Clash.Meta（mihomo 内核）：</h4>
-                        <ul style="margin: 12px 0 16px; padding-left: 20px; line-height: 1.8;">
-                            <li style="margin-bottom: 8px; color: var(--text-secondary);">
-                                所有使用 <strong>clash.meta / mihomo 内核</strong> 的客户端均支持 ECH
-                            </li>
-                            <li style="color: var(--text-secondary);">
-                                ⚠️ <strong>需要 DNS 配合使用</strong>
-                            </li>
-                        </ul>
-
-                        <h3 style="color: var(--text-primary); margin: 24px 0 16px;">⚠️ Clash 用户注意事项</h3>
-
-                        <p style="margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary);">
-                            当前订阅配置中已 <strong>内置 ECH 所需的 DNS 设置</strong>。
-                        </p>
-
-                        <p style="margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary);">
-                            如果出现以下情况：
-                        </p>
-
-                        <ul style="margin: 12px 0 16px; padding-left: 20px; line-height: 1.8;">
-                            <li style="margin-bottom: 8px; color: var(--text-secondary);">✅ 已开启 ECH</li>
-                            <li style="margin-bottom: 8px; color: var(--text-secondary);">✅ 已更新订阅</li>
-                            <li style="color: var(--text-secondary);">❌ ECH 节点仍然无法使用</li>
-                        </ul>
-
-                        <p style="margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary);">
-                            请检查：
-                        </p>
-
-                        <div class="code-block"
-                            style="background: #fff3cd; color: #856404; border-left-color: #ffc107;">
-                            是否在更新订阅时覆盖了原有的 DNS 配置
-                        </div>
-
-                        <p style="margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary);">
-                            建议：<strong>不要覆盖订阅中自带的 DNS 设置</strong>
-                        </p>
-                    </div>
-                </div>
-
-                <div class="ech-tab-pane" id="echTab2">
-                    <div class="api-docs">
-                        <h2 class="section-title">🔍 如何确认 ECH 是否已经生效？</h2>
-
-                        <p style="margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary);">
-                            可以通过一个 <strong>简单且直观的方法</strong> 来验证 ECH 是否正常工作。
-                        </p>
-
-                        <h3 style="color: var(--text-primary); margin: 24px 0 16px;">📋 验证步骤</h3>
-
-                        <ol style="margin: 12px 0 16px; padding-left: 20px; line-height: 1.8;">
-                            <li style="margin-bottom: 12px; color: var(--text-secondary);">打开节点的 <strong>「⚙️
-                                    详细配置信息」</strong></li>
-                            <li style="margin-bottom: 12px; color: var(--text-secondary);">在 <strong>HOST</strong>
-                                中手动填写一个 <strong>已被墙的域名</strong>，例如： <code
-                                    style="background: #e9ecef; padding: 2px 4px; border-radius: 3px;">*.workers.dev</code>
-                            </li>
-                            <li style="margin-bottom: 12px; color: var(--text-secondary);">保存配置后 <strong>重新更新订阅</strong>
-                            </li>
-                            <li style="color: var(--text-secondary);">在节点列表中查找：
-                                <ul style="margin: 8px 0 0 20px; padding-left: 0;">
-                                    <li style="margin-bottom: 4px;">- HOST 为 <code
-                                            style="background: #e9ecef; padding: 2px 4px; border-radius: 3px;">*.workers.dev</code>
-                                        的节点</li>
-                                    <li>- 并尝试连接该节点</li>
-                                </ul>
-                            </li>
-                        </ol>
-
-                        <h3 style="color: var(--text-primary); margin: 24px 0 16px;">✅ 如何判断结果？</h3>
-
-                        <ul style="margin: 12px 0 16px; padding-left: 20px; line-height: 1.8;">
-                            <li style="margin-bottom: 12px; color: var(--text-secondary);">
-                                <strong style="color: #28a745;">✅ 如果节点可以正常连接使用</strong><br>
-                                说明 <strong>ECH 已成功生效</strong>，真实被墙的域名已被隐藏，对外仅显示为 <code
-                                    style="background: #e9ecef; padding: 2px 4px; border-radius: 3px;">cloudflare-ech.com</code>
-                            </li>
-                            <li style="color: var(--text-secondary);">
-                                <strong style="color: #dc3545;">❌ 如果节点无法连接</strong><br>
-                                说明 ECH 未生效，或客户端版本、DNS 配置存在问题
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <button type="button" class="btn btn-primary btn-close-modal" onclick="closeECHHelpModal()"
-                style="margin-top: 20px;">关闭</button>
-        </div>
-    </div>
-
-    <!-- HOSTS 编辑模态框 -->
-    <div class="modal-overlay" id="hostsEditModal">
-        <div class="modal hosts-edit-modal" onclick="event.stopPropagation()">
-            <button type="button" class="modal-close" onclick="closeHostsEditModal()">×</button>
-            <h2 class="hosts-edit-modal-title">✏️ 编辑节点 自定义域名 列表</h2>
-
-            <div class="hosts-edit-container">
-                <label class="hosts-edit-label">自定义域名列表:</label>
-                <textarea id="hostsEditTextarea" class="hosts-edit-textarea" placeholder="每行输入一个域名"></textarea>
-            </div>
-
-            <div class="hosts-edit-footer">
-                <div class="hosts-edit-hint">💡 一行一个节点域名，无需添加逗号</div>
-                <div class="hosts-edit-buttons">
-                    <button type="button" class="btn btn-hosts-cancel" onclick="closeHostsEditModal()">取消</button>
-                    <button type="button" class="btn btn-hosts-confirm" onclick="confirmHostsEdit()">确定</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 
     <!-- 路径模板配置弹窗 -->
     <div class="modal-overlay" id="pathTemplateConfigModal" onclick="closePathTemplateConfigModal(event)">
@@ -6355,10 +5628,27 @@
                     style="cursor: pointer;">×</button>
                 <h2 class="section-title" style="margin-bottom: 10px; text-align: center;">🗺️ 获取更多 PROXYIP</h2>
                 <p style="text-align: center; color: #666; font-size: 13px; margin-bottom: 20px;">
-                    反代资源来自 Github、<a href="https://t.me/zip_cm_edu_kg" target="_blank"
-                        rel="noopener noreferrer">CM科技大学</a>频道 等开源社区。
+                    资源来自社区。
                 </p>
                 <div class="proxy-list-container">
+                	
+<div class="form-group">
+    <label>✍️ 手动检测代理</label>
+    <div class="input-wrapper">
+        <input type="text"
+               id="manualProxyIPInput"
+               placeholder="例如 38.244.63.208:443"
+               style="padding-left:16px; font-family:'Fira Code', monospace;">
+    </div>
+    <button type="button"
+            class="btn btn-primary"
+            style="margin-top:10px; width:100%;"
+            onclick="verifyManualProxyIP()">
+        立即验证
+    </button>
+</div>
+                	
+                	
                     <div class="form-group">
                         <label for="proxyIPDataRegionSelect">🏳️‍🌈 选择目标地区</label>
                         <div class="input-wrapper">
@@ -6410,8 +5700,7 @@
                     style="cursor: pointer;">×</button>
                 <h2 class="section-title" style="margin-bottom: 10px; text-align: center;">🔒 获取更多 SOCKS5</h2>
                 <p style="text-align: center; color: #666; font-size: 13px; margin-bottom: 20px;">
-                    代理资源来自 Github、<a href="https://t.me/Enkelte_notif" target="_blank" rel="noopener noreferrer">Notif
-                        💬</a>频道、OTC大佬 等开源社区。
+                    代理资源来自社区。
                 </p>
                 <div class="socks5-list-container">
                     <div class="form-group">
@@ -6460,8 +5749,7 @@
                     style="cursor: pointer;">×</button>
                 <h2 class="section-title" style="margin-bottom: 10px; text-align: center;">🌐 获取更多 HTTP</h2>
                 <p style="text-align: center; color: #666; font-size: 13px; margin-bottom: 20px;">
-                    代理资源来自 Github、<a href="https://t.me/Enkelte_notif" target="_blank" rel="noopener noreferrer">Notif
-                        💬</a>频道、OTC大佬 等开源社区。
+                    代理资源来自社区。
                 </p>
                 <div class="http-list-container">
                     <div class="form-group">
@@ -6951,797 +6239,7 @@
             }
         }
 
-        function renderUI() {
-            // 标题
-            document.getElementById('pageTitle').textContent = (currentConfig.优选订阅生成?.SUBNAME || 'edgetunnel') + ' 设置页面';
 
-            // 检查 CF 使用情况并显示模块
-            const cfUsageModule = document.getElementById('cfUsageModule');
-            const cfUsage = currentConfig.CF?.Usage;
-            if (cfUsage && cfUsage.success) {
-                cfUsageModule.style.display = 'block';
-                cfUsageModule.classList.remove('cf-usage-module');
-                updateCFUsageDisplay(cfUsage);
-                updateCloudflareButtonStates(true);
-            } else {
-                cfUsageModule.style.display = 'none';
-                cfUsageModule.classList.add('cf-usage-module');
-                updateCloudflareButtonStates(false);
-            }
-
-            // 检查 CF.UsageAPI 字段是否存在，向下兼容旧版本
-            const usageapiOption = document.getElementById('usageapiOption');
-            if (usageapiOption) {
-                // 如果 CF.UsageAPI 字段不存在（旧版本），隐藏 UsageAPI 选项
-                if (currentConfig.CF?.UsageAPI === undefined) {
-                    usageapiOption.style.display = 'none';
-                } else {
-                    usageapiOption.style.display = '';
-                }
-            }
-
-            // 订阅链接
-            const token = currentConfig.优选订阅生成?.TOKEN;
-            const host = window.location.host;
-            const link = currentConfig.LINK;
-            document.getElementById('LinkURL').value = currentConfig.LINK;
-            document.getElementById('subLink').value = `https://${host}/sub?token=${token}`;
-            document.getElementById('base64Link').value = `https://${host}/sub?token=${token}&b64`;
-            document.getElementById('clashLink').value = `https://${host}/sub?token=${token}&clash`;
-            document.getElementById('singboxLink').value = `https://${host}/sub?token=${token}&sb`;
-
-            // 编辑订阅生成
-            const local = currentConfig.优选订阅生成?.local ?? true;
-            const randomIP = currentConfig.优选订阅生成?.本地IP库?.随机IP ?? true;
-
-            if (!local) {
-                document.getElementById('ipMode').value = 'generator';
-                document.getElementById('generatorURL').value = currentConfig.优选订阅生成?.SUB || '';
-            } else if (randomIP) {
-                document.getElementById('ipMode').value = 'random';
-                document.getElementById('randomCount').value = currentConfig.优选订阅生成?.本地IP库?.随机数量 || 16;
-                // 设置指定端口
-                if (currentConfig.优选订阅生成?.本地IP库?.指定端口 !== undefined) {
-                    document.getElementById('specifiedPort').value = currentConfig.优选订阅生成.本地IP库.指定端口;
-                }
-            } else {
-                document.getElementById('ipMode').value = 'custom';
-                loadCustomIPs();
-            }
-            updateIPMode();
-
-            // 详细配置
-            document.getElementById('subName').value = currentConfig.优选订阅生成?.SUBNAME || '';
-
-            // 检查 HOSTS 数组是否存在
-            hasMultipleHosts = Array.isArray(currentConfig.HOSTS) && currentConfig.HOSTS.length > 0;
-
-            const nodeHostInput = document.getElementById('nodeHost');
-            if (hasMultipleHosts) {
-                // 如果存在 HOSTS 数组，用逗号连接显示所有 host
-                nodeHostInput.value = currentConfig.HOSTS.join('、');
-                // 添加可点击样式和事件
-                nodeHostInput.classList.add('nodeHost-clickable');
-                nodeHostInput.title = '点击 可编辑多个节点域名';
-                nodeHostInput.onclick = openHostsEditModal;
-            } else {
-                // 否则显示单个 HOST
-                nodeHostInput.value = currentConfig.HOST || '';
-                // 移除可点击样式和事件
-                nodeHostInput.classList.remove('nodeHost-clickable');
-                nodeHostInput.title = '节点域名';
-                nodeHostInput.onclick = null;
-            }
-
-            document.getElementById('nodeUUID').value = currentConfig.UUID || '';
-            document.getElementById('nodePATH').value = currentConfig.PATH || '';
-            document.getElementById('protocol').value = currentConfig.协议类型 || 'vless';
-            //document.getElementById('transport').value = currentConfig.传输协议 || 'ws';
-
-            // 检查跳过证书验证字段是否存在
-            const skipVerifyGroup = document.getElementById('skipVerifyGroup');
-            if (currentConfig['跳过证书验证'] !== undefined) {
-                skipVerifyGroup.style.setProperty('display', 'flex', 'important');
-                document.getElementById('skipVerify').checked = currentConfig['跳过证书验证'] || false;
-            } else {
-                skipVerifyGroup.style.setProperty('display', 'none', 'important');
-            }
-
-            // 检查"完整节点路径"字段是否存在，判断PATH是否可编辑
-            const nodePathInput = document.getElementById('nodePATH');
-            if (currentConfig['完整节点路径'] !== undefined) {
-                // 存在该字段，表示后端支持编辑PATH，移除readonly属性
-                nodePathInput.removeAttribute('readonly');
-                nodePathInput.title = '节点的伪装路径';
-                nodePathInput.onchange = handlePathChange;
-            } else {
-                // 不存在该字段，PATH保持只读状态
-                nodePathInput.setAttribute('readonly', '');
-                nodePathInput.title = '节点的伪装路径 仅可通过 \'PATH\'环境变量 进行修改';
-                nodePathInput.onchange = null;
-            }
-
-            // 检查Fingerprint字段是否存在
-            const fingerprintGroup = document.getElementById('fingerprintGroup');
-            const fingerprintSelect = document.getElementById('fingerprint');
-            if (currentConfig['Fingerprint'] == undefined) {
-                fingerprintGroup.style.setProperty('display', 'none', 'important');
-            } else {
-                fingerprintSelect.value = currentConfig['Fingerprint'] || 'chrome';
-            }
-
-            // 检查随机路径字段是否存在
-            const randomPathGroup = document.getElementById('randomPathGroup');
-            const randomPathCheckbox = document.getElementById('randomPath');
-            if (currentConfig['随机路径'] !== undefined) {
-                randomPathGroup.style.setProperty('display', 'flex', 'important');
-                randomPathCheckbox.checked = currentConfig['随机路径'] || false;
-            } else {
-                randomPathGroup.style.setProperty('display', 'none', 'important');
-            }
-
-            // 检查启用0RTT字段是否存在
-            const enable0RTTGroup = document.getElementById('enable0RTTGroup');
-            const enable0RTTCheckbox = document.getElementById('enable0RTT');
-            if (currentConfig['启用0RTT'] !== undefined) {
-                enable0RTTGroup.style.setProperty('display', 'flex', 'important');
-                enable0RTTCheckbox.checked = currentConfig['启用0RTT'] || false;
-            } else {
-                enable0RTTGroup.style.setProperty('display', 'none', 'important');
-            }
-
-            // 检查TLS分片字段是否存在
-            const tlsFragmentGroup = document.getElementById('tlsFragmentGroup');
-            const tlsFragmentHappGroup = document.getElementById('tlsFragmentHappGroup');
-            const tlsFragmentShadowrocket = document.getElementById('tlsFragmentShadowrocket');
-            const tlsFragmentHapp = document.getElementById('tlsFragmentHapp');
-            if (currentConfig['TLS分片'] !== undefined) {
-                tlsFragmentGroup.style.setProperty('display', 'flex', 'important');
-                tlsFragmentHappGroup.style.setProperty('display', 'flex', 'important');
-                // 根据当前值设置勾选状态
-                tlsFragmentShadowrocket.checked = currentConfig['TLS分片'] === 'Shadowrocket';
-                tlsFragmentHapp.checked = currentConfig['TLS分片'] === 'Happ';
-            } else {
-                tlsFragmentGroup.style.setProperty('display', 'none', 'important');
-                tlsFragmentHappGroup.style.setProperty('display', 'none', 'important');
-            }
-
-            // 检查ECH字段是否存在
-            const echModule = document.getElementById('echModule');
-            const enableECHCheckbox = document.getElementById('enableECH');
-            if (currentConfig['ECH'] !== undefined) {
-                echModule.style.display = 'block';
-                enableECHCheckbox.checked = currentConfig['ECH'] || false;
-                // 根据Fingerprint值初始化ECH选项的禁用状态
-                updateECHOptionState();
-
-                // 填充ECH DNS下拉框
-                populateEchDNSSelect();
-
-                // 填充ECH SNI下拉框
-                populateEchSNISelect();
-            } else {
-                echModule.style.display = 'none';
-            }
-
-            // 反代落地设置
-            const socksEnabled = currentConfig.反代?.SOCKS5?.启用;
-            if (!socksEnabled) {
-                document.getElementById('proxyMode').value = 'auto';
-                document.getElementById('proxyIP').value = currentConfig.反代?.PROXYIP || '';
-                document.getElementById('autoProxy').checked = (currentConfig.反代?.PROXYIP === 'auto');
-                if (currentConfig.反代?.PROXYIP === 'auto') {
-                    document.getElementById('proxyIP').disabled = true;
-                }
-            } else if (socksEnabled === 'socks5') {
-                document.getElementById('proxyMode').value = 'socks5';
-                document.getElementById('socks5Addr').value = currentConfig.反代?.SOCKS5?.账号 || '';
-                document.getElementById('globalSocks5').checked = currentConfig.反代?.SOCKS5?.全局 || false;
-            } else if (socksEnabled === 'http') {
-                document.getElementById('proxyMode').value = 'http';
-                document.getElementById('httpAddr').value = currentConfig.反代?.SOCKS5?.账号 || '';
-                document.getElementById('globalHTTP').checked = currentConfig.反代?.SOCKS5?.全局 || false;
-            }
-            updateProxyMode();
-
-            // 检查路径模板字段是否存在
-            const pathTemplateConfigBtn = document.getElementById('pathTemplateConfigBtn');
-            if (currentConfig.反代?.路径模板 !== undefined) {
-                pathTemplateConfigBtn.style.display = '';
-            } else {
-                pathTemplateConfigBtn.style.display = 'none';
-            }
-
-            // 订阅转换配置
-            document.getElementById('subAPI').value = currentConfig.订阅转换配置?.SUBAPI || '';
-            document.getElementById('subConfig').value = currentConfig.订阅转换配置?.SUBCONFIG || '';
-            document.getElementById('emoji').checked = currentConfig.订阅转换配置?.SUBEMOJI || false;
-
-            // 消息通知设置 - 兼容两种config结构
-            // 优先读取 TG 字段，如果没有则读取 通知.Telegram
-            const telegramBotToken = currentConfig.TG?.BotToken || currentConfig.通知?.Telegram?.BotToken;
-            const telegramChatID = currentConfig.TG?.ChatID || currentConfig.通知?.Telegram?.ChatID;
-            const telegramCheckbox = document.getElementById('telegramEnabled');
-
-            // 判断TG配置是否完整（BotToken和ChatID都非null且非空字符串）
-            if (telegramBotToken && telegramChatID) {
-                // 两个都有，启用checkbox，并加载 TG.启用 的状态
-                telegramCheckbox.disabled = false;
-                telegramCheckbox.checked = currentConfig.TG?.启用 ?? false;
-                // "参数配置"按钮颜色为绿色，表示已配置
-                updateTelegramButtonStates(true);
-                // "清除配置"按钮为红色，且可点击
-            } else {
-                // 任意一个缺少，禁用checkbox
-                telegramCheckbox.disabled = true;
-                telegramCheckbox.checked = false;
-                // "参数配置"按钮颜色为默认色，表示未配置
-                updateTelegramButtonStates(false);
-                // "清除配置"按钮为灰色，且不可点击
-            }
-
-            modifiedSections.clear();
-            resetAllButtons();
-
-            // 从 localStorage 加载模块展开/折叠状态
-            loadModuleStates();
-
-            // 填充 SubConfig 下拉框（如果数据已加载，会自动设置选中值）
-            populateSubConfigSelect();
-
-            // 检查当前域名是否在 HOSTS 数组中
-            checkHostsMismatch();
-        }
-
-        // CF 使用情况显示函数
-        function updateCFUsageDisplay(cfUsage) {
-            const workers = cfUsage.workers || 0;
-            const pages = cfUsage.pages || 0;
-            const total = cfUsage.total || 0;
-            const dailyQuota = cfUsage.max || 100000;
-
-            // 更新显示数值
-            document.getElementById('cfWorkerCount').textContent = workers.toLocaleString();
-            document.getElementById('cfPagesCount').textContent = pages.toLocaleString();
-            document.getElementById('cfDailyQuota').textContent = dailyQuota.toLocaleString();
-            document.getElementById('cfTotalDisplay').textContent = total.toLocaleString();
-
-            // 计算百分比
-            const percentage = ((total / dailyQuota) * 100).toFixed(2);
-
-            // 计算比例并设置进度条宽度
-            const workersRatio = (workers / dailyQuota) * 100;
-            const pagesRatio = (pages / dailyQuota) * 100;
-
-            // Workers 进度条：从左边开始
-            const workerBarEl = document.getElementById('cfWorkerBar');
-            workerBarEl.style.width = Math.min(workersRatio, 100) + '%';
-            workerBarEl.textContent = '';
-
-            // Pages 进度条：紧跟在 Workers 进度条后面
-            const pagesBarEl = document.getElementById('cfPagesBar');
-            pagesBarEl.style.width = Math.min(pagesRatio, 100 - workersRatio) + '%';
-            pagesBarEl.style.left = Math.min(workersRatio, 100) + '%';
-            pagesBarEl.textContent = '';
-
-            // 总体百分比文字 (中央)
-            const percentageCenterEl = document.getElementById('cfPercentageCenter');
-            percentageCenterEl.textContent = `请求使用进度: ${total.toLocaleString()} (${percentage}%)`;
-        }
-
-        async function loadCustomIPs() {
-            const textarea = document.getElementById('customIPs');
-            textarea.disabled = true;
-            textarea.value = '正在加载...';
-            if (textarea._refreshLineEditor) textarea._refreshLineEditor();
-
-            try {
-                const response = await fetch('/admin/ADD.txt?_t=' + Date.now(), {
-                    headers: {
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache',
-                        'Expires': '0'
-                    }
-                });
-                if (response.ok) {
-                    textarea.value = await response.text();
-                } else {
-                    textarea.value = '';
-                }
-            } catch (error) {
-                showToast('加载自定义IP失败', 'error');
-                textarea.value = '';
-            } finally {
-                textarea.disabled = false;
-                if (textarea._refreshLineEditor) textarea._refreshLineEditor();
-            }
-        }
-
-        function updateIPMode() {
-            const mode = document.getElementById('ipMode').value;
-
-            const sections = {
-                'random': document.getElementById('randomIPSection'),
-                'custom': document.getElementById('customIPSection'),
-                'generator': document.getElementById('generatorSection')
-            };
-
-            Object.keys(sections).forEach(key => {
-                const el = sections[key];
-                if (el) {
-                    if (key === mode) {
-                        el.classList.remove('hidden-section');
-                        el.style.display = (key === 'custom') ? 'block' : 'grid';
-                    } else {
-                        el.classList.add('hidden-section');
-                        el.style.display = 'none';
-                    }
-                }
-            });
-
-            // 显示或隐藏指定端口
-            const portSection = document.getElementById('portSection');
-            if (portSection) {
-                if (mode === 'random' && currentConfig.优选订阅生成?.本地IP库?.指定端口 !== undefined) {
-                    portSection.classList.remove('hidden-section');
-                    portSection.style.display = 'grid';
-                } else {
-                    portSection.classList.add('hidden-section');
-                    portSection.style.display = 'none';
-                }
-            }
-
-            // 显示或隐藏在线优选和订阅接口按钮（仅在自定义优选模式下显示）
-            const onlineOptimizeBtn = document.getElementById('onlineOptimizeBtn');
-            const apiOptimizeBtn = document.getElementById('apiOptimizeBtn');
-            if (onlineOptimizeBtn) {
-                if (mode === 'custom') {
-                    onlineOptimizeBtn.classList.remove('hidden-section');
-                } else {
-                    onlineOptimizeBtn.classList.add('hidden-section');
-                }
-            }
-            if (apiOptimizeBtn) {
-                if (mode === 'custom') {
-                    apiOptimizeBtn.classList.remove('hidden-section');
-                } else {
-                    apiOptimizeBtn.classList.add('hidden-section');
-                }
-            }
-
-            // 当切换到自定义优选时，自动加载现有的ADD.txt内容
-            if (mode === 'custom') {
-                loadCustomIPs();
-            }
-
-            markModified('sub');
-        }
-
-        // 处理优选订阅生成器URL
-        function processGeneratorURL() {
-            const input = document.getElementById('generatorURL').value.trim();
-            let domain = '';
-
-            if (input) {
-                // 如果输入不是空的，提取域名
-                domain = extractDomain(input);
-                document.getElementById('generatorURL').value = domain;
-            }
-
-            markModified('sub');
-        }
-
-        // 提取URL中的纯域名
-        function extractDomain(url) {
-            try {
-                url = url.trim();
-
-                // 如果不包含协议，尝试识别是否为完整URL或纯域名
-                if (!url.includes('://')) {
-                    // 检查是否包含路径、查询参数或端口
-                    if (url.includes('/') || url.includes('?') || url.includes(':')) {
-                        // 这是一个完整的URL，补充https协议
-                        url = 'https://' + url;
-                    } else {
-                        // 这是纯域名，直接返回
-                        return url;
-                    }
-                }
-
-                // 解析URL
-                const urlObj = new URL(url);
-
-                // 获取hostname（不包含端口）
-                let domain = urlObj.hostname;
-
-                // 移除www前缀（如果有）
-                if (domain.startsWith('www.')) {
-                    domain = domain.substring(4);
-                }
-
-                return domain;
-            } catch (error) {
-                // 如果URL解析失败，返回原始输入去掉协议部分的结果
-                let temp = url.trim();
-                if (temp.includes('://')) {
-                    temp = temp.split('://')[1];
-                }
-                if (temp.includes('/')) {
-                    temp = temp.split('/')[0];
-                }
-                if (temp.includes('?')) {
-                    temp = temp.split('?')[0];
-                }
-                if (temp.includes(':')) {
-                    temp = temp.split(':')[0];
-                }
-                if (temp.startsWith('www.')) {
-                    temp = temp.substring(4);
-                }
-                return temp;
-            }
-        }
-
-        function updateProtocol() {
-            const protocol = document.getElementById('protocol').value;
-            /*
-            const transport = document.getElementById('transport');
-            if (protocol === 'trojan') {
-                transport.value = 'ws';
-                transport.disabled = true;
-            } else {
-                transport.disabled = false;
-            }
-            */
-        }
-
-        // 处理浏览器指纹变化，联动ECH选项
-        function handleFingerprintChange() {
-            updateECHOptionState();
-        }
-
-        // 处理ECH启用状态变化
-        function handleECHEnableChange() {
-            const enableECHCheckbox = document.getElementById('enableECH');
-            const fingerprintSelect = document.getElementById('fingerprint');
-
-            // 支持ECH的指纹类型
-            const supportECH = ['chrome', 'firefox'];
-
-            // 如果用户开启ECH，但当前指纹不支持ECH，自动切换到chrome
-            if (enableECHCheckbox && enableECHCheckbox.checked) {
-                const currentFingerprint = fingerprintSelect?.value;
-                if (currentFingerprint && !supportECH.includes(currentFingerprint)) {
-                    fingerprintSelect.value = 'chrome';
-                    // 同时标记详细配置模块为已修改
-                    markModified('config');
-                }
-            }
-
-            markModified('ech');
-        }
-
-        // 更新ECH选项的状态（禁用/启用）
-        function updateECHOptionState() {
-            const fingerprint = document.getElementById('fingerprint').value;
-            const enableECHCheckbox = document.getElementById('enableECH');
-
-            // 支持ECH的指纹类型
-            const supportECH = ['chrome', 'firefox'];
-
-            if (enableECHCheckbox) {
-                // 当指纹不支持ECH时，自动取消勾选
-                if (!supportECH.includes(fingerprint) && enableECHCheckbox.checked) {
-                    enableECHCheckbox.checked = false;
-                    markModified('ech');
-                }
-            }
-        }
-
-        // 填充ECH DNS下拉框
-        function populateEchDNSSelect() {
-            const formGroup = document.getElementById('echDNSGroup');
-            const select = document.getElementById('echDNSSelect');
-            const customInput = document.getElementById('echDNSCustomInput');
-            const hiddenValue = document.getElementById('echDNSValue');
-
-            if (!select || !formGroup) return;
-
-            // 检查ECHConfig.DNS字段是否存在
-            if (currentConfig.ECHConfig?.DNS === undefined) {
-                formGroup.style.display = 'none';
-                return;
-            }
-
-            // 显示form-group和下拉框
-            formGroup.style.display = 'grid';
-            select.style.display = 'block';
-
-            // 如果已有保存的DNS值，设置选中状态
-            const savedDNS = currentConfig.ECHConfig?.DNS || '';
-            if (savedDNS) {
-                // 尝试在下拉框中找到匹配的选项
-                select.value = savedDNS;
-
-                // 如果没有匹配到（值不在列表中），选择"自定义"并显示输入框
-                if (select.value !== savedDNS) {
-                    select.value = 'custom';
-                    customInput.value = savedDNS;
-                    customInput.style.display = 'block';
-                    hiddenValue.value = savedDNS;
-                } else {
-                    // 匹配成功，隐藏自定义输入框
-                    customInput.style.display = 'none';
-                    customInput.value = '';
-                    hiddenValue.value = savedDNS;
-                }
-            } else {
-                // 没有保存值，默认选择"自定义"
-                select.value = 'custom';
-                customInput.style.display = 'block';
-            }
-        }
-
-        // 填充ECH SNI下拉框
-        function populateEchSNISelect() {
-            const formGroup = document.getElementById('echSNIGroup');
-            const select = document.getElementById('echSNISelect');
-            const customInput = document.getElementById('echSNICustomInput');
-            const hiddenValue = document.getElementById('echSNIValue');
-
-            if (!select || !formGroup) return;
-
-            // 检查ECHConfig.SNI字段是否存在
-            if (currentConfig.ECHConfig?.SNI === undefined) {
-                formGroup.style.display = 'none';
-                return;
-            }
-
-            // 显示form-group和下拉框
-            formGroup.style.display = 'grid';
-            select.style.display = 'block';
-
-            // 如果已有保存的SNI值，设置选中状态
-            const savedSNI = currentConfig.ECHConfig?.SNI;
-            if (savedSNI !== undefined) {
-                if (savedSNI === null) {
-                    // 自动获取
-                    select.value = '__AUTO__';
-                    customInput.style.display = 'none';
-                    customInput.value = '';
-                    hiddenValue.value = null;
-                } else {
-                    // 尝试在下拉框中找到匹配的选项
-                    select.value = savedSNI;
-
-                    // 如果没有匹配到（值不在列表中），选择"自定义"并显示输入框
-                    if (select.value !== savedSNI) {
-                        select.value = 'custom';
-                        customInput.value = savedSNI;
-                        customInput.style.display = 'block';
-                        hiddenValue.value = savedSNI;
-                    } else {
-                        // 匹配成功，隐藏自定义输入框
-                        customInput.style.display = 'none';
-                        customInput.value = '';
-                        hiddenValue.value = savedSNI;
-                    }
-                }
-            } else {
-                // 没有保存值，默认选择"自定义"
-                select.value = 'custom';
-                customInput.style.display = 'block';
-            }
-        }
-
-        // ECH DNS select 变化处理
-        function onEchDNSSelectChange() {
-            const select = document.getElementById('echDNSSelect');
-            const customInput = document.getElementById('echDNSCustomInput');
-            const hiddenValue = document.getElementById('echDNSValue');
-
-            if (select.value === 'custom') {
-                customInput.style.display = 'block';
-                hiddenValue.value = customInput.value;
-            } else {
-                customInput.style.display = 'none';
-                customInput.value = '';
-                hiddenValue.value = select.value;
-            }
-
-            // 检查是否选择了国内DNS，若是则自动调整ECH解析域名
-            const selectedOption = select.options[select.selectedIndex];
-            const region = selectedOption.dataset.region;
-
-            if (region === 'domestic') {
-                const echSNISelect = document.getElementById('echSNISelect');
-                // 如果当前选择是 __AUTO__，自动改为 cloudflare-ech.com
-                if (echSNISelect.value === '__AUTO__') {
-                    echSNISelect.value = 'cloudflare-ech.com';
-                    onEchSNISelectChange();
-                }
-            }
-
-            markModified('ech');
-        }
-
-        // ECH DNS 自定义输入框变化处理
-        function onEchDNSCustomInput() {
-            const customInput = document.getElementById('echDNSCustomInput');
-            const hiddenValue = document.getElementById('echDNSValue');
-            hiddenValue.value = customInput.value;
-            markModified('ech');
-        }
-
-        // ECH SNI select 变化处理
-        function onEchSNISelectChange() {
-            const select = document.getElementById('echSNISelect');
-            const customInput = document.getElementById('echSNICustomInput');
-            const hiddenValue = document.getElementById('echSNIValue');
-
-            if (select.value === '__AUTO__') {
-                customInput.style.display = 'none';
-                customInput.value = '';
-                hiddenValue.value = null;
-
-                // 检查当前DNS服务是否为国内DNS
-                const echDNSSelect = document.getElementById('echDNSSelect');
-                const selectedDNSOption = echDNSSelect.options[echDNSSelect.selectedIndex];
-                const dnsRegion = selectedDNSOption.dataset.region;
-
-                if (dnsRegion === 'domestic') {
-                    alert('⚠️ ECH 配置提示\n\n默认使用节点HOST伪装域名 配合 国内 DNS 可能导致 ECH 解析失败。\n\n解决方案（任选其一）：\n① 将 ECH 解析域名改为 cloudflare-ech.com（推荐）\n② 将 ECH DNS 切换为国际服务（如 NextDNS）');
-                    select.value = 'cloudflare-ech.com';
-                }
-            } else if (select.value === 'custom') {
-                customInput.style.display = 'block';
-                hiddenValue.value = customInput.value;
-            } else {
-                customInput.style.display = 'none';
-                customInput.value = '';
-                hiddenValue.value = select.value;
-            }
-            markModified('ech');
-        }
-
-        // ECH SNI 自定义输入框变化处理
-        function onEchSNICustomInput() {
-            const customInput = document.getElementById('echSNICustomInput');
-            const hiddenValue = document.getElementById('echSNIValue');
-            hiddenValue.value = customInput.value;
-            markModified('ech');
-        }
-
-        // 处理PROXYIP地址
-        function processProxyIP() {
-            const input = document.getElementById('proxyIP').value.trim();
-
-            if (input && input !== 'auto') {
-                const cleanAddress = extractProxyIPAddress(input);
-                document.getElementById('proxyIP').value = cleanAddress;
-            }
-
-            markModified('proxy');
-        }
-
-        // 提取PROXYIP地址中的纯格式（保留端口号）
-        function extractProxyIPAddress(input) {
-            input = input.trim();
-
-            // 首先检查是否包含 "ip=" (包括 proxyip= 和 pyip=)
-            const ipPatterns = ['proxyip=', 'pyip=', 'ip='];
-            for (const pattern of ipPatterns) {
-                const index = input.toLowerCase().indexOf(pattern);
-                if (index !== -1) {
-                    input = input.substring(index + pattern.length).trim();
-                    break;
-                }
-            }
-
-            // 移除协议前缀 (http:// 或 https://)
-            if (input.toLowerCase().startsWith('http://')) {
-                input = input.substring(7).trim();
-            } else if (input.toLowerCase().startsWith('https://')) {
-                input = input.substring(8).trim();
-            }
-
-            // 移除末尾的斜杠
-            if (input.endsWith('/')) {
-                input = input.substring(0, input.length - 1).trim();
-            }
-
-            // 移除末尾的备注（#符号之后的内容）
-            if (input.includes('#')) {
-                input = input.split('#')[0].trim();
-            }
-
-            return input;
-        }
-
-        // 处理SOCKS5和HTTP代理地址
-        function processProxyAddress(type) {
-            const fieldId = type === 'socks5' ? 'socks5Addr' : 'httpAddr';
-            const input = document.getElementById(fieldId).value.trim();
-            let cleanAddress = '';
-
-            if (input) {
-                cleanAddress = extractProxyAddress(input, type);
-                document.getElementById(fieldId).value = cleanAddress;
-
-                // 如果输入内容包含协议标识，自动切换反代模式并转移内容
-                switchProxyModeByProtocol(input, cleanAddress);
-            }
-
-            markModified('proxy');
-        }
-
-        // 提取代理地址中的纯格式
-        function extractProxyAddress(input, type) {
-            input = input.trim();
-
-            // 移除开头的 "/" 或 "/"
-            if (input.startsWith('/')) {
-                input = input.substring(1).trim();
-            }
-
-            // 检测并移除协议前缀
-            const socks5Prefixes = ['socks5://', 'socks5=', 'socks5://'];
-            const httpPrefixes = ['http://', 'http=', 'https://'];
-
-            for (const prefix of socks5Prefixes) {
-                if (input.toLowerCase().startsWith(prefix)) {
-                    input = input.substring(prefix.length).trim();
-                    break;
-                }
-            }
-
-            for (const prefix of httpPrefixes) {
-                if (input.toLowerCase().startsWith(prefix)) {
-                    input = input.substring(prefix.length).trim();
-                    break;
-                }
-            }
-
-            // 移除末尾的备注（#符号之后的内容）
-            if (input.includes('#')) {
-                input = input.split('#')[0].trim();
-            }
-
-            return input;
-        }
-
-        // 根据协议自动切换反代模式
-        function switchProxyModeByProtocol(input, cleanAddress) {
-            const lowerInput = input.toLowerCase();
-
-            // 检查是否包含socks5协议
-            if (lowerInput.includes('socks5://') || lowerInput.includes('socks5=') || lowerInput.startsWith('/socks')) {
-                // 切换到SOCKS5模式
-                document.getElementById('proxyMode').value = 'socks5';
-
-                // 清空其他模式的内容，填充SOCKS5
-                document.getElementById('proxyIP').value = '';
-                document.getElementById('socks5Addr').value = cleanAddress;
-                document.getElementById('httpAddr').value = '';
-
-                updateProxyMode();
-                return;
-            }
-
-            // 检查是否包含http协议
-            if (lowerInput.includes('http://') || lowerInput.includes('http=') || lowerInput.includes('https://') || lowerInput.startsWith('/http')) {
-                // 切换到HTTP模式
-                document.getElementById('proxyMode').value = 'http';
-
-                // 清空其他模式的内容，填充HTTP
-                document.getElementById('proxyIP').value = '';
-                document.getElementById('socks5Addr').value = '';
-                document.getElementById('httpAddr').value = cleanAddress;
-
-                updateProxyMode();
-                return;
-            }
-        }
 
         function updateProxyMode() {
             const mode = document.getElementById('proxyMode').value;
@@ -7784,12 +6282,6 @@
                 exploreHTTPBtn.style.display = mode === 'http' ? 'inline-block' : 'none';
             }
 
-            markModified('proxy');
-        }
-
-        function toggleAutoProxy() {
-            const autoProxy = document.getElementById('autoProxy').checked;
-            document.getElementById('proxyIP').disabled = autoProxy;
             markModified('proxy');
         }
 
@@ -7979,19 +6471,6 @@
             markModified('config');
         }
 
-        function markModified(section) {
-            modifiedSections.add(section);
-
-            // 特殊处理 notification 部分：更新 TG.启用 状态
-            if (section === 'notification') {
-                const telegramCheckbox = document.getElementById('telegramEnabled');
-                if (!currentConfig.TG) currentConfig.TG = {};
-                currentConfig.TG.启用 = telegramCheckbox.checked;
-            }
-
-            updateButtonStates();
-        }
-
         function updateButtonStates() {
             // 订阅生成模块
             const subModified = modifiedSections.has('sub');
@@ -8050,44 +6529,6 @@
                 if (happ.checked) {
                     shadowrocket.checked = false;
                 }
-            }
-        }
-
-        function showQRCode(elementId) {
-            const text = document.getElementById(elementId).value;
-            const container = document.getElementById('qrcodeContainer');
-            container.innerHTML = '';
-
-            // 如果文本过长，使用较低的纠错等级来支持更长的内容
-            let correctLevel = QRCode.CorrectLevel.H;
-            if (text.length > 1500) {
-                correctLevel = QRCode.CorrectLevel.M;
-            }
-            if (text.length > 2500) {
-                correctLevel = QRCode.CorrectLevel.L;
-            }
-
-            try {
-                new QRCode(container, {
-                    text: text,
-                    width: 300,
-                    height: 300,
-                    colorDark: '#000',
-                    colorLight: '#fff',
-                    correctLevel: correctLevel
-                });
-                document.getElementById('qrcodeModal').classList.add('show');
-            } catch (error) {
-                // 如果文本过长，显示错误提示
-                console.error('二维码生成失败:', error);
-                showToast('链接过长，无法生成二维码。联系项目作者修复问题。', 'error');
-                container.innerHTML = '<div style="padding:20px;text-align:center;color:#f44336;">二维码生成失败：内容过长</div>';
-            }
-        }
-
-        function closeQRCode(event) {
-            if (!event || event.target.id === 'qrcodeModal') {
-                document.getElementById('qrcodeModal').classList.remove('show');
             }
         }
 
@@ -8188,104 +6629,6 @@
             return domain.trim();
         }
 
-        async function saveSub() {
-            const mode = document.getElementById('ipMode').value;
-
-            // 检查文本框内容是否为空
-            if (mode === 'random') {
-                const randomCount = document.getElementById('randomCount').value.trim();
-                if (!randomCount) {
-                    showToast('随机优选数量不能为空', 'error');
-                    return;
-                }
-            } else if (mode === 'custom') {
-                const customIPs = document.getElementById('customIPs').value.trim();
-                if (!customIPs) {
-                    showToast('自定义优选地址不能为空', 'error');
-                    return;
-                }
-            } else if (mode === 'generator') {
-                const generatorURL = document.getElementById('generatorURL').value.trim();
-                if (!generatorURL) {
-                    showToast('优选订阅生成器地址不能为空', 'error');
-                    return;
-                }
-            }
-
-            const updates = {
-                local: mode !== 'generator',
-                本地IP库: { 随机IP: mode === 'random', 随机数量: parseInt(document.getElementById('randomCount').value) || 16 },
-                SUB: mode === 'generator' ? document.getElementById('generatorURL').value : null,
-                SUBNAME: currentConfig.优选订阅生成.SUBNAME,
-                SUBUpdateTime: currentConfig.优选订阅生成.SUBUpdateTime,
-                TOKEN: currentConfig.优选订阅生成.TOKEN
-            };
-
-            // 如果指定端口存在，添加到本地IP库
-            if (currentConfig.优选订阅生成?.本地IP库?.指定端口 !== undefined) {
-                updates.本地IP库.指定端口 = parseInt(document.getElementById('specifiedPort').value);
-            }
-
-            currentConfig.优选订阅生成 = { ...currentConfig.优选订阅生成, ...updates };
-
-            if (mode === 'custom') {
-                const customIPs = document.getElementById('customIPs').value;
-                try {
-                    await fetch('/admin/ADD.txt', { method: 'POST', body: customIPs });
-                } catch (error) {
-                    showToast('保存自定义IP失败', 'error');
-                    return;
-                }
-            }
-
-            await saveConfigToServer('sub');
-        }
-
-        async function saveConfig() {
-            currentConfig.优选订阅生成.SUBNAME = document.getElementById('subName').value;
-            currentConfig.协议类型 = document.getElementById('protocol').value;
-            //currentConfig.传输协议 = currentConfig.协议类型 === 'trojan' ? 'ws' : document.getElementById('transport').value;
-            currentConfig.跳过证书验证 = document.getElementById('skipVerify').checked;
-
-            // 保存PATH（如果"完整节点路径"字段存在，表示后端支持编辑PATH）
-            if (currentConfig['完整节点路径'] !== undefined) {
-                currentConfig.PATH = document.getElementById('nodePATH').value;
-            }
-
-            // 保存Fingerprint（如果字段存在）
-            if (currentConfig['Fingerprint'] !== undefined) {
-                currentConfig['Fingerprint'] = document.getElementById('fingerprint').value;
-            }
-
-            // 保存随机路径（如果字段存在）
-            if (currentConfig['随机路径'] !== undefined) {
-                currentConfig['随机路径'] = document.getElementById('randomPath').checked;
-            }
-
-            // 保存启用0RTT（如果字段存在）
-            if (currentConfig['启用0RTT'] !== undefined) {
-                currentConfig['启用0RTT'] = document.getElementById('enable0RTT').checked;
-            }
-
-            // 保存TLS分片（如果字段存在）
-            if (currentConfig['TLS分片'] !== undefined) {
-                const shadowrocket = document.getElementById('tlsFragmentShadowrocket').checked;
-                const happ = document.getElementById('tlsFragmentHapp').checked;
-
-                if (shadowrocket) {
-                    currentConfig['TLS分片'] = 'Shadowrocket';
-                } else if (happ) {
-                    currentConfig['TLS分片'] = 'Happ';
-                } else {
-                    currentConfig['TLS分片'] = null;
-                }
-            }
-
-            await saveConfigToServer('config');
-            // 更新网页标题
-            document.title = `${currentConfig.优选订阅生成?.SUBNAME || 'edgetunnel'}设置页面 - 管理后台`;
-        }
-
         async function saveProxy() {
             const mode = document.getElementById('proxyMode').value;
             let socksEnabled = null;
@@ -8337,6 +6680,7 @@
         }
 
 
+
         // 自定义输入框变化时的处理
         function onSubConfigCustomInput() {
             const customInput = document.getElementById('subConfigCustomInput');
@@ -8345,234 +6689,20 @@
         }
 
 
-        function cancelEdit(section) {
-            currentConfig = JSON.parse(JSON.stringify(originalConfig));
-
-            // 只重置该模块的值，不调用 renderUI 以保持展开状态
-            if (section === 'sub') {
-                const local = currentConfig.优选订阅生成?.local ?? true;
-                const randomIP = currentConfig.优选订阅生成?.本地IP库?.随机IP ?? true;
-
-                if (!local) {
-                    document.getElementById('ipMode').value = 'generator';
-                    document.getElementById('generatorURL').value = currentConfig.优选订阅生成?.SUB || '';
-                } else if (randomIP) {
-                    document.getElementById('ipMode').value = 'random';
-                    document.getElementById('randomCount').value = currentConfig.优选订阅生成?.本地IP库?.随机数量 || 16;
-                    // 设置指定端口
-                    if (currentConfig.优选订阅生成?.本地IP库?.指定端口 !== undefined) {
-                        document.getElementById('specifiedPort').value = currentConfig.优选订阅生成.本地IP库.指定端口;
-                    }
-                } else {
-                    document.getElementById('ipMode').value = 'custom';
-                    loadCustomIPs();
-                }
-                updateIPMode();
-            } else if (section === 'config') {
-                document.getElementById('subName').value = currentConfig.优选订阅生成?.SUBNAME || '';
-                document.getElementById('nodeHost').value = currentConfig.HOST || '';
-                document.getElementById('nodeUUID').value = currentConfig.UUID || '';
-                document.getElementById('nodePATH').value = currentConfig.PATH || '';
-                document.getElementById('protocol').value = currentConfig.协议类型 || 'vless';
-                document.getElementById('skipVerify').checked = currentConfig.跳过证书验证 || false;
-
-                // 处理PATH字段的只读状态
-                const nodePathInput = document.getElementById('nodePATH');
-                if (currentConfig['完整节点路径'] !== undefined) {
-                    nodePathInput.removeAttribute('readonly');
-                    nodePathInput.title = '节点的伪装路径';
-                    nodePathInput.onchange = handlePathChange;
-                } else {
-                    nodePathInput.setAttribute('readonly', '');
-                    nodePathInput.title = '节点的伪装路径 仅可通过 \'PATH\'环境变量 进行修改';
-                    nodePathInput.onchange = null;
-                }
-
-                // 重置随机路径（如果字段存在）
-                if (currentConfig['随机路径'] !== undefined) {
-                    document.getElementById('randomPath').checked = currentConfig['随机路径'] || false;
-                }
-
-                // 重置启用0RTT（如果字段存在）
-                if (currentConfig['启用0RTT'] !== undefined) {
-                    document.getElementById('enable0RTT').checked = currentConfig['启用0RTT'] || false;
-                }
-
-                // 重置TLS分片（如果字段存在）
-                if (currentConfig['TLS分片'] !== undefined) {
-                    document.getElementById('tlsFragmentShadowrocket').checked = currentConfig['TLS分片'] === 'Shadowrocket';
-                    document.getElementById('tlsFragmentHapp').checked = currentConfig['TLS分片'] === 'Happ';
-                }
-
-                // 重置ECH（如果字段存在）
-                if (currentConfig['ECH'] !== undefined) {
-                    document.getElementById('enableECH').checked = currentConfig['ECH'] || false;
-
-                    // 重置ECHConfig的下拉框
-                    populateEchDNSSelect();
-                    populateEchSNISelect();
-                }
-
-                updateProtocol();
-            } else if (section === 'ech') {
-                // 重置ECH设置
-                if (currentConfig['ECH'] !== undefined) {
-                    document.getElementById('enableECH').checked = currentConfig['ECH'] || false;
-
-                    // 重置ECHConfig的下拉框
-                    populateEchDNSSelect();
-                    populateEchSNISelect();
-                }
-            } else if (section === 'proxy') {
-                const socksEnabled = currentConfig.反代?.SOCKS5?.启用;
-                if (!socksEnabled) {
-                    document.getElementById('proxyMode').value = 'auto';
-                    document.getElementById('proxyIP').value = currentConfig.反代?.PROXYIP || '';
-                    document.getElementById('autoProxy').checked = (currentConfig.反代?.PROXYIP === 'auto');
-                    if (currentConfig.反代?.PROXYIP === 'auto') {
-                        document.getElementById('proxyIP').disabled = true;
-                    }
-                } else if (socksEnabled === 'socks5') {
-                    document.getElementById('proxyMode').value = 'socks5';
-                    document.getElementById('socks5Addr').value = currentConfig.反代?.SOCKS5?.账号 || '';
-                    document.getElementById('globalSocks5').checked = currentConfig.反代?.SOCKS5?.全局 || false;
-                } else if (socksEnabled === 'http') {
-                    document.getElementById('proxyMode').value = 'http';
-                    document.getElementById('httpAddr').value = currentConfig.反代?.SOCKS5?.账号 || '';
-                    document.getElementById('globalHTTP').checked = currentConfig.反代?.SOCKS5?.全局 || false;
-                }
-                updateProxyMode();
-            } else if (section === 'convert') {
-                document.getElementById('subAPI').value = currentConfig.订阅转换配置?.SUBAPI || '';
-                document.getElementById('subConfig').value = currentConfig.订阅转换配置?.SUBCONFIG || '';
-                document.getElementById('emoji').checked = currentConfig.订阅转换配置?.SUBEMOJI || false;
-                // 重新填充下拉框以恢复正确的选中状态
-                populateSubConfigSelect();
-            }
-
-            modifiedSections.delete(section);
-            updateButtonStates();
-        }
 
         // 保存模块展开/折叠状态到 localStorage
         function saveModuleStates() {
             const states = {};
             document.querySelectorAll('.module').forEach((module, index) => {
                 const title = module.querySelector('.module-title')?.textContent?.trim() || ('module-' + index);
-                // 不保存"查看操作日志"和"当前网络信息"模块的状态
-                if (title !== '📋 查看操作日志' && title !== '🌍 当前网络信息') {
-                    states[title] = !module.classList.contains('collapsed');
-                }
             });
             localStorage.setItem('adminModuleStates', JSON.stringify(states));
-        }
-
-        // 从 localStorage 加载模块展开/折叠状态
-        function loadModuleStates() {
-            const savedStates = localStorage.getItem('adminModuleStates');
-            const states = savedStates ? JSON.parse(savedStates) : {};
-
-            // 如果是第一次访问（localStorage中没有保存状态），所有模块默认折叠
-            const isFirstVisit = !savedStates;
-
-            document.querySelectorAll('.module').forEach((module, index) => {
-                const title = module.querySelector('.module-title')?.textContent?.trim() || ('module-' + index);
-                let shouldBeExpanded;
-
-                // "查看操作日志"模块始终保持折叠状态，"当前网络信息"模块始终展开
-                if (title === '📋 查看操作日志') {
-                    shouldBeExpanded = false;
-                } else if (title === '🌍 当前网络信息') {
-                    shouldBeExpanded = true;
-                } else {
-                    shouldBeExpanded = isFirstVisit ? false : (states[title] !== false); // 第一次默认折叠，之后按保存的状态
-                }
-
-                const isCurrentlyCollapsed = module.classList.contains('collapsed');
-                const content = module.querySelector('.module-content');
-
-                if (shouldBeExpanded && isCurrentlyCollapsed) {
-                    // 需要展开
-                    module.classList.remove('collapsed');
-                    if (content) {
-                        content.style.display = 'block';
-                        content.style.maxHeight = '';
-                        content.style.opacity = '1';
-                    }
-                } else if (!shouldBeExpanded && !isCurrentlyCollapsed) {
-                    // 需要折叠
-                    module.classList.add('collapsed');
-                    if (content) {
-                        content.style.display = 'none';
-                        content.style.maxHeight = '0px';
-                        content.style.opacity = '0';
-                    }
-                }
-            });
         }
 
 
         function closeResetModal(event) {
             if (event && event.target.id !== 'resetModal') return;
             document.getElementById('resetModal').classList.remove('show');
-        }
-
-        async function confirmReset() {
-            try {
-                const response = await fetch('/admin/init');
-                if (!response.ok) throw new Error('重置失败');
-
-                closeResetModal();
-                showToast('配置已重置为默认值', 'success');
-
-                // 延迟1秒后刷新页面，让用户看到成功提示
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
-            } catch (error) {
-                showToast('重置失败: ' + error.message, 'error');
-            }
-        }
-
-
-        // 切换用户模式（小白模式 / 高手模式）
-        function toggleUserMode() {
-            const cardContainer = document.querySelector('.card-container');
-            const btn = document.getElementById('modeToggleBtn');
-
-            if (cardContainer.classList.contains('simple-mode')) {
-                // 切换到高手模式
-                cardContainer.classList.remove('simple-mode');
-                btn.textContent = '🐣 我是小白！我想简单点！';
-                localStorage.setItem('userMode', 'expert');
-                showToast('🚀 已切换到高手模式，显示所有功能', 'success');
-            } else {
-                // 切换到小白模式
-                cardContainer.classList.add('simple-mode');
-                btn.textContent = '🚀 我是高手！我就要折腾！';
-                localStorage.setItem('userMode', 'simple');
-                showToast('🐣 已切换到小白模式，只显示常用功能', 'success');
-            }
-
-            // 使用 requestAnimationFrame 确保动画流畅
-            requestAnimationFrame(() => {
-                void cardContainer.offsetHeight;
-            });
-        }
-
-        // 初始化用户模式
-        function initUserMode() {
-            const userMode = localStorage.getItem('userMode') || 'simple'; // 默认为小白模式
-            const cardContainer = document.querySelector('.card-container');
-            const btn = document.getElementById('modeToggleBtn');
-
-            if (userMode === 'simple') {
-                cardContainer.classList.add('simple-mode');
-                btn.textContent = '🚀 我是高手！我就要折腾！';
-            } else {
-                cardContainer.classList.remove('simple-mode');
-                btn.textContent = '🐣 我是小白！我想简单点！';
-            }
         }
 
         function showToast(message, type = 'info') {
@@ -8612,6 +6742,62 @@
 
 
         // ==================== 代理验证模态框函数 ====================
+
+
+async function verifyManualProxyIP() {
+    const input = document.getElementById('manualProxyIPInput').value.trim();
+    if (!input) {
+        alert('请输入 IP:端口');
+        return;
+    }
+
+    if (!/^(.+):(\d+)$/.test(input)) {
+        alert('格式应为 IP:端口');
+        return;
+    }
+
+    const type = 'proxyip';
+    const config = proxyConfigs[type];
+
+    // 构造符合系统结构的 proxy 对象
+    const proxyObject = {
+        proxy: input,
+        country: 'Manual',
+        country_cn: '手动输入',
+        continent: 'Manual'
+    };
+
+    // 初始化数据池（如果不存在）
+    if (!window[config.listData]) {
+        window[config.listData] = [];
+    }
+
+    // 加入代理池
+    window[config.listData].push(proxyObject);
+
+    // 初始化验证状态
+    window[config.verificationStatus][input] = {
+        status: 'pending',
+        responseTime: null
+    };
+
+    // 刷新显示为“验证中”
+    updateProxyDisplay(type);
+
+    // 执行真正的验证
+    await verifySingleProxyIP(proxyObject);
+
+    // 验证完成后，如果成功，自动选中并触发最终展示
+    if (window[config.verificationStatus][input]?.status === 'success') {
+
+        const select = document.getElementById('proxyIPProxySelect');
+        select.innerHTML = `<option value="${input}" selected>${input}</option>`;
+
+        updateProxyMap(type);
+    }
+}
+
+
 
         // 全局变量存储当前验证的代理类型
         let currentProxyType = null;
@@ -8894,6 +7080,104 @@
             document.getElementById(currentProxyFieldId).value = validAddress;
             markModified('proxy');
             closeProxyVerificationModal();
+        }
+
+        function openSubAPIModal() {
+            const currentValue = document.getElementById('subAPI').value;
+            document.getElementById('subAPIStatus').style.display = 'none';
+            document.getElementById('subAPIStatus').textContent = '';
+            document.getElementById('subAPIConfirmBtn').disabled = true;
+            document.getElementById('subAPIConfirmBtn').style.opacity = '0.5';
+            document.getElementById('subAPIModal').classList.add('show');
+
+            // 加载 SUBAPI 列表
+            loadSubAPIList(currentValue);
+        }
+
+        function closeSubAPIModal(event) {
+            if (event && event.target.id !== 'subAPIModal') return;
+            document.getElementById('subAPIModal').classList.remove('show');
+            document.getElementById('testSubAPIInput').value = '';
+            document.getElementById('subAPIStatus').style.display = 'none';
+        }
+
+        async function loadSubAPIList(currentValue) {
+            const selectEl = document.getElementById('subAPISelect');
+            selectEl.innerHTML = '<option value="">-- 加载中，请稍候 --</option>';
+
+            try {
+                const jsonText = await fetchWithAutoMirror(
+                    'https://raw.githubusercontent.com/cmliu/cmliu/main/SUBAPI.json',
+                    'SUBAPI 列表'
+                );
+
+                const apiList = JSON.parse(jsonText);
+
+                // 清空选项
+                selectEl.innerHTML = '';
+
+                // 添加 API 列表的选项
+                apiList.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.value;
+                    option.textContent = `${item.label}[${item.value}]`;
+                    selectEl.appendChild(option);
+                });
+
+                // 添加自定义选项
+                const customOption = document.createElement('option');
+                customOption.value = 'custom';
+                customOption.textContent = '🔧 自定义';
+                selectEl.appendChild(customOption);
+
+                // 尝试匹配当前值（大小写不敏感比较）
+                if (currentValue && currentValue.trim()) {
+                    const currentValueLower = currentValue.trim().toLowerCase();
+                    const matchedOption = Array.from(selectEl.options).find(
+                        opt => opt.value.toLowerCase() === currentValueLower
+                    );
+                    if (matchedOption) {
+                        // 找到了匹配的选项
+                        selectEl.value = matchedOption.value;
+                        document.getElementById('customSubAPIInputGroup').style.display = 'none';
+                        document.getElementById('testSubAPIInput').value = '';
+                    } else {
+                        // 没有找到匹配的选项，说明是自定义的
+                        selectEl.value = 'custom';
+                        document.getElementById('testSubAPIInput').value = currentValue.trim();
+                        document.getElementById('customSubAPIInputGroup').style.display = 'block';
+                    }
+                } else {
+                    // 没有当前值，显示第一个选项
+                    selectEl.value = '';
+                    document.getElementById('customSubAPIInputGroup').style.display = 'none';
+                    document.getElementById('testSubAPIInput').value = '';
+                }
+            } catch (error) {
+                console.error('加载 SUBAPI 列表失败:', error);
+                selectEl.innerHTML = '<option value="custom">🔧 自定义</option>';
+                selectEl.value = 'custom';
+                document.getElementById('customSubAPIInputGroup').style.display = 'block';
+                if (currentValue && currentValue.trim()) {
+                    document.getElementById('testSubAPIInput').value = currentValue.trim();
+                } else {
+                    document.getElementById('testSubAPIInput').value = '';
+                }
+            }
+        }
+
+        function handleSubAPISelectChange() {
+            const selectEl = document.getElementById('subAPISelect');
+            const customInputGroup = document.getElementById('customSubAPIInputGroup');
+            const testInput = document.getElementById('testSubAPIInput');
+
+            if (selectEl.value === 'custom') {
+                customInputGroup.style.display = 'block';
+                testInput.focus();
+            } else {
+                customInputGroup.style.display = 'none';
+                testInput.value = selectEl.value;
+            }
         }
 
         // ProxyIP 帮助模态框函数
@@ -9440,6 +7724,51 @@
 
         // ==================== 消息通知设置相关函数 ====================
 
+        // 更新 Telegram 按钮状态和颜色
+        function updateTelegramButtonStates(isConfigured) {
+            // 获取 Telegram 按钮元素（第一组通知按钮是 Telegram）
+            const buttons = document.querySelectorAll('.notification-controls');
+
+            if (buttons.length > 0) {
+                const telegramControls = buttons[0];
+                const configBtn = telegramControls.querySelector('.btn-notification-config');
+                const clearBtn = telegramControls.querySelector('.btn-clear-config');
+
+                if (isConfigured) {
+                    // 已配置：参数配置按钮为绿色，清除配置按钮为红色且可点击
+                    clearBtn.classList.remove('btn-not-configured');
+                    clearBtn.classList.add('btn-configured');
+                    clearBtn.disabled = false;
+                } else {
+                    // 未配置：参数配置按钮保持绿色，清除配置按钮为灰色且禁用
+                    clearBtn.classList.remove('btn-configured');
+                    clearBtn.classList.add('btn-not-configured');
+                    clearBtn.disabled = true;
+                }
+            }
+        }
+
+        // 清除 Telegram 配置
+        async function clearTelegramConfig() {
+            if (confirm('确定要清除 Telegram 配置吗？')) {
+                currentConfig.TG = {
+                    BotToken: null,
+                    ChatID: null,
+                    启用: false
+                };
+
+                try {
+                    await saveConfigToServer('notification');
+                    showToast('Telegram 配置已清除', 'success');
+                    updateTelegramButtonStates(false);
+                    const telegramCheckbox = document.getElementById('telegramEnabled');
+                    telegramCheckbox.disabled = true;
+                    telegramCheckbox.checked = false;
+                } catch (error) {
+                    showToast('清除配置失败: ' + error.message, 'error');
+                }
+            }
+        }
 
         // 更新 Cloudflare 按钮状态和颜色
         function updateCloudflareButtonStates(isConfigured) {
@@ -9482,385 +7811,19 @@
             }
         }
 
-        // 打开 Cloudflare 配置模态框
-        function openCloudflareConfigModal() {
-            document.getElementById('cloudflareConfigModal').classList.add('show');
-
-            // 默认选择第一个方案
-            document.getElementById('cloudflareAuthMethod').value = 'accountid';
-            updateCloudflareAuthMethod();
-
-            // 清空输入框
-            document.getElementById('cloudflareEmail').value = '';
-            document.getElementById('cloudflareGlobalAPIKey').value = '';
-            document.getElementById('cloudflareAccountID').value = '';
-            document.getElementById('cloudflareAPIToken').value = '';
-            document.getElementById('cloudflareUsageAPI').value = '';
+        // 打开 TelegramBot 配置模态框
+        function openTelegramConfigModal() {
+            document.getElementById('telegramConfigModal').classList.add('show');
+            // 只加载Chat ID，不加载Bot Token（因为Bot Token是敏感信息）
+            const chatID = currentConfig.TG?.ChatID || currentConfig.通知?.Telegram?.ChatID || '';
+            document.getElementById('telegramBotToken').value = '';
+            document.getElementById('telegramChatID').value = chatID;
 
             // 重置状态和保存按钮
-            document.getElementById('cloudflareStatus').style.display = 'none';
-            document.getElementById('cloudflareStatus').textContent = '';
-            document.getElementById('cloudflareConfirmBtn').disabled = true;
-            document.getElementById('cloudflareConfirmBtn').style.opacity = '0.5';
-            document.getElementById('cloudflareConfirmBtn').dataset.testPassed = 'false';
-        }
-
-        // 更新 Cloudflare 认证方法选择时的显示
-        function updateCloudflareAuthMethod() {
-            const method = document.getElementById('cloudflareAuthMethod').value;
-
-            // 隐藏所有方案的输入框
-            document.getElementById('cloudflareEmailSection').style.display = 'none';
-            document.getElementById('cloudflareAccountIDSection').style.display = 'none';
-            document.getElementById('cloudflareUsageAPISection').style.display = 'none';
-
-            // 显示选中方案的输入框
-            if (method === 'email') {
-                document.getElementById('cloudflareEmailSection').style.display = 'block';
-            } else if (method === 'accountid') {
-                document.getElementById('cloudflareAccountIDSection').style.display = 'block';
-            } else if (method === 'usageapi') {
-                document.getElementById('cloudflareUsageAPISection').style.display = 'block';
-            }
-
-            // 切换方案时重置验证状态和保存按钮
-            document.getElementById('cloudflareStatus').style.display = 'none';
-            document.getElementById('cloudflareStatus').textContent = '';
-            document.getElementById('cloudflareConfirmBtn').disabled = true;
-            document.getElementById('cloudflareConfirmBtn').style.opacity = '0.5';
-            document.getElementById('cloudflareConfirmBtn').dataset.testPassed = 'false';
-        }
-
-        // 关闭 Cloudflare 配置模态框
-        function closeCloudflareConfigModal(event) {
-            if (event && event.target.id !== 'cloudflareConfigModal') return;
-            document.getElementById('cloudflareConfigModal').classList.remove('show');
-
-            // 清空输入框和状态
-            document.getElementById('cloudflareEmail').value = '';
-            document.getElementById('cloudflareGlobalAPIKey').value = '';
-            document.getElementById('cloudflareAccountID').value = '';
-            document.getElementById('cloudflareAPIToken').value = '';
-            document.getElementById('cloudflareUsageAPI').value = '';
-            document.getElementById('cloudflareStatus').style.display = 'none';
-            document.getElementById('cloudflareStatus').textContent = '';
-        }
-
-        // 测试 Cloudflare 连接
-        async function testCloudflareConfig() {
-            const method = document.getElementById('cloudflareAuthMethod').value;
-            let email = '', globalAPIKey = '', accountID = '', apiToken = '', usageAPI = '';
-
-            const statusEl = document.getElementById('cloudflareStatus');
-            const confirmBtn = document.getElementById('cloudflareConfirmBtn');
-            const testBtn = event.target;
-
-            // 根据选择的方案获取输入值
-            if (method === 'email') {
-                email = document.getElementById('cloudflareEmail').value.trim();
-                globalAPIKey = document.getElementById('cloudflareGlobalAPIKey').value.trim();
-
-                if (!email || !globalAPIKey) {
-                    statusEl.textContent = '❌ 请填写 Email 和 Global API Key';
-                    statusEl.style.display = 'block';
-                    statusEl.style.background = 'linear-gradient(135deg, #ef4444 0, #dc2626 100%)';
-                    statusEl.style.color = '#fff';
-                    confirmBtn.disabled = true;
-                    confirmBtn.style.opacity = '0.5';
-                    confirmBtn.dataset.testPassed = 'false';
-                    return;
-                }
-            } else if (method === 'accountid') {
-                accountID = document.getElementById('cloudflareAccountID').value.trim();
-                apiToken = document.getElementById('cloudflareAPIToken').value.trim();
-
-                if (!accountID || !apiToken) {
-                    statusEl.textContent = '❌ 请填写 Account ID 和 API Token';
-                    statusEl.style.display = 'block';
-                    statusEl.style.background = 'linear-gradient(135deg, #ef4444 0, #dc2626 100%)';
-                    statusEl.style.color = '#fff';
-                    confirmBtn.disabled = true;
-                    confirmBtn.style.opacity = '0.5';
-                    confirmBtn.dataset.testPassed = 'false';
-                    return;
-                }
-            } else if (method === 'usageapi') {
-                usageAPI = document.getElementById('cloudflareUsageAPI').value.trim();
-
-                if (!usageAPI) {
-                    statusEl.textContent = '❌ 请填写 UsageAPI 地址';
-                    statusEl.style.display = 'block';
-                    statusEl.style.background = 'linear-gradient(135deg, #ef4444 0, #dc2626 100%)';
-                    statusEl.style.color = '#fff';
-                    confirmBtn.disabled = true;
-                    confirmBtn.style.opacity = '0.5';
-                    confirmBtn.dataset.testPassed = 'false';
-                    return;
-                }
-            }
-
-            try {
-                testBtn.disabled = true;
-                statusEl.textContent = '⏳ 检测中...';
-                statusEl.style.display = 'block';
-                statusEl.style.background = 'linear-gradient(135deg, #3b82f6 0, #1d4ed8 100%)';
-                statusEl.style.color = '#fff';
-
-                let response;
-
-                if (method === 'usageapi') {
-                    // UsageAPI 方案：直接请求外部 API
-                    response = await fetch(usageAPI);
-                } else {
-                    // 构建请求 URL
-                    let queryParams = new URLSearchParams();
-                    if (method === 'email') {
-                        queryParams.append('Email', email);
-                        queryParams.append('GlobalAPIKey', globalAPIKey);
-                    } else if (method === 'accountid') {
-                        queryParams.append('AccountID', accountID);
-                        queryParams.append('APIToken', apiToken);
-                    }
-
-                    response = await fetch('/admin/getCloudflareUsage?' + queryParams.toString());
-                }
-
-                if (!response.ok) {
-                    throw new Error('请求失败 (HTTP ' + response.status + ')');
-                }
-
-                const data = await response.json();
-
-                if (data.success) {
-                    // 验证成功
-                    statusEl.style.background = 'linear-gradient(135deg, #10b981 0, #059669 100%)';
-                    const maxQuota = data.max || 100000;
-                    const percentage = (data.total / maxQuota * 100).toFixed(2);
-                    statusEl.textContent = `✅ 验证成功！ 今天的请求配额: ${data.total}/${maxQuota} (${percentage}%)`;
-                    confirmBtn.disabled = false;
-                    confirmBtn.style.opacity = '1';
-                    confirmBtn.dataset.testPassed = 'true';
-
-                    // 保存验证通过的数据供后续保存使用
-                    confirmBtn.dataset.method = method;
-                    confirmBtn.dataset.email = email;
-                    confirmBtn.dataset.globalAPIKey = globalAPIKey;
-                    confirmBtn.dataset.accountID = accountID;
-                    confirmBtn.dataset.apiToken = apiToken;
-                    confirmBtn.dataset.usageAPI = usageAPI;
-                } else {
-                    // 验证失败
-                    statusEl.style.background = 'linear-gradient(135deg, #ef4444 0, #dc2626 100%)';
-                    statusEl.textContent = '❌ 验证失败：' + (data.msg || '凭证无效或无权限');
-                    confirmBtn.disabled = true;
-                    confirmBtn.style.opacity = '0.5';
-                    confirmBtn.dataset.testPassed = 'false';
-                }
-            } catch (error) {
-                statusEl.style.background = 'linear-gradient(135deg, #ef4444 0, #dc2626 100%)';
-                statusEl.textContent = '❌ 检测失败: ' + error.message;
-                confirmBtn.disabled = true;
-                confirmBtn.style.opacity = '0.5';
-                confirmBtn.dataset.testPassed = 'false';
-            } finally {
-                testBtn.disabled = false;
-            }
-        }
-
-        // 保存 Cloudflare 配置
-        async function confirmCloudflareConfig() {
-            const confirmBtn = document.getElementById('cloudflareConfirmBtn');
-
-            // 检查是否通过了验证
-            if (confirmBtn.dataset.testPassed !== 'true') {
-                showToast('请先点击"可用性验证"按钮通过验证', 'error');
-                return;
-            }
-
-            const method = confirmBtn.dataset.method;
-            const email = confirmBtn.dataset.email || '';
-            const globalAPIKey = confirmBtn.dataset.globalAPIKey || '';
-            const accountID = confirmBtn.dataset.accountID || '';
-            const apiToken = confirmBtn.dataset.apiToken || '';
-            const usageAPI = confirmBtn.dataset.usageAPI || '';
-
-            try {
-                confirmBtn.disabled = true;
-                confirmBtn.textContent = '保存中...';
-
-                // 构建请求体
-                let payload;
-                if (method === 'usageapi') {
-                    payload = {
-                        Email: null,
-                        GlobalAPIKey: null,
-                        AccountID: null,
-                        APIToken: null,
-                        UsageAPI: usageAPI
-                    };
-                } else {
-                    payload = {
-                        Email: method === 'email' ? email : null,
-                        GlobalAPIKey: method === 'email' ? globalAPIKey : null,
-                        AccountID: method === 'accountid' ? accountID : null,
-                        APIToken: method === 'accountid' ? apiToken : null,
-                        UsageAPI: null
-                    };
-                }
-
-                // 提交到后端
-                const response = await fetch('/admin/cf.json', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                if (response.ok) {
-                    showToast('✅ Cloudflare 配置已保存', 'success');
-                    closeCloudflareConfigModal();
-
-                    // 1秒后刷新页面
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
-                } else {
-                    const errorData = await response.json();
-                    showToast('❌ 保存失败: ' + (errorData.error || '未知错误'), 'error');
-                    confirmBtn.disabled = false;
-                    confirmBtn.textContent = '保存';
-                }
-            } catch (error) {
-                showToast('❌ 保存失败: ' + error.message, 'error');
-                confirmBtn.disabled = false;
-                confirmBtn.textContent = '保存';
-            }
-        }
-
-        // 保存通知设置
-        async function saveNotification() {
-            try {
-                // 只更新 TG.启用 字段
-                if (!currentConfig.TG) currentConfig.TG = {};
-                currentConfig.TG.启用 = document.getElementById('telegramEnabled').checked;
-
-                // 提交到服务器，但整个 currentConfig
-                const response = await fetch('/admin/config.json', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(currentConfig)
-                });
-
-                if (!response.ok) throw new Error('保存失败');
-
-                showToast('✅ 启用状态已保存', 'success');
-                modifiedSections.delete('notification');
-                updateButtonStates();
-            } catch (error) {
-                showToast('❌ 保存失败: ' + error.message, 'error');
-            }
-        }
-
-
-        // 清除 Cloudflare 配置
-        function clearCloudflareConfig() {
-            document.getElementById('clearCloudflareModal').classList.add('show');
-        }
-
-        function closeClearCloudflareModal(event) {
-            if (!event || event.target.id === 'clearCloudflareModal') {
-                document.getElementById('clearCloudflareModal').classList.remove('show');
-            }
-        }
-
-        async function confirmClearCloudflareConfig() {
-            try {
-                const response = await fetch('/admin/cf.json', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ init: true })
-                });
-
-                const data = await response.json();
-
-                if (response.ok && data.success) {
-                    closeClearCloudflareModal();
-                    showToast('✅ Cloudflare 配置已清除，页面即将刷新...', 'success');
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
-                } else {
-                    showToast('❌ 清除失败: ' + (data.message || '未知错误'), 'error');
-                }
-            } catch (error) {
-                showToast('❌ 清除出错: ' + error.message, 'error');
-            }
-        }
-
-        // 取消通知设置编辑
-        function cancelEdit(section) {
-            if (section === 'notification') {
-                // 重置通知启用状态为原始值
-                const telegramCheckbox = document.getElementById('telegramEnabled');
-                const originalEnabled = originalConfig.TG?.启用 ?? false;
-                telegramCheckbox.checked = originalEnabled;
-                currentConfig.TG.启用 = originalEnabled;
-            } else {
-                // 原有的cancelEdit逻辑
-                currentConfig = JSON.parse(JSON.stringify(originalConfig));
-
-                if (section === 'sub') {
-                    const local = currentConfig.优选订阅生成?.local ?? true;
-                    const randomIP = currentConfig.优选订阅生成?.本地IP库?.随机IP ?? true;
-
-                    if (!local) {
-                        document.getElementById('ipMode').value = 'generator';
-                        document.getElementById('generatorURL').value = currentConfig.优选订阅生成?.SUB || '';
-                    } else if (randomIP) {
-                        document.getElementById('ipMode').value = 'random';
-                        document.getElementById('randomCount').value = currentConfig.优选订阅生成?.本地IP库?.随机数量 || 16;
-                    } else {
-                        document.getElementById('ipMode').value = 'custom';
-                        loadCustomIPs();
-                    }
-                    updateIPMode();
-                } else if (section === 'config') {
-                    document.getElementById('subName').value = currentConfig.优选订阅生成?.SUBNAME || '';
-                    document.getElementById('nodeHost').value = currentConfig.HOST || '';
-                    document.getElementById('nodeUUID').value = currentConfig.UUID || '';
-                    document.getElementById('nodePATH').value = currentConfig.PATH || '';
-                    document.getElementById('protocol').value = currentConfig.协议类型 || 'vless';
-                    document.getElementById('skipVerify').checked = currentConfig.跳过证书验证 || false;
-                    updateProtocol();
-                } else if (section === 'proxy') {
-                    const socksEnabled = currentConfig.反代?.SOCKS5?.启用;
-                    if (!socksEnabled) {
-                        document.getElementById('proxyMode').value = 'auto';
-                        document.getElementById('proxyIP').value = currentConfig.反代?.PROXYIP || '';
-                        document.getElementById('autoProxy').checked = (currentConfig.反代?.PROXYIP === 'auto');
-                        if (currentConfig.反代?.PROXYIP === 'auto') {
-                            document.getElementById('proxyIP').disabled = true;
-                        }
-                    } else if (socksEnabled === 'socks5') {
-                        document.getElementById('proxyMode').value = 'socks5';
-                        document.getElementById('socks5Addr').value = currentConfig.反代?.SOCKS5?.账号 || '';
-                        document.getElementById('globalSocks5').checked = currentConfig.反代?.SOCKS5?.全局 || false;
-                    } else if (socksEnabled === 'http') {
-                        document.getElementById('proxyMode').value = 'http';
-                        document.getElementById('httpAddr').value = currentConfig.反代?.SOCKS5?.账号 || '';
-                        document.getElementById('globalHTTP').checked = currentConfig.反代?.SOCKS5?.全局 || false;
-                    }
-                    updateProxyMode();
-                } else if (section === 'convert') {
-                    document.getElementById('subAPI').value = currentConfig.订阅转换配置?.SUBAPI || '';
-                    document.getElementById('subConfig').value = currentConfig.订阅转换配置?.SUBCONFIG || '';
-                    document.getElementById('emoji').checked = currentConfig.订阅转换配置?.SUBEMOJI || false;
-                }
-            }
-
-            modifiedSections.delete(section);
-            updateButtonStates();
+            document.getElementById('telegramStatus').style.display = 'none';
+            document.getElementById('telegramStatus').textContent = '';
+            document.getElementById('telegramConfirmBtn').disabled = true;
+            document.getElementById('telegramConfirmBtn').style.opacity = '0.5';
         }
 
         // 更新倒计时
@@ -10246,38 +8209,6 @@
             closeAPIOptimizeModal();
         }
 
-        // 追加结果到自定义优选地址
-        function appendResultsToCustom() {
-            const resultsTextarea = document.getElementById('apiOptimizeResults');
-            const results = resultsTextarea.value.trim();
-
-            if (!results || results.startsWith('❌')) {
-                alert('请先进行可用性验证且验证通过');
-                return;
-            }
-
-            const customIPsTextarea = document.getElementById('customIPs');
-            const currentValue = customIPsTextarea.value.trim();
-
-            // 追加到文本框
-            if (currentValue) {
-                customIPsTextarea.value = currentValue + '\n' + results;
-            } else {
-                customIPsTextarea.value = results;
-            }
-
-            // 刷新line-editor行数
-            if (customIPsTextarea._refreshLineEditor) {
-                customIPsTextarea._refreshLineEditor();
-            }
-
-            // 标记为已修改
-            markModified('sub');
-
-            showToast('✅ API结果已追加到自定义优选地址', 'success');
-            closeAPIOptimizeModal();
-        }
-
         // 检测IP和网络环境
         async function detectIPAndEnvironment() {
             console.log('[在线优选] 开始: 检测网络环境');
@@ -10365,79 +8296,6 @@
                 input.value = 1;
             } else if (value > 32) {
                 input.value = 32;
-            }
-        }
-
-        // 开始优选
-        async function startOptimize() {
-            console.log('[在线优选] 开始: 优选流程');
-            const btnStart = document.getElementById('btnStartOptimize');
-            btnStart.disabled = true;
-            btnStart.textContent = '优选中...';
-
-            const progressBar = document.getElementById('optimizeProgressBar');
-            const progressFill = document.getElementById('optimizeProgressFill');
-            const progressText = document.getElementById('optimizeProgressText');
-            progressBar.classList.remove('hidden-section');
-            progressFill.style.width = '0%';
-            progressText.textContent = '0/512 (0.00%)';
-
-            document.getElementById('optimizeResultsTabs').classList.add('hidden-section');
-            document.getElementById('optimizeResultsContent').classList.add('hidden-section');
-
-            try {
-                // 加载locations数据
-                console.log('[在线优选] 步骤1: 加载位置数据');
-                await loadLocationsData();
-
-                // 获取用户选择
-                const ipLibrary = document.getElementById('optimizeIPLibrary').value;
-                const port = document.getElementById('optimizePort').value;
-                let concurrency = parseInt(document.getElementById('optimizeConcurrency').value) || 8;
-
-                // 验证并发线程数
-                if (isNaN(concurrency) || concurrency < 1 || concurrency > 32) {
-                    concurrency = 8;
-                    document.getElementById('optimizeConcurrency').value = '8';
-                }
-
-                console.log(`[在线优选] 步骤2: 用户选择 - IP库=${ipLibrary}, 端口=${port}, 并发线程=${concurrency}`);
-                currentIPLibrary = ipLibrary; // 保存当前IP库类型
-
-                // 获取IP列表
-                console.log('[在线优选] 步骤3: 获取 IP 列表');
-                const ips = await getIPList(ipLibrary, port);
-
-                if (ips.length === 0) {
-                    console.error('[在线优选] 错误: 未能获取到IP列表');
-                    showToast('未能获取到IP列表', 'error');
-                    return;
-                }
-
-                console.log(`[在线优选] 成功: 已获取 ${ips.length} 个 IP`);
-
-                // 测速（多线程并发）
-                console.log('[在线优选] 步骤4: 开始 IP 测速（多线程并发）');
-                const results = await testIPsConcurrent(ips, progressFill, progressText, concurrency);
-                console.log(`[在线优选] 完成: 测速完成，有效 IP 数量=${results.length}`);
-
-                // 分类结果
-                console.log('[在线优选] 步骤5: 开始分类结果');
-                classifyResults(results);
-
-                // 显示结果
-                console.log('[在线优选] 步骤6: 显示结果');
-                displayResults();
-
-                console.log('[在线优选] 完成: 优选流程已完成');
-                showToast('优选完成！', 'success');
-
-            } catch (error) {
-                console.error('[在线优选] 优选过程出错:', error);
-                showToast('优选过程出错: ' + error.message, 'error');
-            } finally {
-                btnStart.disabled = false;
-                btnStart.textContent = '开始优选';
             }
         }
 
@@ -10529,39 +8387,6 @@
                         throw new Error(`${description}拉取失败，已尝试原始链接和全部${mirrorDomains.length}个备用镜像`);
                     }
                 }
-            }
-        }
-
-        // 获取IP列表
-        async function getIPList(ipLibrary, port) {
-            // 定义各个IP库的原始URLs（仅使用官方地址）
-            const urlMap = {
-                'cf-official': 'https://cf.090227.xyz/ips-v4',
-                'cm-list': 'https://raw.githubusercontent.com/cmliu/cmliu/main/CF-CIDR.txt',
-                'as13335': 'https://raw.githubusercontent.com/ipverse/asn-ip/master/as/13335/ipv4-aggregated.txt',
-                'as209242': 'https://raw.githubusercontent.com/ipverse/asn-ip/master/as/209242/ipv4-aggregated.txt',
-                'reverse-proxy': 'https://zip.cm.edu.kg/all.txt'
-            };
-
-            try {
-                const url = urlMap[ipLibrary];
-                if (!url) throw new Error(`未知的IP库类型: ${ipLibrary}`);
-
-                console.log(`[在线优选] 进度: 获取 ${ipLibrary} 的 IP 列表`);
-                const text = await fetchWithAutoMirror(url, `${ipLibrary}数据`);
-
-                if (ipLibrary === 'reverse-proxy') {
-                    // 处理反向代理列表
-                    console.log('[在线优选] 进度: 处理反向代理列表');
-                    return processReverseProxyList(text, port);
-                } else {
-                    // 处理CIDR列表
-                    console.log('[在线优选] 进度: 处理 CIDR 列表');
-                    return processCIDRList(text, port);
-                }
-            } catch (error) {
-                console.error('[在线优选] 获取IP列表失败:', error);
-                throw new Error('获取IP列表失败: ' + error.message);
             }
         }
 
@@ -10843,217 +8668,6 @@
             }).join('');
         }
 
-        // 分类结果
-        function classifyResults(results) {
-            console.log('[在线优选] 开始: 分类结果');
-            optimizeResults = {};
-
-            // 根据IP库类型判断是否为优选反代
-            // 只有使用"反向代理列表"IP库时，备注才是"优选反代"，其余一律为"官方优选"
-            const isReverseProxy = currentIPLibrary === 'reverse-proxy';
-            const type = isReverseProxy ? '优选反代' : '官方优选';
-            console.log(`[在线优选] 调试: IP库类型=${currentIPLibrary}, 备注类型=${type}`);
-
-            for (const result of results) {
-                if (!result.colo) continue;
-
-                // 通过colo查找国家编码
-                const location = locationsData.find(loc => loc.iata === result.colo);
-                const countryCode = location ? location.cca2 : result.colo;
-
-                if (!optimizeResults[countryCode]) {
-                    optimizeResults[countryCode] = [];
-                }
-
-                optimizeResults[countryCode].push({
-                    ip: result.ip,
-                    port: result.port,
-                    remark: result.remark || countryCode,
-                    type: type,
-                    time: result.avgTime
-                });
-            }
-
-            console.log(`[在线优选] 结果: 已分类到 ${Object.keys(optimizeResults).length} 个国家/地区`);
-
-            // 对每个国家的结果按响应时间排序
-            for (const country in optimizeResults) {
-                optimizeResults[country].sort((a, b) => a.time - b.time);
-                console.log(`[在线优选] 结果: ${country}=${optimizeResults[country].length} 个 IP`);
-                // 不再限制为16个，保留所有结果
-            }
-        }
-
-        // 显示结果
-        function displayResults() {
-            console.log('[在线优选] 进度: 显示优选结果');
-            const tabsContainer = document.getElementById('optimizeResultsTabs');
-            const contentContainer = document.getElementById('optimizeResultsContent');
-
-            tabsContainer.innerHTML = '';
-            contentContainer.innerHTML = '';
-
-            const countries = Object.keys(optimizeResults).sort();
-            console.log(`[在线优选] 结果: 可用国家/地区=${countries.join(', ')}`);
-
-            if (countries.length === 0) {
-                console.warn('[在线优选] 警告: 未找到任何可用的优选IP');
-                contentContainer.innerHTML = '<div style="text-align: center; color: #6b7280;">未找到可用的优选IP</div>';
-                contentContainer.classList.remove('hidden-section');
-                return;
-            }
-
-            // 创建选项卡 - 显示实际的IP数量
-            countries.forEach((country, index) => {
-                const tab = document.createElement('div');
-                tab.className = 'optimize-tab';
-                if (index === 0) {
-                    tab.classList.add('active');
-                    currentSelectedCountry = country;
-                }
-                const actualCount = optimizeResults[country].length;
-                tab.textContent = `${country} (${actualCount})`;
-                tab.onclick = () => selectCountryTab(country);
-                tabsContainer.appendChild(tab);
-            });
-
-            // 显示第一个国家的结果
-            showCountryResults(currentSelectedCountry);
-
-            tabsContainer.classList.remove('hidden-section');
-            contentContainer.classList.remove('hidden-section');
-
-            // 启用保存按钮
-            document.getElementById('btnSaveOverride').disabled = false;
-            document.getElementById('btnSaveAppend').disabled = false;
-
-            console.log('[在线优选] 完成: 结果显示完成');
-        }
-
-        // 选择国家选项卡
-        function selectCountryTab(country) {
-            currentSelectedCountry = country;
-
-            // 更新选项卡样式
-            const tabs = document.querySelectorAll('.optimize-tab');
-            tabs.forEach(tab => {
-                if (tab.textContent === country) {
-                    tab.classList.add('active');
-                } else {
-                    tab.classList.remove('active');
-                }
-            });
-
-            // 显示对应国家的结果
-            showCountryResults(country);
-        }
-
-        // 显示国家结果
-        function showCountryResults(country, showAll = false) {
-            const contentContainer = document.getElementById('optimizeResultsContent');
-            const results = optimizeResults[country] || [];
-
-            if (results.length === 0) {
-                contentContainer.innerHTML = '<div style="text-align: center; color: #6b7280;">暂无数据</div>';
-                return;
-            }
-
-            // 默认只显示前16个，可通过showAll参数显示全部
-            const displayCount = showAll ? results.length : Math.min(16, results.length);
-            const displayResults = results.slice(0, displayCount);
-
-            const html = displayResults.map(r => {
-                // 根据延迟时间确定颜色
-                let color = '#10b981'; // 100ms以下绿色
-                if (r.time > 100 && r.time <= 200) {
-                    color = '#f59e0b'; // 101~200ms黄色
-                } else if (r.time > 200) {
-                    color = '#ef4444'; // 201ms以上红色
-                }
-
-                return `<div class="optimize-result-item" style="color: ${color}; font-weight: bold;">${r.ip}:${r.port}#${r.remark} ${r.type} ${r.time}ms</div>`;
-            }).join('');
-
-            let finalHtml = html;
-
-            // 如果有更多结果且未展开，添加展开按钮
-            if (!showAll && results.length > 16) {
-                finalHtml += `<div style="margin-top: 15px; text-align: center;">
-                    <button type="button" class="btn btn-secondary" onclick="showCountryResults('${country}', true)" style="padding: 8px 16px; font-size: 12px;">
-                        📂 展开所有IP (${results.length} 个)
-                    </button>
-                </div>`;
-            }
-
-            contentContainer.innerHTML = finalHtml;
-        }
-
-        // 保存优选结果
-        async function saveOptimizeResults(mode) {
-            console.log(`[在线优选] 进度: 保存结果（模式=${mode}）`);
-
-            if (!currentSelectedCountry || !optimizeResults[currentSelectedCountry]) {
-                console.warn('[在线优选] 未选择国家或无结果数据');
-                showToast('请先选择一个国家', 'error');
-                return;
-            }
-
-            const allResults = optimizeResults[currentSelectedCountry];
-            // 只保存前16个
-            const resultsToSave = allResults.slice(0, 16);
-            // 修改格式：包含国家、类型和时间信息
-            const newContent = resultsToSave.map(r => `${r.ip}:${r.port}#${r.remark}|${r.type}|${r.time}ms`).join('\n');
-            console.log(`[在线优选] 成功: ${currentSelectedCountry} 保存 ${resultsToSave.length} 个 IP（总共 ${allResults.length} 个）`);
-
-            const textarea = document.getElementById('customIPs');
-
-            if (mode === 'override') {
-                textarea.value = newContent;
-                console.log('[在线优选] 成功: 覆盖保存完成');
-                showToast('已覆盖到自定义优选地址 (前16个)', 'success');
-            } else if (mode === 'append') {
-                const currentValue = textarea.value.trim();
-
-                // 追加保存时进行去重处理
-                if (currentValue) {
-                    // 将现有内容和新内容合并
-                    const existingLines = currentValue.split('\n').map(line => line.trim()).filter(line => line);
-                    const newLines = newContent.split('\n').map(line => line.trim()).filter(line => line);
-
-                    // 使用 Set 进行去重（基于完整行内容）
-                    const uniqueLinesSet = new Set(existingLines);
-                    let addedCount = 0;
-
-                    // 添加新行，同时统计实际添加的数量
-                    newLines.forEach(line => {
-                        if (!uniqueLinesSet.has(line)) {
-                            uniqueLinesSet.add(line);
-                            addedCount++;
-                        }
-                    });
-
-                    // 合并去重后的内容
-                    textarea.value = Array.from(uniqueLinesSet).join('\n');
-
-                    console.log(`[在线优选] 成功: 追加保存完成，新增=${addedCount} 个 IP，重复=${newLines.length - addedCount} 个`);
-                    if (addedCount === 0) {
-                        showToast('所有IP均已存在，未添加新内容', 'info');
-                    } else if (addedCount < newLines.length) {
-                        showToast(`已追加 ${addedCount} 个新IP，过滤 ${newLines.length - addedCount} 个重复项`, 'success');
-                    } else {
-                        showToast(`已追加 ${addedCount} 个IP到自定义优选地址`, 'success');
-                    }
-                } else {
-                    textarea.value = newContent;
-                    console.log('[在线优选] 成功: 追加保存完成（原内容为空）');
-                    showToast('已追加到自定义优选地址 (前16个)', 'success');
-                }
-            }
-
-            // 标记为已修改
-            markModified('sub');
-        }
-
         // 工具函数：数组随机打乱
         function shuffleArray(array) {
             const newArray = [...array];
@@ -11063,16 +8677,6 @@
             }
             return newArray;
         }
-
-        // 初始化
-        initializeTheme();
-        window.addEventListener('DOMContentLoaded', () => {
-            loadConfig();
-            initUserMode();
-            initLineEditor('customIPs');
-            // 独立预加载 SubConfig 数据，不阻塞主流程
-            loadSubConfigData().catch(err => console.error('SubConfig预加载失败:', err));
-        });
 
         // 启动倒计时更新
         setInterval(updateCountdown, 1000);
@@ -11850,12 +9454,7 @@
 
             closeGetMoreProxyIPModal();
 
-            // 如果勾选了自动获取，取消勾选
-            const autoProxyCheck = document.getElementById('autoProxy');
-            if (autoProxyCheck && autoProxyCheck.checked) {
-                autoProxyCheck.checked = false;
-                if (typeof toggleAutoProxy === 'function') toggleAutoProxy();
-            }
+          
 
             const config = proxyConfigs['proxyip'];
             if (config.abortController) {
