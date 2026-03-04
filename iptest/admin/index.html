@@ -5643,10 +5643,20 @@
     <button type="button"
             class="btn btn-primary"
             style="margin-top:10px; width:100%;"
-            onclick="verifyManualProxyIP()">
+            onclick="manualCheckProxyIP()">
         立即验证
     </button>
 </div>
+                	
+                	
+<div id="manualResultBox" style="
+    margin-top:10px;
+    padding:10px;
+    border-radius:6px;
+    background:#111;
+    color:#fff;
+    display:none;
+"></div>
                 	
                 	
                     <div class="form-group">
@@ -9376,6 +9386,101 @@ async function verifyManualProxyIP() {
             }
             updateProxyDisplay('proxyip');
         }
+
+
+async function manualCheckProxyIP() {
+	
+let input = document.getElementById('manualProxyIPInput').value.trim();
+if (!input) return;
+
+// 如果没有端口，默认443
+if (!input.includes(":")) {
+    input = input + ":443";
+}
+
+ //   const input = document.getElementById('manualProxyIPInput').value.trim();
+    if (!input) return;
+
+    const box = document.getElementById('manualResultBox');
+    box.style.display = 'block';
+    box.style.background = "#111";
+    box.innerHTML = "正在检测...";
+
+    try {
+
+        // 1️⃣ 反代检测
+        const resp = await fetch(
+            `https://check-proxyip-api.cmliussss.net/check?proxyip=${input}`
+        );
+        const data = await resp.json();
+
+        if (!data.success) {
+            box.style.background = "#400";
+            box.innerHTML = "❌ 反代不可用";
+            return;
+        }
+
+        const realIp = data.ip;
+        const country = data.loc || "-";
+        const isCF = data.colo ? "是" : "否";
+
+        // 2️⃣ ChatGPT 可达性
+        let chatgptStatus = "未知";
+        try {
+            const t1 = performance.now();
+            const r = await fetch("https://chat.openai.com/cdn-cgi/trace");
+            const t2 = performance.now();
+            chatgptStatus = r.ok ? `可访问 (${Math.round(t2-t1)}ms)` : "被限制";
+        } catch {
+            chatgptStatus = "不可访问";
+        }
+
+// X 检测
+let xStatus = "未知";
+try {
+    const t1 = performance.now();
+    const r = await fetch("https://x.com/cdn-cgi/trace");
+    const t2 = performance.now();
+    xStatus = r.ok ? `可访问 (${Math.round(t2-t1)}ms)` : "被限制";
+} catch {
+    xStatus = "不可访问";
+}
+
+// YouTube 检测
+let ytStatus = "未知";
+try {
+    const t1 = performance.now();
+    const r = await fetch("https://www.youtube.com/cdn-cgi/trace");
+    const t2 = performance.now();
+    ytStatus = r.ok ? `可访问 (${Math.round(t2-t1)}ms)` : "被限制";
+} catch {
+    ytStatus = "不可访问";
+}
+
+        box.style.background = "#063";
+        box.innerHTML = `
+            ✅ 反代可用<br><br>
+
+            🌍 国家: ${country}<br>
+            ☁ Cloudflare: ${isCF}<br>
+            ⏱ 延迟: ${data.responseTime} ms<br><br>
+
+            🔗 落地IP:<br>
+            <span style="color:#00ff88;font-size:16px">${realIp}</span>
+            <br><br>
+
+            🤖 ChatGPT: ${chatgptStatus}<br>
+            𝕏 X访问: ${xStatus}<br>
+            ▶ YouTube: ${ytStatus}
+        `;
+
+    } catch (e) {
+
+        box.style.background = "#400";
+        box.innerHTML = "检测失败";
+    }
+}
+
 
         function addSelectedProxyIP() {
             const select = document.getElementById('proxyIPProxySelect');
