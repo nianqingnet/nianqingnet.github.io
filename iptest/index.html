@@ -2716,263 +2716,6 @@
             color: var(--text-primary);
         }
 
-        /* 消息通知设置样式 */
-        .notification-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px !important;
-            padding: 2px 0;
-        }
-
-        .notification-row>label:first-child {
-            display: flex;
-            align-items: center;
-            gap: 70px;
-            margin: 0 !important;
-            white-space: nowrap;
-            flex: 1;
-        }
-
-        .notification-row>label:first-child .checkbox-group {
-            display: flex;
-            margin: 0;
-            white-space: nowrap;
-            gap: 6px;
-        }
-
-        .notification-controls {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-left: auto;
-            flex-shrink: 0;
-        }
-
-        .notification-controls .btn {
-            flex-shrink: 0;
-            font-size: 14px;
-        }
-
-        .btn-notification-config {
-            background: linear-gradient(135deg, #8b5cf6 0, #7c3aed 100%);
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
-        }
-
-        .btn-notification-config::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left .5s ease
-        }
-
-        .btn-notification-config:hover::before {
-            left: 100%
-        }
-
-        .btn-notification-config:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(139, 92, 246, 0.5);
-        }
-
-        .btn-notification-config:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 10px rgba(139, 92, 246, 0.3);
-        }
-
-        .btn-clear-config {
-            background: linear-gradient(135deg, #ef4444 0, #dc2626 100%);
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
-        }
-
-        .btn-clear-config::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left .5s ease
-        }
-
-        .btn-clear-config:hover::before {
-            left: 100%
-        }
-
-        .btn-clear-config:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(239, 68, 68, 0.5);
-        }
-
-        .btn-clear-config:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 10px rgba(239, 68, 68, 0.3);
-        }
-
-        html.dark-mode .btn-clear-config {
-            background: linear-gradient(135deg, #ef4444 0, #dc2626 100%);
-            color: #fff;
-        }
-
-        /* Telegram 按钮状态样式 */
-        .btn-clear-config.btn-configured {
-            background: linear-gradient(135deg, #ef4444 0, #dc2626 100%);
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
-            cursor: pointer;
-            opacity: 1;
-        }
-
-        .btn-clear-config.btn-not-configured {
-            background: linear-gradient(135deg, #d1d5db 0, #9ca3af 100%);
-            box-shadow: 0 4px 15px rgba(209, 213, 219, 0.3);
-            cursor: not-allowed;
-            opacity: 0.5;
-        }
-
-        .btn-clear-config.btn-not-configured:hover {
-            transform: none;
-            box-shadow: 0 4px 15px rgba(209, 213, 219, 0.3);
-        }
-
-        /* ==================== CF 使用统计模块样式 ==================== */
-
-        .cf-usage-module {
-            display: none;
-        }
-
-        .cf-usage-module[style*="display: block"] {
-            display: block !important;
-        }
-
-        .cf-usage-wrapper {
-            padding: 20px 0;
-        }
-
-        /* 统计卡片 */
-        .cf-stats-card {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 24px;
-            border-left: 4px solid #3b82f6;
-        }
-
-        .cf-stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 20px;
-        }
-
-        .cf-stat-item {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .cf-stat-label {
-            font-size: 12px;
-            color: #6b7280;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-        }
-
-        .cf-stat-value {
-            font-size: 24px;
-            font-weight: 700;
-        }
-
-        .cf-value-green {
-            color: #10b981;
-        }
-
-        .cf-value-blue {
-            color: #3b82f6;
-        }
-
-        .cf-value-orange {
-            color: #f59e0b;
-        }
-
-        .cf-progress-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .cf-progress-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        .cf-percentage-badge {
-            font-size: 13px;
-            font-weight: 600;
-            color: #f59e0b;
-            background: rgba(245, 158, 11, 0.1);
-            padding: 4px 12px;
-            border-radius: 20px;
-        }
-
-        .cf-progress-bar {
-            position: relative;
-            height: 28px;
-            background: linear-gradient(90deg, #9ca3af 0%, #6b7280 100%);
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
-        }
-
-        .cf-bar-segment {
-            position: absolute;
-            height: 100%;
-            border-radius: 0;
-            width: 0%;
-            transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-            display: flex;
-            align-items: center;
-            font-size: 11px;
-            font-weight: 700;
-            color: white;
-        }
-
-        .cf-bar-green {
-            background: linear-gradient(90deg, #10b981 0%, #059669 100%);
-            box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
-            justify-content: flex-end;
-            padding-right: 12px;
-            opacity: 0.9;
-        }
-
-        .cf-bar-blue {
-            background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
-            box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
-            justify-content: center;
-            opacity: 0.85;
-        }
-
-        .cf-percentage-center {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 700;
-            color: white;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-        }
-
         /* 信息提示框 */
         .cf-info-box {
             background: linear-gradient(135deg, rgba(249, 115, 22, 0.05) 0%, rgba(234, 179, 8, 0.05) 100%);
@@ -4318,19 +4061,6 @@
     <div class="page-wrapper">
         <div class="card-container">
 
-            <!-- Cloudflare Workers/Pages 使用统计模块 -->
-            <div class="module cf-usage-module collapsed" id="cfUsageModule">
-                
-
-                        <!-- 信息提示 -->
-                                                    
-                            <div class="cf-info-text">
-                                <span id="countdown" class="cf-highlight"></span>，
-                            </div>
-                    
-
-            </div>
-
             <!-- 网络信息模块 -->
             <div class="module advanced-module">
                 <div class="module-title" onclick="toggleNetworkModule(this)">
@@ -4363,7 +4093,7 @@
                                 <span class="status-indicator" id="status-overseas"></span>
                                 <div class="title-text">
                                     <div class="title-main">国外测试</div>
-                                    <div class="title-subtitle">漏网之鱼</div>
+                                    <div class="title-subtitle">外网访问</div>
                                 </div>
                             </div>
                             <div class="network-info-content">
@@ -5612,40 +5342,7 @@ async function verifyManualProxyIP() {
             closeProxyVerificationModal();
         }
 
-        // ECH 帮助模态框函数 影响测试IP信息显示
-        function showECHHelpModal() {
-            document.getElementById('echHelpModal').classList.add('show');
-
-            // 计算并设置内容高度以适应浏览器高度
-            setTimeout(() => {
-                calculateECHContentHeight();
-                // 窗口大小改变时重新计算
-                window.addEventListener('resize', calculateECHContentHeight);
-            }, 0);
-        }
-
-
-
         // ==================== 消息通知设置相关函数 ====================
-
-        // 更新倒计时 影响测试IP信息显示
-        function updateCountdown() {
-            const now = new Date();
-            const nextMidnightUTC = new Date(now);
-            nextMidnightUTC.setUTCHours(0, 0, 0, 0);
-            nextMidnightUTC.setUTCDate(nextMidnightUTC.getUTCDate() + 1); // 总是设置为明天的0点
-
-            const diff = nextMidnightUTC - now;
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-            document.getElementById('countdown').innerHTML = `<span class="countdown-text">距离重置还有</span> <span class="countdown-numbers">${hours.toString().padStart(2, '0')}</span><span class="countdown-text">小时</span><span class="countdown-numbers">${minutes.toString().padStart(2, '0')}</span><span class="countdown-text">分</span><span class="countdown-numbers">${seconds.toString().padStart(2, '0')}</span><span class="countdown-text">秒</span>`;
-        }
-
-        // ==================== 在线优选相关函数 ====================
-
-
 
         // 打开在线优选模态框
         async function openOnlineOptimizeModal() {
@@ -6003,9 +5700,6 @@ async function verifyManualProxyIP() {
             return newArray;
         }
 
-        // 启动倒计时更新
-        setInterval(updateCountdown, 1000);
-        updateCountdown(); // 立即执行一次
 
         // ==================== 网络信息相关函数 ====================
 
@@ -7623,8 +7317,6 @@ async function manualCheckProxyIP() {
             });
         }
 
-
-
 document.addEventListener("DOMContentLoaded", function() {
     // 1. 强制显示面板（防止 CSS 里的 display: none 影响）
     const panel = document.getElementById('getMoreProxyIPModal');
@@ -7646,5 +7338,4 @@ document.addEventListener("DOMContentLoaded", function() {
 
     </script>
 </body>
-
 </html>
