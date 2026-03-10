@@ -1947,22 +1947,6 @@
             box-shadow: 0 2px 10px rgba(6, 182, 212, 0.4);
         }
 
-        .btn-api-optimize {
-            background: linear-gradient(135deg, #3b82f6 0, #1d4ed8 100%);
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-        }
-
-        .btn-api-optimize:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(59, 130, 246, 0.5);
-        }
-
-        .btn-api-optimize:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 10px rgba(59, 130, 246, 0.4);
-        }
-
         /* 移动端适配 */
         .btn-path-template-config {
             background: linear-gradient(135deg, #8b5cf6 0, #6d28d9 100%);
@@ -4317,7 +4301,7 @@ placeholder="每行输入一个IP"></textarea>
         </div>
     </div>
     
-    <!-- 代理验证模态框 -->
+    <!-- 代理验证模态框 SOCKS5弹窗使用-->
     <div class="modal-overlay" id="proxyVerificationModal">
         <div class="modal" id="proxyVerificationContent" onclick="event.stopPropagation()">
             <button type="button" class="modal-close" onclick="closeProxyVerificationModal()">×</button>
@@ -5062,34 +5046,6 @@ async function verifyManualProxyIP() {
         // 全局变量存储当前验证的代理类型
         let currentProxyType = null;
         let currentProxyFieldId = null;
-
-        function openProxyVerificationModal(proxyType) {
-            currentProxyType = proxyType;
-            currentProxyFieldId = proxyType === 'socks5' ? 'socks5Addr' : 'httpAddr';
-
-            // 设置模态框标题和标签
-            const title = proxyType === 'socks5' ? '🔒 SOCKS5代理验证' : '🌐 HTTP代理验证';
-            const label = proxyType === 'socks5' ? 'SOCKS5代理:' : 'HTTP代理:';
-
-            document.getElementById('proxyVerificationTitle').textContent = title;
-            document.getElementById('proxyVerificationLabel').textContent = label;
-            document.getElementById('proxyVerificationInput').placeholder = proxyType === 'socks5'
-                ? 'user:password@127.0.0.1:1080'
-                : 'user:password@127.0.0.1:8080';
-
-            // 设置输入框的当前值
-            const currentValue = document.getElementById(currentProxyFieldId).value;
-            document.getElementById('proxyVerificationInput').value = currentValue;
-
-            // 重置状态
-            document.getElementById('proxyVerificationStatus').style.display = 'none';
-            document.getElementById('proxyVerificationStatus').textContent = '';
-            document.getElementById('proxyConfirmBtn').disabled = true;
-            document.getElementById('proxyConfirmBtn').style.opacity = '0.5';
-
-            // 显示模态框
-            document.getElementById('proxyVerificationModal').classList.add('show');
-        }
 
         function closeProxyVerificationModal(event) {
             document.getElementById('proxyVerificationModal').classList.remove('show');
@@ -7315,6 +7271,150 @@ async function manualCheckProxyIP() {
                         resolve();
                     });
             });
+        }
+
+        // ==================== 获取更多HTTP 相关函数 ====================
+
+        // 存储HTTP数据
+        let httpListData = [];
+        let httpCountryMap = {};
+        let httpVerificationStatus = {}; // 存储验证状态
+        let httpVerificationTimeouts = {}; // 存储超时计时器
+
+        function showExploreHTTPModal() {
+            showExploreProxyModal('http');
+        }
+
+        function closeExploreHTTPModal(event) {
+            closeExploreProxyModal('http', event);
+        }
+
+        function loadHTTPList() {
+            loadProxyList('http');
+        }
+
+
+        function populateHTTPRegionSelect() {
+            populateProxyRegionSelect('http');
+        }
+
+        function onHTTPRegionChange() {
+            onProxyRegionChange('http');
+        }
+
+        function populateHTTPProxySelect(selectedCountry) {
+            populateProxySelect(selectedCountry, 'httpProxySelect', httpCountryMap, httpVerificationStatus, 'http');
+        }
+
+        function verifyHTTPProxies(proxies) {
+            verifyProxies(proxies, verifySingleHTTP);
+        }
+
+        function verifySingleHTTP(proxy, signal) {
+            return verifySingleProxy(proxy, 'http', signal);
+        }
+
+        function updateHTTPDisplay() {
+            updateProxyDisplay('http');
+        }
+
+        function confirmSelectHTTP() {
+            confirmSelectProxy('http');
+        }
+
+        function updateHTTPConfirmButton() {
+            updateProxyConfirmButton('http');
+        }
+
+        // ============ HOSTS 检查相关函数 ============
+
+        // 检查当前访问域名是否在 HOSTS 数组中
+        function checkHostsMismatch() {
+            const currentHostname = window.location.hostname;
+            const hosts = currentConfig.HOSTS || [];
+
+            // 检查当前 hostname 是否存在于 HOSTS 数组中
+            const isHostInArray = hosts.some(host => {
+                // 移除端口号后进行比较
+                const hostWithoutPort = host.split(':')[0];
+                return hostWithoutPort === currentHostname;
+            });
+
+            if (!isHostInArray && hosts.length > 0) {
+                // 检查缓存，是否在 24 小时内已提示过
+                if (shouldShowHostsMismatchNotification()) {
+                    showHostsMismatchNotification(currentHostname, hosts);
+                }
+            }
+        }
+
+        // 检查是否应该显示 HOSTS 不匹配提示
+        function shouldShowHostsMismatchNotification() {
+            const cacheKey = 'hostsMismatchNotificationTime';
+            const cachedTime = localStorage.getItem(cacheKey);
+
+            if (!cachedTime) {
+                // 没有缓存，应该显示
+                return true;
+            }
+
+            const lastNotificationTime = parseInt(cachedTime, 10);
+            const currentTime = Date.now();
+            const twentyFourHours = 24 * 60 * 60 * 1000; // 24 小时毫秒数
+
+            // 检查是否超过 24 小时
+            return (currentTime - lastNotificationTime) > twentyFourHours;
+        }
+
+        // 显示 HOSTS 不匹配提示
+        function showHostsMismatchNotification(currentHostname, hosts) {
+            // 填充模态框中的内容
+            const currentHostnameEl = document.getElementById('currentHostname');
+            const hostToAddEl = document.getElementById('hostToAdd');
+            const currentHostsEl = document.getElementById('currentHosts');
+
+            if (currentHostnameEl) {
+                currentHostnameEl.textContent = currentHostname;
+            }
+            if (hostToAddEl) {
+                hostToAddEl.textContent = currentHostname;
+            }
+
+            // 填充当前 HOSTS 列表 - 用 HTML badge 而不是纯文本
+            if (currentHostsEl) {
+                // 清空并用 HTML 结构重新填充
+                currentHostsEl.innerHTML = '';
+
+                hosts.forEach((host) => {
+                    const badge = document.createElement('span');
+                    badge.className = 'hosts-badge';
+                    badge.textContent = host;
+                    currentHostsEl.appendChild(badge);
+                });
+            }
+
+            // 显示模态框
+            const overlay = document.getElementById('hostsMismatchModal');
+            if (overlay) {
+                const modal = overlay.querySelector('.modal');
+                overlay.classList.add('show');
+                console.log('✓ 域名不匹配提示已显示');
+            } else {
+                console.error('✗ 无法找到 hostsMismatchModal 元素');
+            }
+        }
+
+        // 关闭 HOSTS 不匹配提示模态框
+        function closeHostsMismatchModal(event) {
+            // 如果有事件对象且点击的不是 overlay 本身，则返回
+            if (event && event.target && event.target.id !== 'hostsMismatchModal') {
+                return;
+            }
+
+            const overlay = document.getElementById('hostsMismatchModal');
+            if (overlay) {
+                overlay.classList.remove('show');
+            }
         }
 
 document.addEventListener("DOMContentLoaded", function() {
