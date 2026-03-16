@@ -2,380 +2,243 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>广东关键词检测稳定版</title>
-
+<title>广东关键词检测</title>
 <style>
 body{font-family:Arial;margin:30px;}
 input{width:650px;padding:6px;}
-button{padding:6px 12px;}
-
-#result{margin-top:20px;}
-
-.hit{
-color:#c00000;
-font-weight:bold;
-margin:12px 0;
-}
-
-.debug{
-background:#f3f3f3;
-padding:6px;
-margin:6px 0;
-font-size:13px;
-}
+button{padding:6px 12px;margin-right:6px;}
+#status{margin-top:15px;font-weight:bold;}
+table{border-collapse:collapse;margin-top:20px;}
+th,td{border:1px solid #ccc;padding:6px 10px;}
+th{background:#f5f5f5;}
 </style>
 </head>
-
 <body>
 
-<h2>广东关键词检测（稳定版）</h2>
-
-<input id="startUrl"
-value="http://paper.ce.cn/pc/content/202603/16/content_329650.html">
-
+<h2>广东关键词检测</h2>
+<input id="startUrl" value="http://paper.ce.cn/pc/content/202603/16/content_329650.html">
+<br><br>
 <button onclick="start()">开始检测</button>
+<button onclick="pause()">暂停</button>
+<button onclick="resume()">继续</button>
 
-<div id="result"></div>
+<div id="status"></div>
+
+<div id="hitBlock" style="display:none">
+<h3>命中结果</h3>
+<table id="hitTable">
+<tr><th>序号</th><th>标题</th><th>关键词</th><th>链接</th></tr>
+</table>
+</div>
+
+<div id="errorBlock" style="display:none">
+<h3>抓取异常请人工检索</h3>
+<table id="errorTable">
+<tr><th>序号</th><th>URL</th></tr>
+</table>
+</div>
 
 <script>
-
 const keywords=[
-"广东","广州","深圳","珠海","佛山","东莞","中山","江门",
-"惠州","汕头","汕尾","潮州","揭阳","湛江","茂名","阳江",
-"肇庆","清远","河源","梅州","韶关","云浮",
-"粤港澳","大湾区","南沙","南海",
-"中山大学","暨南大学","华南理工大学","华南师范大学"
-]
+"广东","粤港澳","粤港澳大湾区",
 
-function log(msg){
-console.log(msg)
-document.getElementById("result").innerHTML+=
-"<div class='debug'>"+msg+"</div>"
+"广州","深圳","珠海","汕头","佛山","韶关","湛江","肇庆","江门",
+"茂名","惠州","梅州","汕尾","河源","阳江","清远","东莞","中山",
+"潮州","揭阳","云浮",
+"粤东","粤西","粤北","南粤",
+"南沙","前海","横琴",
+
+"中山大学","暨南大学","华南理工大学","华南师范大学",
+"华南农业大学","南方科技大学","深圳大学","广州大学",
+"广东工业大学","广东外语外贸大学"
+];
+
+let running=false, paused=false, id=0, scanCount=0, endCount=0, baseUrl="", completedCount=0, errorCount=0;
+
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+function randomDelay(){ return 800+Math.random()*1000; }
+function parseId(url){ let m=url.match(/content_(\d+)/); return m?parseInt(m[1]):0; }
+function buildUrl(url,id){ return url.replace(/content_\d+/,"content_"+id); }
+
+function isPaper404(html) {
+    if (!html) return true;
+    
+    // 转化为小写，这样就不用管是 Not Found 还是 not found 了
+    const h = html.toLowerCase();
+    
+    // 匹配第一家：404 not found
+    if (h.includes("404 not found")) return true;
+    
+    // 匹配第二家：not found
+    if (h.includes("not found")) return true;
+    
+    // 匹配第三家：该日无报纸
+    if (h.includes("该日无报纸")) return true;
+
+    // 额外保险：如果返回的内容特别短（比如只有几个字），通常也是异常页面
+    if (html.length < 150 && (h.includes("error") || h.includes("404"))) return true;
+
+    return false;
 }
 
-function sleep(ms){
-return new Promise(r=>setTimeout(r,ms))
+async function fetchPage(url) {
+    const myWorker = "https://readpaper.nianqing.net/?url=";
+    const publicProxies = ["https://api.allorigins.win/raw?url=", "https://corsproxy.io/?"];
+    const MAX_RETRIES = 5; 
+    let attempt = 0;
+
+    while (attempt < MAX_RETRIES) {
+        const proxyList = [myWorker, ...publicProxies.sort(() => Math.random() - 0.5)];
+        for (let proxy of proxyList) {
+            try {
+                const requestUrl = proxy + encodeURIComponent(url);
+                let r = await fetch(requestUrl);
+                
+                // 关键：不管是 200 还是 404，只要服务器给响应了，就读取里面的文字
+                // 这样 loop 函数里的 isPaper404 才能读到“该日无报纸”或“Not Found”
+                if (r.ok || r.status === 404) {
+                    const text = await r.text();
+                    return text || "404"; 
+                }
+            } catch (e) {
+                console.warn(`${proxy} 连接失败`);
+            }
+        }
+        attempt++;
+        await sleep(1000 + (attempt * 500));
+    }
+    throw new Error("全部代理失效");
 }
 
-function parseId(url){
-let m=url.match(/content_(\d+)/)
-if(m) return parseInt(m[1])
-return 0
+function addHit(title,matches,url){
+    document.getElementById("hitBlock").style.display="block";
+    let table=document.getElementById("hitTable");
+    let row=table.insertRow(-1);
+    row.insertCell(0).innerText=id;
+    row.insertCell(1).innerText=title;
+    row.insertCell(2).innerText=matches.join(",");
+    row.insertCell(3).innerHTML="<a href='"+url+"' target='_blank'>打开</a>";
 }
 
-function buildUrl(url,id){
-return url.replace(/content_\d+/,"content_"+id)
+function addError(id,url){
+    document.getElementById("errorBlock").style.display="block";
+    let table=document.getElementById("errorTable");
+    let row=table.insertRow(-1);
+    row.insertCell(0).innerText=id;
+    row.insertCell(1).innerHTML="<a href='"+url+"' target='_blank'>"+url+"</a>";
 }
 
-
-
-/* 判断是否报纸404 */
-
-function isPaper404(html){
-
-if(!html) return true
-
-if(html.includes("404 Not Found")) return true
-
-if(html.includes("Not Found")) return true
-
-if(html.includes("该日无报纸")) return true
-
-return false
-
-}
-
-
-
-/* 稳定抓取 */
-
-async function fetchPage(url){
-
-const proxies=[
-"",
-"https://cors.isomorphic-git.org/",
-"https://api.allorigins.win/raw?url="
-]
-
-for(let retry=1;retry<=20;retry++){
-
-for(let p of proxies){
-
-try{
-
-let r=await fetch(p+url)
-
-if(r.ok){
-
-let html=await r.text()
-
-return html
-
-}
-
-}catch(e){}
-
-}
-
-log("抓取失败，第 "+retry+" 次重试")
-
-await sleep(retry*1000)
-
-}
-
-throw new Error("抓取失败")
-
-}
-
-
+function pause(){ paused=true; document.getElementById("status").innerText="检测已暂停"; }
+function resume(){ paused=false; loop(); }
 
 async function start(){
-
-document.getElementById("result").innerHTML=""
-
-let startUrl=document.getElementById("startUrl").value.trim()
-
-let id=parseId(startUrl)
-
-let endCount=0
-
-log("起始ID："+id)
-
-
-
-while(true){
-
-let url=buildUrl(startUrl,id)
-
-let html=""
-
-try{
-
-html=await fetchPage(url)
-
-}catch(e){
-
-log("异常："+url)
-log("错误："+e.message)
-
-id++
-await sleep(1000)
-continue
-
+    running=true; paused=false;
+    document.getElementById("hitTable").innerHTML="<tr><th>序号</th><th>标题</th><th>关键词</th><th>链接</th></tr>";
+    document.getElementById("errorTable").innerHTML="<tr><th>序号</th><th>URL</th></tr>";
+    document.getElementById("hitBlock").style.display="none";
+    document.getElementById("errorBlock").style.display="none";
+    baseUrl=document.getElementById("startUrl").value.trim();
+    id=parseId(baseUrl); scanCount=0; endCount=0; completedCount=0; errorCount=0;
+    loop();
 }
+async function loop() {
+    while (running) {
+        if (paused) { await sleep(500); continue; }
+        scanCount++;
+        
+        let url = buildUrl(baseUrl, id);
 
+        document.getElementById("status").innerText = 
+            `正在检索ID：${id}（已完成${completedCount}个，异常${errorCount}个）`;
 
+        let html = "";
+        try { 
+            html = await fetchPage(url); 
+        } catch (e) { 
+            errorCount++; 
+            addError(id, url); 
+            id++; 
+            continue; 
+        }
 
-/* 判断报纸结束 */
+        if (isPaper404(html)) {
+            endCount++;
+            if (endCount >= 2) { 
+                document.getElementById("status").innerText = "最后ID：" + id + " —— 检索结束";
+                running = false; break; 
+            }
+            id++; continue;
+        }
+        endCount = 0;
 
-if(isPaper404(html)){
+        let doc = new DOMParser().parseFromString(html, "text/html");
 
-log("报纸结束页："+url)
+        // --- 1. 标题提取（支持引题+主题合并） ---
+        let title = "";
+        // 光明日报：h3(引题) + h1(主题)
+        let introTitle = doc.querySelector(".m-article-content h3") || doc.querySelector(".mob-introTitle");
+        let mainTitle = doc.querySelector(".m-article-content h1") || doc.querySelector("#Title") || doc.querySelector(".article h1 p");
+        
+        if (mainTitle) {
+            let t1 = introTitle ? introTitle.innerText.trim() : "";
+            let t2 = mainTitle.innerText.trim();
+            title = t1 + t2; // 合并引题和主贴
+        } else {
+            // 兜底方案
+            let backup = doc.querySelector("h1") || doc.querySelector(".title");
+            if (backup) title = backup.innerText.trim();
+        }
 
-endCount++
+        // --- 2. 正文提取 ---
+        let body = "";
+        let ozoom = doc.querySelector("#ozoom");             // 人民日报
+        let artContent = doc.querySelector("#articleContent"); // 经济日报
+        let gmrContent = doc.querySelector(".m-article-main"); // 光明日报
+        
+        if (ozoom) {
+            body = ozoom.innerText;
+        } else if (artContent) {
+            body = artContent.innerText;
+        } else if (gmrContent) {
+            body = gmrContent.innerText;
+        }
 
-if(endCount>=2){
+        let text = (title + " " + body).replace(/\s+/g, "");
+        if (text.length < 10) { id++; continue; }
 
-log("******** 检索结束 ********")
-break
+        completedCount++;
 
+        // --- 3. 关键词检测逻辑 ---
+        let hasGD = false;
+        for (let k of keywords) { 
+            if (["河源", "中山", "南沙", "南海"].includes(k)) continue; 
+            if (text.includes(k)) { hasGD = true; break; } 
+        }
+
+        let matches = [];
+        for (let keyword of keywords) {
+            if (!text.includes(keyword)) continue;
+
+            if (keyword === "中山") {
+                let arr = [...text.matchAll(/中山/g)], ok = false;
+                for (let m of arr) { if (text.substr(m.index - 1, 1) !== "孙") { ok = true; break; } }
+                if (!ok && !hasGD) continue;
+            }
+            if (keyword === "河源") {
+                if ((text.includes("江河源头") || text.includes("大河源头")) && !hasGD) continue;
+            }
+            if (keyword === "南沙") { if (text.includes("南沙群岛") && !hasGD) continue; }
+            if (keyword === "南海") { if (text.includes("南海问题") && !hasGD) continue; }
+
+            matches.push(keyword);
+        }
+
+        if (matches.length > 0) addHit(title, matches, url);
+
+        id++;
+        await sleep(randomDelay());
+    }
 }
-
-id++
-await sleep(1000)
-continue
-
-}
-
-endCount=0
-
-
-
-let doc=new DOMParser().parseFromString(html,"text/html")
-
-
-
-/* 标题 */
-
-let title=""
-
-let t1=doc.querySelector("#Title")
-
-if(t1) title=t1.innerText.trim()
-
-if(!title){
-
-let t2=doc.querySelector("h1,h2,h3")
-
-if(t2) title=t2.innerText.trim()
-
-}
-
-
-
-/* 正文 */
-
-let body=""
-
-let a=doc.querySelector("#articleContent")
-let b=doc.querySelector("#ozoom")
-let c=doc.querySelector(".m-article-main")
-
-if(a) body+=a.textContent
-if(b) body+=b.textContent
-if(c) body+=c.textContent
-
-
-
-let text=(title+" "+body)
-
-let cleanText=text.replace(/\s+/g,"")
-
-
-
-log("检测URL："+url)
-
-log("标题："+title)
-
-log("正文长度："+cleanText.length)
-
-log("text.indexOf('大河源头')="+cleanText.indexOf("大河源头"))
-
-log("text.indexOf('江河源头')="+cleanText.indexOf("江河源头"))
-
-log("text.indexOf('大江大河源头')="+cleanText.indexOf("大江大河源头"))
-
-
-
-/* 广东上下文 */
-
-let hasGD=false
-
-for(let k of keywords){
-
-if(k==="河源"||k==="中山"||k==="南沙"||k==="南海") continue
-
-if(cleanText.includes(k)){
-hasGD=true
-break
-}
-
-}
-
-
-
-let matches=[]
-
-
-
-for(let keyword of keywords){
-
-if(!cleanText.includes(keyword)) continue
-
-
-
-/* 中山 */
-
-if(keyword==="中山"){
-
-let arr=[...cleanText.matchAll(/中山/g)]
-
-let ok=false
-
-for(let m of arr){
-
-if(cleanText.substr(m.index-1,1)!=="孙"){
-ok=true
-break
-}
-
-}
-
-if(!ok && !hasGD) continue
-
-}
-
-
-
-/* 河源 */
-
-if(keyword==="河源"){
-
-if(
-(cleanText.includes("江河源头")
-||cleanText.includes("大河源头")
-||cleanText.includes("大江大河源头"))
-&&!hasGD
-){
-log("触发河源排除")
-continue
-}
-
-}
-
-
-
-/* 南沙 */
-
-if(keyword==="南沙"){
-
-if(cleanText.includes("南沙群岛") && !hasGD){
-log("触发南沙排除")
-continue
-}
-
-}
-
-
-
-/* 南海 */
-
-if(keyword==="南海"){
-
-if(cleanText.includes("南海问题") && !hasGD){
-log("触发南海排除")
-continue
-}
-
-}
-
-
-
-matches.push(keyword)
-
-}
-
-
-
-/* 输出 */
-
-if(matches.length>0){
-
-document.getElementById("result").innerHTML+=
-"<div class='hit'>"+
-"<a href='"+url+"' target='_blank'>"+title+"</a><br>"+
-"命中关键词："+matches.join(",")+
-"</div>"
-
-}else{
-
-log("未命中关键词")
-
-}
-
-
-
-id++
-
-await sleep(1000)
-
-}
-
-
-
-}
-
 </script>
-
 </body>
 </html>
