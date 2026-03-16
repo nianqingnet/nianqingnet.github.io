@@ -2,332 +2,380 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>纸媒广东内容检索</title>
+<title>广东关键词检测稳定版</title>
 
 <style>
+body{font-family:Arial;margin:30px;}
+input{width:650px;padding:6px;}
+button{padding:6px 12px;}
 
-body{
-font-family:Arial;
-padding:20px;
-}
-
-textarea{
-width:100%;
-height:60px;
-}
-
-button{
-padding:8px 20px;
-margin-top:10px;
-}
-
-#log{
-margin-top:20px;
-}
-
-.result{
-border-bottom:1px solid #ddd;
-padding:10px 0;
-}
+#result{margin-top:20px;}
 
 .hit{
-color:red;
+color:#c00000;
 font-weight:bold;
+margin:12px 0;
 }
 
+.debug{
+background:#f3f3f3;
+padding:6px;
+margin:6px 0;
+font-size:13px;
+}
 </style>
-
 </head>
 
 <body>
 
-<h2>纸媒涉及广东内容检索页</h2>
+<h2>广东关键词检测（稳定版）</h2>
 
-起始文章URL：
-
-<textarea id="startUrl"></textarea>
-
-<br>
+<input id="startUrl"
+value="http://paper.ce.cn/pc/content/202603/16/content_329650.html">
 
 <button onclick="start()">开始检测</button>
 
-<div id="log"></div>
+<div id="result"></div>
 
 <script>
 
 const keywords=[
-
-"广东","粤港澳","粤港澳大湾区",
-
-"广州","深圳","珠海","汕头","佛山","韶关","湛江","肇庆","江门",
-"茂名","惠州","梅州","汕尾","河源","阳江","清远","东莞","中山",
-"潮州","揭阳","云浮",
-"粤东","粤西","粤北","南粤",
-"南沙","前海","横琴",
-
-"中山大学","暨南大学","华南理工大学","华南师范大学",
-"华南农业大学","南方科技大学","深圳大学","广州大学",
-"广东工业大学","广东外语外贸大学"
-
+"广东","广州","深圳","珠海","佛山","东莞","中山","江门",
+"惠州","汕头","汕尾","潮州","揭阳","湛江","茂名","阳江",
+"肇庆","清远","河源","梅州","韶关","云浮",
+"粤港澳","大湾区","南沙","南海",
+"中山大学","暨南大学","华南理工大学","华南师范大学"
 ]
 
-let stopFail=6
-let failCount=0
-
-function log(t){
-
-document.getElementById("log").innerHTML+=t
-
+function log(msg){
+console.log(msg)
+document.getElementById("result").innerHTML+=
+"<div class='debug'>"+msg+"</div>"
 }
 
-function parseUrl(url){
-
-let m=url.match(/content_(\d+)\.html/)
-
-return{
-
-base:url.replace(/content_\d+\.html/,"content_"),
-
-id:parseInt(m[1])
-
+function sleep(ms){
+return new Promise(r=>setTimeout(r,ms))
 }
 
+function parseId(url){
+let m=url.match(/content_(\d+)/)
+if(m) return parseInt(m[1])
+return 0
 }
 
-function hasGDContext(text){
-
-return keywords.some(k=>text.includes(k))
-
+function buildUrl(url,id){
+return url.replace(/content_\d+/,"content_"+id)
 }
 
-function keywordValid(keyword,text){
 
-let hasGD=hasGDContext(text)
 
-if(keyword==="中山"){
+/* 判断是否报纸404 */
 
-if(!text.includes("中山")) return false
+function isPaper404(html){
 
-if(text.includes("孙中山") && !hasGD) return false
+if(!html) return true
 
-return true
+if(html.includes("404 Not Found")) return true
 
-}
+if(html.includes("Not Found")) return true
 
-if(keyword==="河源"){
-
-if(!text.includes("河源")) return false
-
-if(
-
-(text.includes("江河源头")
-||text.includes("大河源头"))
-
-&&!hasGD
-
-){
+if(html.includes("该日无报纸")) return true
 
 return false
 
 }
 
-return true
 
-}
 
-if(keyword==="南沙"){
+/* 稳定抓取 */
 
-if(!text.includes("南沙")) return false
+async function fetchPage(url){
 
-if(text.includes("南沙群岛") && !hasGD){
+const proxies=[
+"",
+"https://cors.isomorphic-git.org/",
+"https://api.allorigins.win/raw?url="
+]
 
-return false
+for(let retry=1;retry<=20;retry++){
 
-}
-
-return true
-
-}
-
-if(keyword==="南海"){
-
-if(!text.includes("南海")) return false
-
-if(
-
-(text.includes("南海问题")
-||text.includes("南海局势")
-||text.includes("南海仲裁")
-||text.includes("南海争议"))
-
-&&!hasGD
-
-){
-
-return false
-
-}
-
-return true
-
-}
-
-return text.includes(keyword)
-
-}
-
-function match(text){
-
-let found=[]
-
-keywords.forEach(k=>{
-
-if(keywordValid(k,text)){
-
-found.push(k)
-
-}
-
-})
-
-return [...new Set(found)]
-
-}
-
-async function fetchArticle(url){
+for(let p of proxies){
 
 try{
 
-let r=await fetch("https://api.allorigins.win/raw?url="+encodeURIComponent(url))
+let r=await fetch(p+url)
 
-if(!r.ok) return null
+if(r.ok){
 
 let html=await r.text()
 
 return html
 
-}catch(e){
+}
 
-return null
+}catch(e){}
 
 }
 
-}
+log("抓取失败，第 "+retry+" 次重试")
 
-function parseArticle(html){
-
-let doc=new DOMParser().parseFromString(html,"text/html")
-
-let h1=doc.querySelector("h1")?.innerText||""
-
-let h2=doc.querySelector("h2")?.innerText||""
-
-let h3=doc.querySelector("h3")?.innerText||""
-
-let body=""
-
-let a=doc.querySelector("#articleContent")
-
-let b=doc.querySelector("#ozoom")
-
-let c=doc.querySelector(".m-article-main")
-
-if(a) body+=a.innerText
-
-if(b) body+=" "+b.innerText
-
-if(c) body+=" "+c.innerText
-
-if(!body){
-
-body=doc.body.innerText
+await sleep(retry*1000)
 
 }
 
-let text=(h1+h2+h3+body).replace(/\s+/g,"")
-
-return{
-
-title:h1||h2||"(无标题)",
-
-text:text
+throw new Error("抓取失败")
 
 }
 
-}
+
 
 async function start(){
 
-document.getElementById("log").innerHTML=""
+document.getElementById("result").innerHTML=""
 
 let startUrl=document.getElementById("startUrl").value.trim()
 
-let p=parseUrl(startUrl)
+let id=parseId(startUrl)
 
-let base=p.base
+let endCount=0
 
-let id=p.id
+log("起始ID："+id)
 
-log("开始扫描ID："+id+"<br><br>")
+
 
 while(true){
 
-let url=base+id+".html"
+let url=buildUrl(startUrl,id)
 
-let html=await fetchArticle(url)
+let html=""
 
-if(!html){
+try{
 
-failCount++
+html=await fetchPage(url)
 
-if(failCount>=stopFail){
+}catch(e){
 
-log("<br>连续"+stopFail+"篇失败，停止<br>")
+log("异常："+url)
+log("错误："+e.message)
 
+id++
+await sleep(1000)
+continue
+
+}
+
+
+
+/* 判断报纸结束 */
+
+if(isPaper404(html)){
+
+log("报纸结束页："+url)
+
+endCount++
+
+if(endCount>=2){
+
+log("******** 检索结束 ********")
 break
 
 }
 
 id++
-
+await sleep(1000)
 continue
 
 }
 
-failCount=0
+endCount=0
 
-let art=parseArticle(html)
 
-let hits=match(art.text)
 
-if(hits.length){
+let doc=new DOMParser().parseFromString(html,"text/html")
 
-log(
 
-`<div class="result">
 
-<span class="hit">命中关键词：</span>${hits.join(", ")}
+/* 标题 */
 
-<br>
+let title=""
 
-<a href="${url}" target="_blank">${art.title}</a>
+let t1=doc.querySelector("#Title")
 
-</div>`
+if(t1) title=t1.innerText.trim()
 
-)
+if(!title){
+
+let t2=doc.querySelector("h1,h2,h3")
+
+if(t2) title=t2.innerText.trim()
 
 }
+
+
+
+/* 正文 */
+
+let body=""
+
+let a=doc.querySelector("#articleContent")
+let b=doc.querySelector("#ozoom")
+let c=doc.querySelector(".m-article-main")
+
+if(a) body+=a.textContent
+if(b) body+=b.textContent
+if(c) body+=c.textContent
+
+
+
+let text=(title+" "+body)
+
+let cleanText=text.replace(/\s+/g,"")
+
+
+
+log("检测URL："+url)
+
+log("标题："+title)
+
+log("正文长度："+cleanText.length)
+
+log("text.indexOf('大河源头')="+cleanText.indexOf("大河源头"))
+
+log("text.indexOf('江河源头')="+cleanText.indexOf("江河源头"))
+
+log("text.indexOf('大江大河源头')="+cleanText.indexOf("大江大河源头"))
+
+
+
+/* 广东上下文 */
+
+let hasGD=false
+
+for(let k of keywords){
+
+if(k==="河源"||k==="中山"||k==="南沙"||k==="南海") continue
+
+if(cleanText.includes(k)){
+hasGD=true
+break
+}
+
+}
+
+
+
+let matches=[]
+
+
+
+for(let keyword of keywords){
+
+if(!cleanText.includes(keyword)) continue
+
+
+
+/* 中山 */
+
+if(keyword==="中山"){
+
+let arr=[...cleanText.matchAll(/中山/g)]
+
+let ok=false
+
+for(let m of arr){
+
+if(cleanText.substr(m.index-1,1)!=="孙"){
+ok=true
+break
+}
+
+}
+
+if(!ok && !hasGD) continue
+
+}
+
+
+
+/* 河源 */
+
+if(keyword==="河源"){
+
+if(
+(cleanText.includes("江河源头")
+||cleanText.includes("大河源头")
+||cleanText.includes("大江大河源头"))
+&&!hasGD
+){
+log("触发河源排除")
+continue
+}
+
+}
+
+
+
+/* 南沙 */
+
+if(keyword==="南沙"){
+
+if(cleanText.includes("南沙群岛") && !hasGD){
+log("触发南沙排除")
+continue
+}
+
+}
+
+
+
+/* 南海 */
+
+if(keyword==="南海"){
+
+if(cleanText.includes("南海问题") && !hasGD){
+log("触发南海排除")
+continue
+}
+
+}
+
+
+
+matches.push(keyword)
+
+}
+
+
+
+/* 输出 */
+
+if(matches.length>0){
+
+document.getElementById("result").innerHTML+=
+"<div class='hit'>"+
+"<a href='"+url+"' target='_blank'>"+title+"</a><br>"+
+"命中关键词："+matches.join(",")+
+"</div>"
+
+}else{
+
+log("未命中关键词")
+
+}
+
+
 
 id++
 
+await sleep(1000)
+
 }
 
-log("<br>检测结束，最后扫描ID："+(id-1))
+
 
 }
 
 </script>
 
 </body>
-
 </html>
