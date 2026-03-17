@@ -15,7 +15,7 @@ th{background:#f5f5f5;}
 </head>
 <body>
 
-<h2>纸媒涉及广东内容检索</h2>
+<h2>纸媒涉及广东内容检索页</h2>
 <input type="text" id="urlInput" placeholder="（人日/经济）输入content_xxx.html首篇稿件链接，（光明）请输入node_01.html头版链接">
 <br>
 <button onclick="start()">开始检测</button>
@@ -24,11 +24,24 @@ th{background:#f5f5f5;}
 
 <div id="status"></div>
 
-<div id="hitBlock" style="display:none">
-<h3>命中结果</h3>
-<table id="hitTable">
-<tr><th>序号</th><th>标题</th><th>关键词</th><th>链接</th></tr>
-</table>
+<div id="hitBlock" style="display:none; margin-top: 20px; border-top: 2px solid #ccc; padding-top: 20px;">
+    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+        <h2 style="margin: 0;">命中结果</h2>
+        <button onclick="copyToClipboard()" style="margin-left: 20px; background: #4CAF50; color: white; border: none; padding: 6px 15px; cursor: pointer; border-radius: 4px;">一键复制简报</button>
+        <button onclick="exportToTxt()" style="margin-left: 10px; background: #2196F3; color: white; border: none; padding: 6px 15px; cursor: pointer; border-radius: 4px;">导出 TXT</button>
+    </div>
+    
+    <table id="hitTable" border="1" border-collapse: collapse;">
+        <thead>
+            <tr style="background: #f2f2f2;">
+                <th>ID (版面)</th>
+                <th>文章标题 (字数)</th>
+                <th>命中关键词(频次)</th>
+                <th style="width: 60px;">链接</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
 </div>
 
 <div id="errorBlock" style="display:none">
@@ -117,17 +130,23 @@ async function fetchPage(url) {
     }
     throw new Error("全部代理失效");
 }
-function addHit(title, matches, url) {
+function addHit(title, matches, url, version) {
     document.getElementById("hitBlock").style.display = "block";
     let table = document.getElementById("hitTable");
     let row = table.insertRow(-1);
     
-    // 从 URL 提取数字，如果提取不到则显示当前完成数
+    // 0. ID 和 版面 合并显示
+    // 格式：123456 (01)
     let displayId = url.match(/content_(\d+)/) ? url.match(/content_(\d+)/)[1] : completedCount;
-    
-    row.insertCell(0).innerText = displayId;
+    row.insertCell(0).innerText = `${displayId} (${version})`;
+
+    // 1. 标题（内嵌字数）
     row.insertCell(1).innerText = title;
-    row.insertCell(2).innerText = matches.join(",");
+
+    // 2. 关键词（带频次）
+    row.insertCell(2).innerText = matches.join(", ");
+
+    // 3. 链接
     row.insertCell(3).innerHTML = "<a href='" + url + "' target='_blank'>打开</a>";
 }
 
@@ -380,76 +399,131 @@ function incrementContentId(url) {
     });
 }
 
-// 这个就是“处理工人”，专门负责解析一篇具体的文章内容
+// 专门负责解析一篇具体的文章内容
 function processArticle(html, url) {
     let doc = new DOMParser().parseFromString(html, "text/html");
 
-   // --- 1. 标题提取
+    // --- 1. 标题提取 ---
     let title = "";
-    // 增加了一些新的选择器（如 .introtitle），兼容性更好
-    let introTitle = doc.querySelector(".m-article-content h3") || doc.querySelector(".mob-introTitle") || doc.querySelector(".introtitle");
-    let mainTitle = doc.querySelector(".m-article-content h1") || doc.querySelector("#Title") || doc.querySelector(".article h1 p") || doc.querySelector(".title");
-    
-    if (mainTitle) {
-        let t1 = introTitle ? introTitle.innerText.trim() : "";
-        let t2 = mainTitle.innerText.trim();
-        
-        // 修改点：如果引题存在，中间加个“ | ”分隔，不仅美观也能防止两个标题粘在一起
-        title = t1 ? t1 + " | " + t2 : t2; 
+    let pre = doc.querySelector("#PreTitle, .introtitle, .article h3, .m-article-content h3, .mob-introTitle");
+    let main = doc.querySelector("#Title, .article h1, .m-article-content h1, .art-title, .title, .mob-title");
+    let sub = doc.querySelector("#SubTitle, .subtitle, .article h2, .m-article-content h2, .subTitle, .mob-subtitle");
+
+    if (main) {
+        let t1 = pre ? pre.innerText.trim() : ""; 
+        let t2 = main.innerText.trim();           
+        let t3 = sub ? sub.innerText.trim() : ""; 
+        title = [t1, t2, t3].filter(Boolean).join(" | ");
     } else {
-        // 最后的兜底方案
-        let backup = doc.querySelector("h1") || doc.querySelector(".title") || doc.querySelector(".content_title");
+        let backup = doc.querySelector("h1, h2, .title, .mob-title");
         title = backup ? backup.innerText.trim() : "无标题";
     }
 
-    // --- 2. 正文提取（直接搬你原来的逻辑） ---
+    // --- 2. 正文提取 ---
     let body = "";
-    let ozoom = doc.querySelector("#ozoom");           // 人民日报
-    let artContent = doc.querySelector("#articleContent"); // 经济日报
-    let gmrContent = doc.querySelector(".m-article-main"); // 光明日报
+    let ozoom = doc.querySelector("#ozoom");
+    let artContent = doc.querySelector("#articleContent");
+    let gmrContent = doc.querySelector(".m-article-main");
     
-    if (ozoom) {
-        body = ozoom.innerText;
-    } else if (artContent) {
-        body = artContent.innerText;
-    } else if (gmrContent) {
-        body = gmrContent.innerText;
-    }
+    if (ozoom) { body = ozoom.innerText; } 
+    else if (artContent) { body = artContent.innerText; } 
+    else if (gmrContent) { body = gmrContent.innerText; }
 
     let text = (title + " " + body).replace(/\s+/g, "");
-    if (text.length < 10) return; // 如果太短就不处理了
+    if (text.length < 15) return; 
 
     completedCount++;
 
-    // --- 3. 关键词检测逻辑（直接搬你原来的逻辑） ---
-    let hasGD = false;
-    for (let k of keywords) { 
-        if (["河源", "中山", "南沙", "南海"].includes(k)) continue; 
-        if (text.includes(k)) { hasGD = true; break; } 
-    }
-
+    // --- 3. 关键词检测逻辑 ---
     let matches = [];
     for (let keyword of keywords) {
         if (!text.includes(keyword)) continue;
 
+        let tempText = text; 
         if (keyword === "中山") {
-            let arr = [...text.matchAll(/中山/g)], ok = false;
-            for (let m of arr) { if (text.substr(m.index - 1, 1) !== "孙") { ok = true; break; } }
-            if (!ok) continue;
+            tempText = tempText.replace(/孙中山/g, "###"); 
+        } 
+        else if (keyword === "河源") {
+            tempText = tempText.replace(/江河源头/g, "###").replace(/大河源头/g, "###");
         }
-        if (keyword === "河源") {
-            if (text.includes("江河源头") || text.includes("大河源头"))  continue;
+        else if (keyword === "南沙") {
+            tempText = tempText.replace(/南沙群岛/g, "###");
         }
-        if (keyword === "南沙") { if (text.includes("南沙群岛") ) continue; }
-        if (keyword === "南海") { if (text.includes("南海问题") ) continue; }
+        else if (keyword === "南海") {
+            tempText = tempText.replace(/南海问题/g, "###").replace(/南海仲裁/g, "###").replace(/南海观音/g, "###");
+        }
 
-        matches.push(keyword);
+        // 擦除干扰后检查余量
+        if (tempText.includes(keyword)) {
+            let count = (tempText.split(keyword).length - 1);
+            if (count > 0) {
+                matches.push(`${keyword}(${count}次)`);
+            }
+        }
+    } // 关键词循环结束
+
+    // --- 4. 提取版面并输出结果 ---
+    let versionMatch = html.match(/(\d{2}版)|第\s*(\d{2})\s*版/);
+    let versionInfo = versionMatch ? versionMatch[0].replace(/[第版]/g, "").trim() : "未知";
+    
+    if (matches.length > 0) {
+        addHit(title + " [" + text.length + "字]", matches, url, versionInfo);
     }
+}
+// 格式化获取结果文本（提取公用逻辑）
+function getResultText() {
+    let table = document.getElementById("hitTable");
+    let rows = table.getElementsByTagName("tr");
+    let content = "";
+    let count = 0;
 
-    // 命中结果，存入页面
-    if (matches.length > 0) addHit(title, matches, url);
+    for (let i = 1; i < rows.length; i++) {
+        let cells = rows[i].getElementsByTagName("td");
+        if (cells.length > 0) {
+            count++;
+            let idAndVersion = cells[0].innerText; // ID(版面)
+            let title = cells[1].innerText;        // 标题[字数]
+            let keywords = cells[2].innerText;     // 关键词(频次)
+            let url = cells[3].querySelector("a").href; // 链接
+            
+            // 拼接成你要求的格式
+            content += `${count}. ${title} (命中：${keywords})\n${url}\n\n`;
+        }
+    }
+    return content;
 }
 
+// 1. 导出 TXT 文件
+function exportToTxt() {
+    let content = getResultText();
+    if (!content) return alert("没有结果可导出");
+    
+    let blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    let link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `检索简报_${new Date().toLocaleDateString()}.txt`;
+    link.click();
+}
+
+// 2. 一键复制到剪贴板
+function copyToClipboard() {
+    let content = getResultText();
+    if (!content) return alert("没有结果可复制");
+
+    navigator.clipboard.writeText(content).then(() => {
+        alert("已成功复制到剪贴板，可直接粘贴！");
+    }).catch(err => {
+        console.error('复制失败: ', err);
+        // 兜底方案
+        let textArea = document.createElement("textarea");
+        textArea.value = content;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        alert("已通过兼容模式复制到剪贴板");
+    });
+}
 </script>
 </body>
 </html>
