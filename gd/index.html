@@ -16,8 +16,8 @@ th{background:#f5f5f5;}
 <body>
 
 <h2>广东关键词检测</h2>
-<input id="startUrl" value="http://paper.ce.cn/pc/content/202603/16/content_329650.html">
-<br><br>
+<input type="text" id="urlInput" placeholder="（人日/经济）输入content_xxx.html首篇稿件链接，（光明）请输入node_01.html头版链接">
+<br>
 <button onclick="start()">开始检测</button>
 <button onclick="pause()">暂停</button>
 <button onclick="resume()">继续</button>
@@ -61,39 +61,47 @@ function parseId(url){ let m=url.match(/content_(\d+)/); return m?parseInt(m[1])
 function buildUrl(url,id){ return url.replace(/content_\d+/,"content_"+id); }
 
 function isPaper404(html) {
-    if (!html) return true;
+    // 1. 基础判定：没内容或者是显式的 404 字符串
+    if (!html || html.trim() === "404") return true;
     
-    // 转化为小写，这样就不用管是 Not Found 还是 not found 了
+    // 2. 统一转为小写，处理大小写不一致问题
     const h = html.toLowerCase();
     
-    // 匹配第一家：404 not found
-    if (h.includes("404 not found")) return true;
-    
-    // 匹配第二家：not found
-    if (h.includes("not found")) return true;
-    
-    // 匹配第三家：该日无报纸
-    if (h.includes("该日无报纸")) return true;
+    // 3. 定义三大报常见的错误关键词（合并两者的词库）
+    const errorKeywords = [
+        "not found", 
+        "该日无报纸", 
+        "404 not found", 
+        "页面不存在", 
+    ];
 
-    // 额外保险：如果返回的内容特别短（比如只有几个字），通常也是异常页面
-    if (html.length < 150 && (h.includes("error") || h.includes("404"))) return true;
+    // 4. 逻辑 A：关键词匹配
+    const hasErrorKeyword = errorKeywords.some(kw => h.includes(kw));
+    if (hasErrorKeyword) return true;
 
-    return false;
+    // 5. 逻辑 B：异常短页面判定（保险措施）
+    // 如果页面字数极少且含有 404 字样，基本就是报社的自定义错误页
+    if (html.length < 200 && h.includes("404")) return true;
+
+    // 6. 只有以上都不满足，才认为是正常的报纸页面
+    return false; 
 }
 
-async function fetchPage(url) {
+// --- 配置区 ---
     const myWorker = "https://readpaper.nianqing.net/?url=";
     const publicProxies = ["https://api.allorigins.win/raw?url=", "https://corsproxy.io/?"];
+
+async function fetchPage(url) {
     const MAX_RETRIES = 5; 
     let attempt = 0;
 
     while (attempt < MAX_RETRIES) {
+        // 直接使用最顶层定义的 myWorker 和 publicProxies
         const proxyList = [myWorker, ...publicProxies.sort(() => Math.random() - 0.5)];
         for (let proxy of proxyList) {
             try {
                 const requestUrl = proxy + encodeURIComponent(url);
                 let r = await fetch(requestUrl);
-                
                 // 关键：不管是 200 还是 404，只要服务器给响应了，就读取里面的文字
                 // 这样 loop 函数里的 isPaper404 才能读到“该日无报纸”或“Not Found”
                 if (r.ok || r.status === 404) {
@@ -109,15 +117,18 @@ async function fetchPage(url) {
     }
     throw new Error("全部代理失效");
 }
-
-function addHit(title,matches,url){
-    document.getElementById("hitBlock").style.display="block";
-    let table=document.getElementById("hitTable");
-    let row=table.insertRow(-1);
-    row.insertCell(0).innerText=id;
-    row.insertCell(1).innerText=title;
-    row.insertCell(2).innerText=matches.join(",");
-    row.insertCell(3).innerHTML="<a href='"+url+"' target='_blank'>打开</a>";
+function addHit(title, matches, url) {
+    document.getElementById("hitBlock").style.display = "block";
+    let table = document.getElementById("hitTable");
+    let row = table.insertRow(-1);
+    
+    // 从 URL 提取数字，如果提取不到则显示当前完成数
+    let displayId = url.match(/content_(\d+)/) ? url.match(/content_(\d+)/)[1] : completedCount;
+    
+    row.insertCell(0).innerText = displayId;
+    row.insertCell(1).innerText = title;
+    row.insertCell(2).innerText = matches.join(",");
+    row.insertCell(3).innerHTML = "<a href='" + url + "' target='_blank'>打开</a>";
 }
 
 function addError(id,url){
@@ -131,16 +142,6 @@ function addError(id,url){
 function pause(){ paused=true; document.getElementById("status").innerText="检测已暂停"; }
 function resume(){ paused=false; loop(); }
 
-async function start(){
-    running=true; paused=false;
-    document.getElementById("hitTable").innerHTML="<tr><th>序号</th><th>标题</th><th>关键词</th><th>链接</th></tr>";
-    document.getElementById("errorTable").innerHTML="<tr><th>序号</th><th>URL</th></tr>";
-    document.getElementById("hitBlock").style.display="none";
-    document.getElementById("errorBlock").style.display="none";
-    baseUrl=document.getElementById("startUrl").value.trim();
-    id=parseId(baseUrl); scanCount=0; endCount=0; completedCount=0; errorCount=0;
-    loop();
-}
 async function loop() {
     while (running) {
         if (paused) { await sleep(500); continue; }
@@ -239,6 +240,212 @@ async function loop() {
         await sleep(randomDelay());
     }
 }
+
+// --- 核心函数：目录扫描适配器 ---
+async function scanFullDay(startNodeUrl) {
+    let allTaskLinks = [];
+    // 自动识别报社前缀，例如：https://paper.people.com.cn/rmrb/pc/layout/202603/13/
+    const baseUrl = startNodeUrl.substring(0, startNodeUrl.lastIndexOf('/') + 1);
+    
+    // 扫描第 1 到 25 版
+    for (let i = 1; i <= 25; i++) {
+        let nodeName = `node_${i.toString().padStart(2, '0')}.html`;
+        let currentLayoutUrl = baseUrl + nodeName;
+        
+        document.getElementById("status").innerText = `正在扫描目录：第 ${i} 版...`;
+        
+        try {
+            let html = await fetchPage(currentLayoutUrl);
+            if (isPaper404(html)) break; // 判定版面结束
+
+            let doc = new DOMParser().parseFromString(html, "text/html");
+            // 兼容三家报纸的选择器：.news-list (人民), .newsList (经济), .m-list-wrap (光明)
+            let links = doc.querySelectorAll(".news-list a, .newsList a, .m-list-wrap a, map area");
+            
+            links.forEach(el => {
+                let href = el.getAttribute('href');
+                if (href && href.includes('content_')) {
+                    let absoluteUrl = new URL(href, currentLayoutUrl).href;
+                    if (!allTaskLinks.includes(absoluteUrl)) {
+                        allTaskLinks.push(absoluteUrl);
+                    }
+                }
+            });
+        } catch (e) { break; }
+    }
+    return allTaskLinks;
+}
+
+// --- 核心入口：开始检索 ---
+async function start() {
+    running = true;
+    paused = false;
+    
+    // 获取输入框元素
+    const inputEl = document.getElementById("urlInput");
+    
+    // 防错处理：如果找不到输入框，先报错提示
+    if (!inputEl) {
+        console.error("错误：找不到 ID 为 'urlInput' 的输入框，请检查 HTML 标签！");
+        return;
+    }
+
+    let inputUrl = inputEl.value.trim();
+    if (!inputUrl) {
+        alert("请输入起始链接");
+        return;
+    }
+    // 判断模式
+    if (inputUrl.includes("node_")) {
+        // 【模式 A：目录索引模式】
+        let taskList = await scanFullDay(inputUrl);
+        if (taskList.length === 0) {
+            alert("未能识别目录或该日无报纸");
+            return;
+        }
+        await executeTaskQueue(taskList);
+    } else if (inputUrl.includes("content_")) {
+        // 【模式 B：ID 递增模式】
+        await executeIncremental(inputUrl);
+    } else {
+        alert("请输入正确的 node_xx.html 或 content_xxx.html 链接");
+    }
+}
+
+// --- 执行器 A：按清单爬取 ---
+async function executeTaskQueue(list) {
+    let count = 0;
+    for (let url of list) {
+        if (!running) break;
+        while (paused) await sleep(500);
+
+        document.getElementById("status").innerText = `进度：${count + 1} / ${list.length}`;
+        try {
+            let html = await fetchPage(url);
+            processArticle(html, url); // 这里放你原有的解析和关键词比对逻辑
+            count++;
+        } catch (e) { console.error("抓取失败", url); }
+        
+        await sleep(randomDelay());
+    }
+    document.getElementById("status").innerText = "目录检索模式：全部完成！";
+}
+
+// --- 执行器 B：按 ID 递增爬取 ---
+async function executeIncremental(startUrl) {
+    let currentUrl = startUrl;
+    let endCount = 0;
+    let foundCount = 0; // 记录成功抓到了多少篇
+
+    while (running) {
+        if (!running) break;
+        while (paused) await sleep(500);
+        
+        // 从 URL 中提取 ID 部分，用于在界面展示当前的进度
+        const currentIdMatch = currentUrl.match(/content_(\d+)/);
+        const currentId = currentIdMatch ? currentIdMatch[1] : "...";
+        document.getElementById("status").innerText = `递增模式：正在检测 ID ${currentId} ...`;
+
+        try {
+            let html = await fetchPage(currentUrl);
+            
+            // 判定是否是 404（建议你检查 isPaper404 是否对三家报社都生效）
+            if (isPaper404(html)) {
+                endCount++;
+                console.log(`ID ${currentId} 为空，连续空号数: ${endCount}`);
+                if (endCount >= 2) break; // 连续两个 404 结束
+            } else {
+                endCount = 0;
+                foundCount++;
+                processArticle(html, currentUrl); // 执行你原来的解析逻辑
+            }
+            
+            // ID 递增逻辑（调用我们之前写的辅助函数）
+            currentUrl = incrementContentId(currentUrl);
+            
+        } catch (e) { 
+            console.error("递增爬取异常:", e);
+            break; 
+        }
+        
+        await sleep(randomDelay());
+    }
+    document.getElementById("status").innerText = `递增检索结束！共分析文章 ${foundCount} 篇`;
+}
+
+// 辅助函数，否则 currentUrl 不会变
+function incrementContentId(url) {
+    return url.replace(/content_(\d+)/, (match, id) => {
+        return "content_" + (parseInt(id) + 1);
+    });
+}
+
+// 这个就是“处理工人”，专门负责解析一篇具体的文章内容
+function processArticle(html, url) {
+    let doc = new DOMParser().parseFromString(html, "text/html");
+
+    // --- 1. 标题提取（直接搬你原来的逻辑） ---
+    let title = "";
+    let introTitle = doc.querySelector(".m-article-content h3") || doc.querySelector(".mob-introTitle");
+    let mainTitle = doc.querySelector(".m-article-content h1") || doc.querySelector("#Title") || doc.querySelector(".article h1 p");
+    
+    if (mainTitle) {
+        let t1 = introTitle ? introTitle.innerText.trim() : "";
+        let t2 = mainTitle.innerText.trim();
+        title = t1 + t2; 
+    } else {
+        let backup = doc.querySelector("h1") || doc.querySelector(".title");
+        if (backup) title = backup.innerText.trim();
+    }
+
+    // --- 2. 正文提取（直接搬你原来的逻辑） ---
+    let body = "";
+    let ozoom = doc.querySelector("#ozoom");           // 人民日报
+    let artContent = doc.querySelector("#articleContent"); // 经济日报
+    let gmrContent = doc.querySelector(".m-article-main"); // 光明日报
+    
+    if (ozoom) {
+        body = ozoom.innerText;
+    } else if (artContent) {
+        body = artContent.innerText;
+    } else if (gmrContent) {
+        body = gmrContent.innerText;
+    }
+
+    let text = (title + " " + body).replace(/\s+/g, "");
+    if (text.length < 10) return; // 如果太短就不处理了
+
+    completedCount++;
+
+    // --- 3. 关键词检测逻辑（直接搬你原来的逻辑） ---
+    let hasGD = false;
+    for (let k of keywords) { 
+        if (["河源", "中山", "南沙", "南海"].includes(k)) continue; 
+        if (text.includes(k)) { hasGD = true; break; } 
+    }
+
+    let matches = [];
+    for (let keyword of keywords) {
+        if (!text.includes(keyword)) continue;
+
+        if (keyword === "中山") {
+            let arr = [...text.matchAll(/中山/g)], ok = false;
+            for (let m of arr) { if (text.substr(m.index - 1, 1) !== "孙") { ok = true; break; } }
+            if (!ok) continue;
+        }
+        if (keyword === "河源") {
+            if (text.includes("江河源头") || text.includes("大河源头"))  continue;
+        }
+        if (keyword === "南沙") { if (text.includes("南沙群岛") ) continue; }
+        if (keyword === "南海") { if (text.includes("南海问题") ) continue; }
+
+        matches.push(keyword);
+    }
+
+    // 命中结果，存入页面
+    if (matches.length > 0) addHit(title, matches, url);
+}
+
 </script>
 </body>
 </html>
