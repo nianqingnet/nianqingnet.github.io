@@ -148,15 +148,35 @@ function resume() { paused = false; } // 这里不需要重新调loop，loop内�
 async function scanFullDay(startNodeUrl) {
     let allTaskLinks = [];
     const baseUrl = startNodeUrl.substring(0, startNodeUrl.lastIndexOf('/') + 1);
+    let emptyPageCount = 0; // 记录连续空版的次数
+
     for (let i = 1; i <= 25; i++) {
-        let nodeName = `node_${i.toString().padStart(2, '0')}.html`;
+        if (!running) break;
+        
+        let nodeName = "node_" + i.toString().padStart(2, '0') + ".html";
         let currentLayoutUrl = baseUrl + nodeName;
-        document.getElementById("status").innerText = `正在扫描目录：第 ${i} 版...`;
+        
+        document.getElementById("status").innerText = "正在扫描目录：第 " + i + " 版...";
+        
         try {
             let html = await fetchPage(currentLayoutUrl);
-            if (isPaper404(html)) break;
+            
+            // 判定为 404 或空版面
+            if (isPaper404(html) || html.length < 500) {
+                emptyPageCount++;
+                if (emptyPageCount >= 2) {
+                    console.log("检测到连续 2 个空版，判断本日报纸结束。");
+                    break; // 立即中止循环，进入处理模块
+                }
+                continue;
+            }
+
+            // 如果扫到内容，重置空版计数
+            emptyPageCount = 0; 
+            
             let doc = new DOMParser().parseFromString(html, "text/html");
             let links = doc.querySelectorAll(".news-list a, .newsList a, .m-list-wrap a, map area");
+            
             links.forEach(el => {
                 let href = el.getAttribute('href');
                 if (href && href.includes('content_')) {
@@ -164,25 +184,45 @@ async function scanFullDay(startNodeUrl) {
                     if (!allTaskLinks.includes(absoluteUrl)) allTaskLinks.push(absoluteUrl);
                 }
             });
-        } catch (e) { break; }
+            await sleep(300); // 扫描间隔
+        } catch (e) {
+            emptyPageCount++;
+            if (emptyPageCount >= 2) break;
+        }
     }
     return allTaskLinks;
 }
 
 async function start() {
-    running = true; paused = false; completedCount = 0; errorCount = 0;
+    // 1. 强制重置所有全局变量
+    running = true; 
+    paused = false;
+    completedCount = 0; 
+    errorCount = 0;
+    
+    // 2. 彻底清空 UI 界面
+    document.getElementById("status").innerText = "准备开始...";
+    const hitTableBody = document.querySelector("#hitTable tbody");
+    if (hitTableBody) hitTableBody.innerHTML = ""; // 清空表格内容
+    document.getElementById("hitBlock").style.display = "none";
+    document.getElementById("errorBlock").style.display = "none";
+
+    // 3. 获取输入
     const inputEl = document.getElementById("urlInput");
     let inputUrl = inputEl.value.trim();
     if (!inputUrl) { alert("请输入起始链接"); return; }
 
+    // 4. 执行逻辑
     if (inputUrl.includes("node_")) {
         let taskList = await scanFullDay(inputUrl);
-        if (taskList.length === 0) { alert("未能识别目录或该日无报纸"); return; }
-        await executeTaskQueue(taskList);
+        // 只要扫到了稿件，就去处理，不弹窗报错
+        if (taskList.length > 0) {
+            await executeTaskQueue(taskList);
+        } else {
+            document.getElementById("status").innerText = "未发现有效稿件，请检查链接。";
+        }
     } else if (inputUrl.includes("content_")) {
         await executeIncremental(inputUrl);
-    } else {
-        alert("请输入正确的 node_xx.html 或 content_xxx.html 链接");
     }
 }
 
@@ -307,21 +347,21 @@ function processArticle(html, url) {
 
     // --- 4. 版面识别  ---
     let versionInfo = "未知";
-    
-    // 1. 原有的正则匹配 (人民日报等)
+    // 提前获取所有可能的坑位
     let versionMatch = html.match(/(\d{2}版)|第\s*(\d{2})\s*版/);
-    // 2. 原有的经济日报 ID 匹配
     let padLayout = doc.querySelector("#nowLayout");
-    // 3. 新增：光明日报专用的容器匹配
     let gmrLayout = doc.querySelector(".m-info-left span");
 
-    if (versionMatch) {
-        versionInfo = versionMatch[0].replace(/[第版]/g, "").trim();
-    } else if (padLayout) {
-        versionInfo = padLayout.innerText.trim();// 对应移动版源码中的 <p id="nowLayout">
-    } else if (gmrLayout) {
-        // 针对光明日报 PC 版：提取其中的数字，如 "13版:" -> "13"
+    // 修改判断顺序：先看精准容器，再看模糊正则
+    if (padLayout && padLayout.innerText.trim() !== "") {
+        // 经济日报/移动端
+        versionInfo = padLayout.innerText.replace(/[^0-9]/g, "").trim();
+    } else if (gmrLayout && gmrLayout.innerText.trim() !== "") {
+        // 光明日报 PC 版
         versionInfo = gmrLayout.innerText.replace(/[^0-9]/g, "").trim();
+    } else if (versionMatch) {
+        // 人民日报或兜底
+        versionInfo = versionMatch[0].replace(/[第版]/g, "").trim();
     }
     
     // --- 5. 输出结果 ---
