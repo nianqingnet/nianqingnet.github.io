@@ -229,52 +229,79 @@ function incrementContentId(url) {
 
 function processArticle(html, url) {
     let doc = new DOMParser().parseFromString(html, "text/html");
+
+    // --- 1. 标题提取 (支持经济日报移动端 #intro-title, #main-title, #sub-title) ---
     let title = "";
-    let pre = doc.querySelector("#PreTitle, .introtitle, .article h3, .m-article-content h3, .mob-introTitle");
-    let main = doc.querySelector("#Title, .article h1, .m-article-content h1, .art-title, .title, .mob-title");
-    let sub = doc.querySelector("#SubTitle, .subtitle, .article h2, .m-article-content h2, .subTitle, .mob-subtitle");
+    let pre = doc.querySelector("#PreTitle, .introtitle, .article h3, .m-article-content h3, .mob-introTitle, #intro-title");
+    let main = doc.querySelector("#Title, .article h1, .m-article-content h1, .art-title, .title, .mob-title, #main-title");
+    let sub = doc.querySelector("#SubTitle, .subtitle, .article h2, .m-article-content h2, .subTitle, .mob-subtitle, #sub-title");
 
     if (main) {
         let t1 = pre ? pre.innerText.trim() : ""; 
         let t2 = main.innerText.trim();           
         let t3 = sub ? sub.innerText.trim() : ""; 
+        // 过滤掉空字符串并用分隔符连接
         title = [t1, t2, t3].filter(Boolean).join(" | ");
     } else {
+        // 兜底方案
         let backup = doc.querySelector("h1, h2, .title, .mob-title");
         title = backup ? backup.innerText.trim() : "无标题";
     }
 
+    // --- 2. 正文提取 ---
     let body = "";
-    let ozoom = doc.querySelector("#ozoom");
-    let artContent = doc.querySelector("#articleContent");
-    let gmrContent = doc.querySelector(".m-article-main");
-    if (ozoom) body = ozoom.innerText;
-    else if (artContent) body = artContent.innerText;
-    else if (gmrContent) body = gmrContent.innerText;
+    let ozoom = doc.querySelector("#ozoom");               // 人民日报
+    let artContent = doc.querySelector("#articleContent"); // 经济日报PC
+    let gmrContent = doc.querySelector(".m-article-main"); // 光明日报
+    let padContent = doc.querySelector("founder-content"); // 经济日报移动版(PAD)
+    
+    if (ozoom) { body = ozoom.innerText; } 
+    else if (artContent) { body = artContent.innerText; } 
+    else if (gmrContent) { body = gmrContent.innerText; }
+    else if (padContent) { body = padContent.innerText; }
 
+    // 清理多余空格，进行长度校验
     let text = (title + " " + body).replace(/\s+/g, "");
     if (text.length < 15) return; 
 
+    // --- 3. 关键词检测 (保留你原有的过滤逻辑) ---
     let matches = [];
     for (let keyword of keywords) {
         if (!text.includes(keyword)) continue;
+
         let tempText = text; 
-        if (keyword === "中山") tempText = tempText.replace(/孙中山/g, "###"); 
-        else if (keyword === "河源") tempText = tempText.replace(/江河源头/g, "###").replace(/大河源头/g, "###");
-        else if (keyword === "南沙") tempText = tempText.replace(/南沙群岛/g, "###");
-        else if (keyword === "南海") tempText = tempText.replace(/南海问题/g, "###").replace(/南海仲裁/g, "###").replace(/南海观音/g, "###");
+        if (keyword === "中山") {
+            tempText = tempText.replace(/孙中山/g, "###"); 
+        } else if (keyword === "河源") {
+            tempText = tempText.replace(/江河源头/g, "###").replace(/大河源头/g, "###");
+        } else if (keyword === "南沙") {
+            tempText = tempText.replace(/南沙群岛/g, "###");
+        } else if (keyword === "南海") {
+            tempText = tempText.replace(/南海问题/g, "###").replace(/南海仲裁/g, "###").replace(/南海观音/g, "###");
+        }
 
         if (tempText.includes(keyword)) {
             let count = (tempText.split(keyword).length - 1);
-            if (count > 0) matches.push(`${keyword}(${count}次)`);
+            if (count > 0) {
+                matches.push(`${keyword}(${count}次)`);
+            }
         }
     }
 
+    // --- 4. 版面识别 ---
+    let versionInfo = "未知";
     let versionMatch = html.match(/(\d{2}版)|第\s*(\d{2})\s*版/);
-    let versionInfo = versionMatch ? versionMatch[0].replace(/[第版]/g, "").trim() : "未知";
+    let padLayout = doc.querySelector("#nowLayout");
+
+    if (versionMatch) {
+        versionInfo = versionMatch[0].replace(/[第版]/g, "").trim();
+    } else if (padLayout) {
+        versionInfo = padLayout.innerText.trim(); // 对应移动版源码中的 <p id="nowLayout">
+    }
     
+    // --- 5. 输出结果 ---
     if (matches.length > 0) {
-        completedCount++; // 只有命中才增加完成数（用于简报计数）
+        completedCount++;// 只有命中才增加完成数（用于简报计数）
         addHit(title + " [" + text.length + "字]", matches, url, versionInfo);
     }
 }
