@@ -305,15 +305,23 @@ function processArticle(html, url) {
         }
     }
 
-    // --- 4. 版面识别 ---
+    // --- 4. 版面识别  ---
     let versionInfo = "未知";
+    
+    // 1. 原有的正则匹配 (人民日报等)
     let versionMatch = html.match(/(\d{2}版)|第\s*(\d{2})\s*版/);
+    // 2. 原有的经济日报 ID 匹配
     let padLayout = doc.querySelector("#nowLayout");
+    // 3. 新增：光明日报专用的容器匹配
+    let gmrLayout = doc.querySelector(".m-info-left span");
 
     if (versionMatch) {
         versionInfo = versionMatch[0].replace(/[第版]/g, "").trim();
     } else if (padLayout) {
-        versionInfo = padLayout.innerText.trim(); // 对应移动版源码中的 <p id="nowLayout">
+        versionInfo = padLayout.innerText.trim();// 对应移动版源码中的 <p id="nowLayout">
+    } else if (gmrLayout) {
+        // 针对光明日报 PC 版：提取其中的数字，如 "13版:" -> "13"
+        versionInfo = gmrLayout.innerText.replace(/[^0-9]/g, "").trim();
     }
     
     // --- 5. 输出结果 ---
