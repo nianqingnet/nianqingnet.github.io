@@ -38,6 +38,7 @@ th{background:#f5f5f5;}
                 <th>文章标题 (字数)</th>
                 <th>命中关键词(频次)</th>
                 <th style="width: 60px;">链接</th>
+                <th style="width: 80px;">高亮预览</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -110,11 +111,27 @@ function addHit(title, matches, url, version) {
     document.getElementById("hitBlock").style.display = "block";
     let table = document.getElementById("hitTable");
     let row = table.insertRow(-1);
+    
+    // 0. ID 和 版面
     let displayId = url.match(/content_(\d+)/) ? url.match(/content_(\d+)/)[1] : "N/A";
-    row.insertCell(0).innerText = `${displayId} (${version || '未知'})`;
+    row.insertCell(0).innerText = displayId + " (" + (version || '未知') + ")";
+
+    // 1. 标题
     row.insertCell(1).innerText = title;
+
+    // 2. 关键词
     row.insertCell(2).innerText = matches.join(", ");
-    row.insertCell(3).innerHTML = "<a href='" + url + "' target='_blank'>打开</a>";
+
+    // 3. 原文链接 (保留原有功能)
+    row.insertCell(3).innerHTML = "<a href='" + url + "' target='_blank'>打开原文</a>";
+
+    // 4. 【新增】套红预览按钮
+    let btnCell = row.insertCell(4);
+    let btn = document.createElement("button");
+    btn.innerText = "套红预览";
+    btn.style = "padding:2px 8px; cursor:pointer; background:#FFEB3B; border:1px solid #cebe25; border-radius:3px; font-size:12px;";
+    btn.onclick = function() { openRedContent(url, title); };
+    btnCell.appendChild(btn);
 }
 
 function addError(id, url) {
@@ -333,6 +350,57 @@ function copyToClipboard() {
     let content = getResultText();
     if (!content) return alert("没有结果可复制");
     navigator.clipboard.writeText(content).then(() => alert("已成功复制！")).catch(err => alert("复制失败"));
+}
+
+async function openRedContent(url, title) {
+    const statusBox = document.getElementById("status");
+    const oldStatus = statusBox.innerText;
+    statusBox.innerText = "正在抓取并处理套红页面...";
+
+    try {
+        let html = await fetchPage(url);
+        if (!html || html.length < 100) throw new Error("内容获取失败");
+
+        // 1. 移除所有 <script> 标签，防止弹窗逻辑执行
+        // 2. 移除所有 <iframe> 标签，防止广告或嵌套
+        let cleanHtml = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+                            .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "");
+
+        // 3. 注入套红样式
+        const redStyle = `
+            <style>
+                .hit-highlight { color: red !important; font-weight: bold !important; background: yellow !important; padding: 0 2px; }
+                /* 补一点基础样式防止由于删了脚本导致排版太乱 */
+                body { font-family: "Microsoft YaHei", sans-serif; line-height: 1.6; padding: 20px; max-width: 900px; margin: auto; }
+            </style>`;
+
+        // 4. 关键词套红替换
+        keywords.forEach(kw => {
+            const reg = new RegExp(kw, 'g');
+            cleanHtml = cleanHtml.replace(reg, '<span class="hit-highlight">' + kw + '</span>');
+        });
+
+        // 5. 补全图片路径
+        const urlObj = new URL(url);
+        const baseUrl = urlObj.origin + urlObj.pathname.substring(0, urlObj.pathname.lastIndexOf('/') + 1);
+        cleanHtml = cleanHtml.replace(/src="(?!(http|https|\/\/))/gi, 'src="' + baseUrl);
+
+        // 6. 组合并展示
+        cleanHtml = "<html><head><meta charset='utf-8'><title>【套红检测】" + title + "</title>" + redStyle + "</head><body>" + cleanHtml + "</body></html>";
+
+        const newWin = window.open("", "_blank");
+        if (!newWin) {
+            alert("请允许浏览器弹窗！");
+            return;
+        }
+        newWin.document.write(cleanHtml);
+        newWin.document.close();
+
+    } catch (e) {
+        alert("预览失败：" + e.message);
+    } finally {
+        statusBox.innerText = oldStatus;
+    }
 }
 </script>
 </body>
