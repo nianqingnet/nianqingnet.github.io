@@ -148,48 +148,78 @@ function resume() { paused = false; } // 这里不需要重新调loop，loop内�
 async function scanFullDay(startNodeUrl) {
     let allTaskLinks = [];
     const baseUrl = startNodeUrl.substring(0, startNodeUrl.lastIndexOf('/') + 1);
-    let emptyPageCount = 0; // 记录连续空版的次数
+    let emptyPageCount = 0; // 沿用你的变量名
 
-    for (let i = 1; i <= 25; i++) {
-        if (!running) break;
-        
-        let nodeName = "node_" + i.toString().padStart(2, '0') + ".html";
-        let currentLayoutUrl = baseUrl + nodeName;
-        
-        document.getElementById("status").innerText = "正在扫描目录：第 " + i + " 版...";
-        
-        try {
-            let html = await fetchPage(currentLayoutUrl);
-            
-            // 判定为 404 或空版面
-            if (isPaper404(html) || html.length < 500) {
-                emptyPageCount++;
-                if (emptyPageCount >= 2) {
-                    console.log("检测到连续 2 个空版，判断本日报纸结束。");
-                    break; // 立即中止循环，进入处理模块
-                }
-                continue;
-            }
+    document.getElementById("status").innerText = "正在分析报纸目录结构...";
 
-            // 如果扫到内容，重置空版计数
-            emptyPageCount = 0; 
-            
-            let doc = new DOMParser().parseFromString(html, "text/html");
-            let links = doc.querySelectorAll(".news-list a, .newsList a, .m-list-wrap a, map area");
-            
+    try {
+        // 1. 先抓取初始页面分析结构
+        let html = await fetchPage(startNodeUrl);
+        let doc = new DOMParser().parseFromString(html, "text/html");
+        
+        // --- 优先检查：是否存在全量目录 (经济日报PAD版特征) ---
+        let catalog = doc.getElementById("catalog");
+        if (catalog) {
+            let links = catalog.querySelectorAll("a");
             links.forEach(el => {
                 let href = el.getAttribute('href');
                 if (href && href.includes('content_')) {
-                    let absoluteUrl = new URL(href, currentLayoutUrl).href;
+                    let absoluteUrl = new URL(href, startNodeUrl).href;
                     if (!allTaskLinks.includes(absoluteUrl)) allTaskLinks.push(absoluteUrl);
                 }
             });
-            await sleep(300); // 扫描间隔
-        } catch (e) {
-            emptyPageCount++;
-            if (emptyPageCount >= 2) break;
+            if (allTaskLinks.length > 0) {
+                document.getElementById("status").innerText = `检测到全量目录，共 ${allTaskLinks.length} 篇文章`;
+                return allTaskLinks; // 抓完直接返回，不走下面的循环
+            }
         }
+
+        // --- 保底方案：你原本的逐版循环逻辑 (适配人民、光明等) ---
+        for (let i = 1; i <= 25; i++) {
+            if (!running) break;
+            
+            let nodeName = "node_" + i.toString().padStart(2, '0') + ".html";
+            let currentLayoutUrl = baseUrl + nodeName;
+            
+            document.getElementById("status").innerText = "正在扫描目录：第 " + i + " 版...";
+            
+            try {
+                // 如果是第1版，直接复用刚才抓过的 html，省一次请求
+                let pageHtml = (i === 1) ? html : await fetchPage(currentLayoutUrl);
+                
+                // 判定为 404 或空版面
+                if (isPaper404(pageHtml) || pageHtml.length < 500) {
+                    emptyPageCount++;
+                    if (emptyPageCount >= 2) {
+                        console.log("检测到连续 2 个空版，判断本日报纸结束。");
+                        break; 
+                    }
+                    continue;
+                }
+
+                emptyPageCount = 0; // 重置
+                
+                let pageDoc = new DOMParser().parseFromString(pageHtml, "text/html");
+                // 增加 .list_t a 这种常见于其他报纸的选择器
+                let links = pageDoc.querySelectorAll(".news-list a, .newsList a, .m-list-wrap a, map area, .list_t a");
+                
+                links.forEach(el => {
+                    let href = el.getAttribute('href');
+                    if (href && href.includes('content_')) {
+                        let absoluteUrl = new URL(href, currentLayoutUrl).href;
+                        if (!allTaskLinks.includes(absoluteUrl)) allTaskLinks.push(absoluteUrl);
+                    }
+                });
+                await sleep(300); 
+            } catch (e) {
+                emptyPageCount++;
+                if (emptyPageCount >= 2) break;
+            }
+        }
+    } catch (e) {
+        console.error("解析初始页面失败:", e);
     }
+    
     return allTaskLinks;
 }
 
