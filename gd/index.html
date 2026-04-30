@@ -63,8 +63,8 @@ const keywords = [
     "中山大学", "暨南大学", "华南理工大学", "华南师范大学",
     "华南农业大学", "南方科技大学", "深圳大学", "广州大学",
     "广东工业大学", "广东外语外贸大学",
-    "华为", "腾讯", "网易", "广汽","比亚迪","大疆","格力",
-    "粤剧","粤语","粤菜","粤曲","粤超"
+    "华为", "腾讯", "网易", "广汽","比亚迪","小鹏汽车","大疆","格力",
+    "粤剧","粤语","粤菜","粤曲","粤超","粤BA","广交会"
 ];
 
 // 1. 确保所有全局计数器已定义
@@ -353,30 +353,38 @@ function processArticle(html, url) {
     let text = (title + " " + body).replace(/\s+/g, "");
     if (text.length < 15) return; 
 
-    // --- 3. 关键词检测 (保留你原有的过滤逻辑) ---
+    // --- 3. 关键词检测 (重构后的逻辑) ---
     let matches = [];
+    // 将排除规则定义在循环外，提高效率
+    const excludeRules = {
+        "中山": [/孙中山/g, /中山装/g],
+        "南海": [/南海问题/g, /南海仲裁/g, /南海观音/g],
+        "南沙": [/南沙群岛/g],
+        "河源": [/江河源头/g, /大河源头/g, /渭河源/g]
+    };
+    
     for (let keyword of keywords) {
+        // 1. 初步检查，如果根本不包含关键词，直接跳过
         if (!text.includes(keyword)) continue;
-
-        let tempText = text; 
-        if (keyword === "中山") {
-            tempText = tempText.replace(/孙中山/g, "###"); 
-        } else if (keyword === "河源") {
-            tempText = tempText.replace(/江河源头/g, "###").replace(/大河源头/g, "###");
-        } else if (keyword === "南沙") {
-            tempText = tempText.replace(/南沙群岛/g, "###");
-        } else if (keyword === "南海") {
-            tempText = tempText.replace(/南海问题/g, "###").replace(/南海仲裁/g, "###").replace(/南海观音/g, "###");
+    
+        let tempText = text;
+    
+        // 2. 命中排除规则：如果有定义该关键词的排除逻辑，则执行替换
+        if (excludeRules[keyword]) {
+            excludeRules[keyword].forEach(rule => {
+                tempText = tempText.replace(rule, "###");
+            });
         }
-
+        // 3. 二次检查并计数：排除后是否依然包含关键词
         if (tempText.includes(keyword)) {
-            let count = (tempText.split(keyword).length - 1);
+            // 使用 split 计数是简单高效的方法
+            let count = tempText.split(keyword).length - 1;
             if (count > 0) {
-                matches.push(`${keyword}(${count}次)`);
+                matches.push(keyword + "(" + count + "次)");
             }
         }
     }
-
+    
     // --- 4. 版面识别  ---
     let versionInfo = "未知";
     // 提前获取所有可能的坑位
