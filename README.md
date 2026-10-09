@@ -27,45 +27,24 @@
                         <p>　　以下是分别适用于简体中文（Simplified Chinese）<span class="toptitlenew">Windows 9x/ME和Windows NT/2000/XP/2003</span>的念青五笔简/繁GB输入法（86版）。</p>
                         <table border="1" align="center">
                           <tr class="toptitlenew">
-                            <td>念青五笔简/繁体输入法（86版）  Windows 7/8/10/11 </td>
+                            <td>念青五笔简/繁体输入法（86版）  Windows All </td>
                             <td>软件大小</td>
                             <td><div align="center">版本特征词</div></td>
                           </tr>
                           <tr class="font2">
                             <td class="toptitlenew"><a href="nqwb/soft/Nqwb86.exe">念青五笔86版 for Windows All （64bit）3.0.0.0</a></td>
-                            <td class="toptitlenew">940 KB</td>
+                            <td class="toptitlenew">2.62 MB</td>
                             <td rowspan="2"><div align="center">
                                 <p class="text2">打野（jayo）</p>
-                                <p class="text2">更新日期：2026/10/08</p>
+                                <p class="text2">更新日期：2026/10/09</p>
                             </div></td>
                           </tr>
-                          <tr class="toptitlenew">
-                            <td><a href="nqwb/soft/Nqwb86z64bit.exe">念青五筆86版 for Windows All （64bit）2.08.25.0804</a></td>
-                            <td>946 KB</td>
-                          </tr>
-                        </table>
-                        <p>&nbsp;</p>
-                        <table border="1" align="center">
-                          <tr class="toptitlenew">
-                            <td>念青五笔简/繁体GB输入法（86版） for Windoes 9X/ME </td>
-                            <td>软件大小</td>
-                          </tr>
-                          <tr class="font2">
-                            <td class="toptitlenew"><a href="http://longyu.nianqing.net/soft/nqwbx9x.exe">念青五笔（86版） 
-                              （Windows 9x/ME）2.00.08.0522</a></td>
-                            <td class="toptitlenew">788 KB</td>
-                          </tr>
-                          <tr class="toptitlenew">
-                            <td><a href="http://longyu.nianqing.net/soft/nqwbz9x.exe">念青繁體五筆（86版）(Windows 
-                              9x/ME)2.00.08.0522</a></td>
-                            <td>796 KB</td>
-                          </tr>
-                        </table>
+                          </table>
                         <p>&nbsp;</p>
                         <p>　　<strong>其它版本</strong>：<a href="nqwb/nqwb98.htm" class="toptitlenew">念青五笔98版简繁体输入法 for 简体中文Windows操作系统</a></p>
                         <p><span class="STYLE1">　　<strong>其它版本</strong>： </span><a href="nqwb/big5nqwb.htm" class="toptitlenew">念青五筆86、98版輸入法 for 繁體中文（Traditional Chinese）Windows作業系统</a> </p>
                         <p><span class="STYLE1">　　<strong>其它版本</strong>： </span><a href="nqwb/nqlinux.htm" class="toptitlenew">念青五笔86版 for Linux</a> </p>
-                        <p>　　用户在使用时遇到字词不够、不当的地方，或有任何其它意见，烦请移步念青的<a href="http://longyu.nianqing.net/asp/guestbook/index.asp?page=1&amp;username=nianqing" class="toptitlenew">留言簿</a>或加入念青五笔QQ群（群号码：7709014）提出，以便本输入法能够得以不断完善，非常感谢。</p>
+                        <p>　　用户在使用时遇到字词不够、不当的地方，或有任何其它意见，烦请加入念青五笔QQ群（群号码：7709014）提出，以便本输入法能够得以不断完善，非常感谢。</p>
                          </div></td>
                     </tr>
                   </table>
@@ -98,7 +77,7 @@
 		</div>
 	</div>
 	<div  id="p-logo">
-		<a style="background-image: url(nqwb/../assets/images/logo/nqlogo.gif);" href="http://www.nianqing.net/" title="访问念青小筑首页 [z]" accesskey="z"></a>
+		<a style="background-image: url(assets/images/logo/nqlogo.gif);" href="http://www.nianqing.net/" title="访问念青小筑首页 [z]" accesskey="z"></a>
 	</div>
 
 	<div class='generated-sidebar portlet' id='p-navigation'>
@@ -125,7 +104,7 @@
 
       <p style="line-height: 150%; margin-top: 0; margin-bottom: 0">
       <span style="font-size: 9pt">版权所有 1998-2025 <a href="nianqing.htm" style="text-decoration: none" target="_top">念青</a></span>
-      </span><span style="font-size: 9pt" lang="zh-cn">保留全部权利</span></p>
+      <span style="font-size: 9pt" lang="zh-cn">保留全部权利</span></p>
 
 <p style="line-height: 150%; margin-top: 0; margin-bottom: 0">
       <span style="font-size: 9pt">Copyright<span lang="zh-cn"> </span>&copy;1998-2025<font color="#FFCC00">
