@@ -33,7 +33,7 @@
                           </tr>
                           <tr class="font2">
                             <td class="toptitlenew"><a href="nqwb/soft/Nqwb86.exe">念青五笔86版 for Windows All （64bit）3.0.0.0</a></td>
-                            <td class="toptitlenew">2.62 MB</td>
+                            <td class="toptitlenew">3.73 MB</td>
                             <td rowspan="2"><div align="center">
                                 <p class="text2">打野（jayo）</p>
                                 <p class="text2">更新日期：2026/10/09</p>
