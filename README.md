@@ -21,10 +21,9 @@
                           </tr>
                         </table>
                         <p align="left">　　一个输入法，最重要的是能够输入尽可能多的汉字，免得在使用的时候捉襟见肘；再者啦，词汇要多，重码要少，为着减少重码率，一些无关紧要的词宁可不要，要不然也就体现不了五笔的妙处了。这两个，便一直是念青五笔的努力方向。</p>
-                        <p>　　念青输入法分别提供了86版五笔和98版五笔两种五笔编码规则，并有分别适用于简体中文版Windows 9x/ME及Windows 
-                          2000/NT/XP的众多版本，安装前请留意版别，安装时需要用户取得系统管理员权限。</p>
+                        <p>　　念青输入法分别提供了86版五笔和98版五笔两种五笔编码规则，适用于简体中文版Windows 9x/XP和Windows 7~Windows 11，安装前请留意版别，安装时需要用户取得系统管理员权限。</p>
                         <p>　　如用户有特殊的需要（例如不宜安装或不想安装，却又想要暂时使用一下念青五笔），可以点击试用：<a href="nqwb/nqwbweb.htm" target="_blank">念青五笔在线版</a><font size="2">（注：在线版大小约为627KB）</font>。</p>
-                        <p>　　以下是分别适用于简体中文（Simplified Chinese）<span class="toptitlenew">Windows 9x/ME和Windows NT/2000/XP/2003</span>的念青五笔简/繁GB输入法（86版）。</p>
+                        <p>　　以下是适用于简体中文（Simplified Chinese）<span class="toptitlenew">Windows All</span>的念青五笔简/繁GB输入法 86版和 98版输入法。</p>
                         <table border="1" align="center">
                           <tr class="toptitlenew">
                             <td>念青五笔简/繁体输入法（86版）  Windows All </td>
@@ -39,21 +38,22 @@
                                 <p class="text2">更新日期：2026/10/18</p>
                             </div></td>
                           </tr>
-						  
-                          <tr class="toptitlenew">
+						</table>
+						<table border="1" align="center">
+						<tr class="toptitlenew">
                             <td>念青五笔简/繁体输入法（98版）  Windows All </td>
                             <td>软件大小</td>
                             <td><div align="center">版本特征词</div></td>
                           </tr>
                           <tr class="font2">
-                            <td class="toptitlenew"><a href="nqwb/soft/Nqwb86.exe">念青五笔98版 for Windows All （64bit）3.1.0</a></td>
+                            <td class="toptitlenew"><a href="nqwb/soft/Nqwb98.exe">念青五笔98版 for Windows All （64bit）3.1.0</a></td>
                             <td class="toptitlenew">5.42 MB</td>
                             <td rowspan="2"><div align="center">
                                 <p class="text2">星链（jtql）</p>
                                 <p class="text2">更新日期：2026/10/18</p>
                             </div></td>
                           </tr>
-                          </table>
+						  </table>
                         <p>&nbsp;</p>
                         <p>　　<strong>其它版本</strong>：<a href="nqwb/nqwb98.htm" class="toptitlenew">念青五笔98版简繁体输入法 for 简体中文Windows操作系统</a></p>
                         <p><span class="STYLE1">　　<strong>其它版本</strong>： </span><a href="nqwb/big5nqwb.htm" class="toptitlenew">念青五筆86、98版輸入法 for 繁體中文（Traditional Chinese）Windows作業系统</a> </p>
