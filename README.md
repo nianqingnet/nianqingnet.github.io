@@ -1,4 +1,4 @@
-# 念青五笔86版·输入法
+# 念青五笔86/98版·输入法
 
 <div id="globalWrapper">
 		<div id="column-content">
