@@ -33,7 +33,21 @@
                           </tr>
                           <tr class="font2">
                             <td class="toptitlenew"><a href="nqwb/soft/Nqwb86.exe">念青五笔86版 for Windows All （64bit）3.1.0</a></td>
-                            <td class="toptitlenew">5.40 MB</td>
+                            <td class="toptitlenew">5.42 MB</td>
+                            <td rowspan="2"><div align="center">
+                                <p class="text2">星链（jtql）</p>
+                                <p class="text2">更新日期：2026/10/18</p>
+                            </div></td>
+                          </tr>
+						  
+                          <tr class="toptitlenew">
+                            <td>念青五笔简/繁体输入法（98版）  Windows All </td>
+                            <td>软件大小</td>
+                            <td><div align="center">版本特征词</div></td>
+                          </tr>
+                          <tr class="font2">
+                            <td class="toptitlenew"><a href="nqwb/soft/Nqwb86.exe">念青五笔98版 for Windows All （64bit）3.1.0</a></td>
+                            <td class="toptitlenew">5.42 MB</td>
                             <td rowspan="2"><div align="center">
                                 <p class="text2">星链（jtql）</p>
                                 <p class="text2">更新日期：2026/10/18</p>
