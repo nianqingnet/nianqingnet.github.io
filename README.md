@@ -117,11 +117,11 @@
 			<div id="footer" align="center">
 
       <p style="line-height: 150%; margin-top: 0; margin-bottom: 0">
-      <span style="font-size: 9pt">版权所有 1998-2025 <a href="nianqing.htm" style="text-decoration: none" target="_top">念青</a></span>
+      <span style="font-size: 9pt">版权所有 1998-2026 <a href="nianqing.htm" style="text-decoration: none" target="_top">念青</a></span>
       <span style="font-size: 9pt" lang="zh-cn">保留全部权利</span></p>
 
 <p style="line-height: 150%; margin-top: 0; margin-bottom: 0">
-      <span style="font-size: 9pt">Copyright<span lang="zh-cn"> </span>&copy;1998-2025<font color="#FFCC00">
+      <span style="font-size: 9pt">Copyright<span lang="zh-cn"> </span>&copy;1998-2026<font color="#FFCC00">
       </font><a href="http://www.nianqing.net/" target="_blank">念青小筑</a>All Rights Reserved</span></p>
 
 		</div>
