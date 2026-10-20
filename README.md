@@ -55,10 +55,12 @@
                           </tr>
 						  </table>
                         <p>&nbsp;</p>
+						<p>　　<strong>IOS 16以上版本：或Coming soon。以下其它旧版本暂未提供</strong>：<a href="nqwb/nqwb98.htm" class="toptitlenew">念青五笔98版简繁体输入法 for 简体中文Windows操作系统</a></p>
                         <p>　　<strong>其它版本</strong>：<a href="nqwb/nqwb98.htm" class="toptitlenew">念青五笔98版简繁体输入法 for 简体中文Windows操作系统</a></p>
                         <p><span class="STYLE1">　　<strong>其它版本</strong>： </span><a href="nqwb/big5nqwb.htm" class="toptitlenew">念青五筆86、98版輸入法 for 繁體中文（Traditional Chinese）Windows作業系统</a> </p>
                         <p><span class="STYLE1">　　<strong>其它版本</strong>： </span><a href="nqwb/nqlinux.htm" class="toptitlenew">念青五笔86版 for Linux</a> </p>
                         <p>　　用户在使用时遇到字词不够、不当的地方，或有任何其它意见，烦请加入念青五笔QQ群（群号码：7709014）提出，以便本输入法能够得以不断完善，非常感谢。</p>
+						<p>　　如果你的电脑安装了360卫士，或将无法正常使用念青五笔，若试图强行安装，可能会造成严重后果。</p>
                          </div></td>
                     </tr>
                   </table>
