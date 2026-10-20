@@ -32,9 +32,9 @@
                           </tr>
                           <tr class="font2">
                             <td class="toptitlenew"><a href="nqwb/soft/Nqwb86.exe">念青五笔86版 for Windows All （64bit）3.1.0</a></td>
-                            <td class="toptitlenew">5.57 MB</td>
+                            <td class="toptitlenew">6.43 MB</td>
                             <td rowspan="2"><div align="center">
-                                <p class="text2">餐补（hqpu）</p>
+                                <p class="text2">鸿蒙（iaap）</p>
                                 <p class="text2">更新日期：2026/10/20</p>
                             </div></td>
                           </tr>
@@ -47,9 +47,9 @@
                           </tr>
                           <tr class="font2">
                             <td class="toptitlenew"><a href="nqwb/soft/Nqwb98.exe">念青五笔98版 for Windows All （64bit）3.1.0</a></td>
-                            <td class="toptitlenew">5.58 MB</td>
+                            <td class="toptitlenew">6.43 MB</td>
                             <td rowspan="2"><div align="center">
-                                <p class="text2">餐补（hqpu）</p>
+                                <p class="text2">鸿蒙（iaap）</p>
                                 <p class="text2">更新日期：2026/10/20</p>
                             </div></td>
                           </tr>
