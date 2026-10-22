@@ -55,8 +55,8 @@
                           </tr>
 						  </table>
                         <p>&nbsp;</p>
-						<td><a href="nqwb/help.htm" border="0"><img src="nqwb/images/settings.png" width="535" height="513" border="0" /></a></td>
-						<p>　　<strong>IOS 16以上版本：或Coming soon。以下其它旧版本暂未提供</strong>：<a href="nqwb/nqwb98.htm" class="toptitlenew">念青五笔98版简繁体输入法 for 简体中文Windows操作系统</a></p>
+						<a href="nqwb/help.htm" border="0"><img src="nqwb/images/settings.png" width="535" height="513" border="0" /></a>
+						
                         <p>　　<strong>IOS 16以上版本：或Coming soon。以下其它旧版本暂未提供</strong>：<a href="nqwb/nqwb98.htm" class="toptitlenew">念青五笔98版简繁体输入法 for 简体中文Windows操作系统</a></p>
                         <p><span class="STYLE1">　　<strong>其它版本</strong>： </span><a href="nqwb/big5nqwb.htm" class="toptitlenew">念青五筆86、98版輸入法 for 繁體中文（Traditional Chinese）Windows作業系统</a> </p>
                         <p><span class="STYLE1">　　<strong>其它版本</strong>： </span><a href="nqwb/nqlinux.htm" class="toptitlenew">念青五笔86版 for Linux</a> </p>
