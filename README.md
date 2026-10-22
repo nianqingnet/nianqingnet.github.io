@@ -17,7 +17,7 @@
                           <span class="subjecttitle">念青五笔输入法</span>是一个遵循五笔编码规则的中文输入法，包括有简体和繁體、86版和98版五笔编码等不同版本，适用于多种中文Windows操作系统。与坊间流行的众多五笔输入法相比，念青五笔在沿袭了系统输入法的简洁风格之余，更是悉数收藏了大量常用的GBK汉字（如冇、咁、啫、乜、嘢、啰、啲等）；其次，在避免重码的前提下，加入了大量词目，诸如非典、网友、程式、菜鸟、男色等，不一而足；此外，对码表中的词序排列也依据常用频率作出了适当调整，这使得输入中文时需要用到数字键选择备选词的机率大为减少，从而极大的提高了工作效率和滋润了休闲的心情。 
                           <table border="0" align="right">
                           <tr>
-                            <td><a href="nqwb/help.htm" border="0"><img src="nqwb/images/nqwb.gif" width="237" height="129" border="0" /></a></td>
+                            <td><a href="nqwb/help.htm" border="0"><img src="nqwb/images/nqwb.png" width="474" height="355" border="0" /></a></td>
                           </tr>
                         </table>
                         <p align="left">　　一个输入法，最重要的是能够输入尽可能多的汉字，免得在使用的时候捉襟见肘；再者啦，词汇要多，重码要少，为着减少重码率，一些无关紧要的词宁可不要，要不然也就体现不了五笔的妙处了。这两个，便一直是念青五笔的努力方向。</p>
@@ -55,8 +55,9 @@
                           </tr>
 						  </table>
                         <p>&nbsp;</p>
+						<td><a href="nqwb/help.htm" border="0"><img src="nqwb/images/settings.png" width="535" height="513" border="0" /></a></td>
 						<p>　　<strong>IOS 16以上版本：或Coming soon。以下其它旧版本暂未提供</strong>：<a href="nqwb/nqwb98.htm" class="toptitlenew">念青五笔98版简繁体输入法 for 简体中文Windows操作系统</a></p>
-                        <p>　　<strong>其它版本</strong>：<a href="nqwb/nqwb98.htm" class="toptitlenew">念青五笔98版简繁体输入法 for 简体中文Windows操作系统</a></p>
+                        <p>　　<strong>IOS 16以上版本：或Coming soon。以下其它旧版本暂未提供</strong>：<a href="nqwb/nqwb98.htm" class="toptitlenew">念青五笔98版简繁体输入法 for 简体中文Windows操作系统</a></p>
                         <p><span class="STYLE1">　　<strong>其它版本</strong>： </span><a href="nqwb/big5nqwb.htm" class="toptitlenew">念青五筆86、98版輸入法 for 繁體中文（Traditional Chinese）Windows作業系统</a> </p>
                         <p><span class="STYLE1">　　<strong>其它版本</strong>： </span><a href="nqwb/nqlinux.htm" class="toptitlenew">念青五笔86版 for Linux</a> </p>
                         <p>　　用户在使用时遇到字词不够、不当的地方，或有任何其它意见，烦请加入念青五笔QQ群（群号码：7709014）提出，以便本输入法能够得以不断完善，非常感谢。</p>
