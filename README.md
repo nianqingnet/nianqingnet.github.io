@@ -14,7 +14,7 @@
                     <tr> 
                       <td valign="top"><div align="left">　　 
 
-                          <span class="subjecttitle">念青五笔输入法</span>是一个遵循五笔编码规则的中文输入法，本来包括有简体和繁體、86版和98版五笔编码等不同版本，适用于多种中文Windows操作系统。在五笔输入日渐式微的今天，念青五笔推出了一个更新版本，既是情怀，也为责任。新版本继续沿袭了当年的简洁风格，亦不断的在新旧词目之间作艰难取舍。在功能上尽可能周全各方需求的同时，在设置中也尽可能的体现最初的传承。我们可以不再依赖于打字，但是如果需要动手，那必须行云流水，了无挂碍。 
+                          <span class="subjecttitle">念青五笔输入法</span>是一个遵循五笔编码规则的中文输入法，本来包括有简体和繁體、86版和98版五笔编码等不同版本，适用于多种中文Windows操作系统。在五笔输入日渐式微的今天，念青五笔推出了一个更新版本，既是情怀，也为责任。新版本继续沿袭了当年的简洁风格，亦不断的在新旧词目之间作艰难取舍。功能上尽可能周全各方需求的同时，在设置中也尽可能的体现最初的传承。我们可以不再依赖于打字，但是如果需要动手，那必须行云流水，了无挂碍。 
                           <table border="0" align="right">
                           <tr>
                             <td><a href="nqwb/help.htm" border="0"><img src="nqwb/images/nqwb.png" width="474" height="355" border="0" /></a></td>
@@ -32,7 +32,7 @@
                           </tr>
                           <tr class="font2">
                             <td class="toptitlenew"><a href="nqwb/soft/Nqwb86.exe">念青五笔86版 for Windows All （64bit）3.1.0</a></td>
-                            <td class="toptitlenew">6.56 MB</td>
+                            <td class="toptitlenew">6.60 MB</td>
                             <td rowspan="2"><div align="center">
                                 <p class="text2">相爱相杀（sesq）</p>
                                 <p class="text2">更新日期：2026/10/24</p>
@@ -47,7 +47,7 @@
                           </tr>
                           <tr class="font2">
                             <td class="toptitlenew"><a href="nqwb/soft/Nqwb98.exe">念青五笔98版 for Windows All （64bit）3.1.0</a></td>
-                            <td class="toptitlenew">6.56 MB</td>
+                            <td class="toptitlenew">6.60 MB</td>
                             <td rowspan="2"><div align="center">
                                 <p class="text2">相爱相杀（sesr）</p>
                                 <p class="text2">更新日期：2026/10/24</p>
