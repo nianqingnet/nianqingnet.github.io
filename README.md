@@ -32,10 +32,10 @@
                           </tr>
                           <tr class="font2">
                             <td class="toptitlenew"><a href="nqwb/soft/Nqwb86.exe">念青五笔86版 for Windows All （64bit）3.1.0</a></td>
-                            <td class="toptitlenew">6.43 MB</td>
+                            <td class="toptitlenew">6.56 MB</td>
                             <td rowspan="2"><div align="center">
-                                <p class="text2">鸿蒙（iaap）</p>
-                                <p class="text2">更新日期：2026/10/20</p>
+                                <p class="text2">相爱相杀（sesq）</p>
+                                <p class="text2">更新日期：2026/10/24</p>
                             </div></td>
                           </tr>
 						</table>
@@ -47,10 +47,10 @@
                           </tr>
                           <tr class="font2">
                             <td class="toptitlenew"><a href="nqwb/soft/Nqwb98.exe">念青五笔98版 for Windows All （64bit）3.1.0</a></td>
-                            <td class="toptitlenew">6.43 MB</td>
+                            <td class="toptitlenew">6.56 MB</td>
                             <td rowspan="2"><div align="center">
-                                <p class="text2">鸿蒙（iaap）</p>
-                                <p class="text2">更新日期：2026/10/20</p>
+                                <p class="text2">相爱相杀（sesr）</p>
+                                <p class="text2">更新日期：2026/10/24</p>
                             </div></td>
                           </tr>
 						  </table>
