@@ -315,7 +315,19 @@ async function executeIncremental(startUrl) {
 function incrementContentId(url) {
     return url.replace(/content_(\d+)/, (match, id) => "content_" + (parseInt(id) + 1));
 }
-
+    
+// 光明日报把作者简介、图片说明放在 HTML 注释 <!-- --> 里，页面上看不到，但对检索很重要
+function commentText(root) {
+    let out = [];
+    let walker = document.createTreeWalker(root, NodeFilter.SHOW_COMMENT);
+    let n;
+    while ((n = walker.nextNode())) {
+        let frag = new DOMParser().parseFromString(n.nodeValue, "text/html");
+        out.push(frag.body.textContent);
+    }
+    return out.join(" ");
+}
+    
 function processArticle(html, url) {
     let doc = new DOMParser().parseFromString(html, "text/html");
 
@@ -341,48 +353,19 @@ function processArticle(html, url) {
     let body = "";
     let ozoom = doc.querySelector("#ozoom");               // 人民日报
     let artContent = doc.querySelector("#articleContent"); // 经济日报PC
-    let gmrContent = doc.querySelector(".m-article-main"); // 光明日报
+    // let gmrContent = doc.querySelector(".m-article-main"); // 光明日报
+    // 光明日报：用 .m-article-text（外层容器，含注释里的作者简介、图片说明）
+    let gmrContent = doc.querySelector(".m-article-text") || doc.querySelector(".m-article-content") || doc.querySelector(".m-article-main");
     let padContent = doc.querySelector("founder-content"); // 经济日报移动版(PAD)
     
     if (ozoom) { body = ozoom.innerText; } 
     else if (artContent) { body = artContent.innerText; } 
-    else if (gmrContent) { body = gmrContent.innerText; }
+    // else if (gmrContent) { body = gmrContent.innerText; }
+    else if (gmrContent) { body = gmrContent.innerText + " " + commentText(gmrContent); }
     else if (padContent) { body = padContent.innerText; }
-
-
-    // --- 补丁：单独抓作者简介/作者单位区块，拼进匹配文本 ---
-    // 原因：三家报纸的作者单位只出现在文末“（作者为/系/：…）”一行、
-    //       顶部“作者：…”署名或“作者简介”区块里，这些都不在
-    //       #ozoom / #articleContent / .m-article-main / founder-content
-    //       四个正文容器内；只读正文容器时，“作者是广东的”这一唯一
-    //       命中信号会被漏掉。本段不依赖 class，只认文字标记。
-    let authorText = "";
-    let seenAuthor = new Set();
-    let bodyFlat = body.replace(/\s+/g, "");
-    let expectBio = false; // 上一段是裸“作者简介”标题时，下一段即简介正文
-    doc.querySelectorAll("p, div, span, font").forEach(el => {
-        let t = (el.textContent || "").replace(/\s+/g, " ").trim();
-        if (!t) return;
-        // 裸标题：“作者简介”单独成段，后面一段才是简介正文
-        if (/^作者简介\s*[：:]?\s*$/.test(t)) { expectBio = true; return; }
-        let isBio = /^作者简介/.test(t);
-        let isLine = /^（?作者(为|系|：|:)/.test(t);
-        let isBioBody = expectBio;
-        expectBio = false;
-        if (!isBio && !isLine && !isBioBody) return;
-        if (isBio && t.length > 1000) return;
-        if (isLine && t.length > 300) return;
-        if (isBioBody && t.length > 500) return;
-        let flat = t.replace(/\s+/g, "");
-        // 去重：已在正文容器里的不重复拼（避免命中次数虚增）；
-        // 嵌套元素（div 包 p 同文）也只拼一次
-        if (seenAuthor.has(flat) || bodyFlat.includes(flat)) return;
-        seenAuthor.add(flat);
-        authorText += " " + t;
-    });
     
     // 清理多余空格，进行长度校验
-    let text = (title + " " + body + " " + authorText).replace(/\s+/g, "");
+    let text = (title + " " + body).replace(/\s+/g, "");
     if (text.length < 15) return; 
 
     // --- 3. 关键词检测 (重构后的逻辑) ---
@@ -486,6 +469,8 @@ async function openRedContent(url, title) {
         let cleanHtml = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
                             .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "");
 
+        // 2b. 光明日报的作者简介/图片说明被注释掉了，预览时放出来
+        cleanHtml = cleanHtml.replace(/<!--([\s\S]*?m-article-pic-wrap[\s\S]*?)-->/g, "$1");
         // 3. 注入套红样式
         const redStyle = `
             <style>
