@@ -2,54 +2,84 @@
 <html>
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>纸媒涉及广东内容检索页</title>
 <style>
-body{font-family:Arial;margin:30px;}
-input{width:650px;padding:6px;}
-button{padding:6px 12px;margin-right:6px;}
-#status{margin-top:15px;font-weight:bold;}
-table{border-collapse:collapse;margin-top:20px;}
-th,td{border:1px solid #ccc;padding:6px 10px;}
-th{background:#f5f5f5;}
+:root{--bg:#fbf8ea;--ink:#222;--text:#333;--muted:#7d776a;--accent:#1f6f6b;--accent-dark:#175451;--line:#e3dcc4;--card:#fff;--hit:#b3261e}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.8 "PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC","Source Han Sans SC",sans-serif}
+a{color:var(--accent);text-decoration:none}
+a:hover{color:var(--accent-dark);text-decoration:underline}
+.wrap{width:min(1280px,100%);margin:0 auto;padding:36px clamp(16px,4vw,64px)}
+h2,h3{font-family:"Songti SC","STSong","Noto Serif SC","Source Han Serif SC","SimSun",serif;color:var(--ink);letter-spacing:2px}
+.page-title{font-size:28px;margin:0 0 4px}
+.kicker{font-size:12px;letter-spacing:5px;color:var(--muted);margin-bottom:22px}
+.panel{background:var(--card);border:1px solid var(--line);padding:22px 24px;margin-bottom:22px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+input#urlInput{flex:1 1 520px;min-width:0;padding:9px 12px;font-size:14px;border:1px solid var(--line);border-radius:3px;background:#fffdf6;color:var(--ink)}
+input#urlInput:focus{outline:none;border-color:var(--accent)}
+button{font:inherit;font-size:14px;padding:7px 18px;border-radius:3px;border:1px solid var(--accent);background:#fff;color:var(--accent);cursor:pointer}
+button:hover{background:#eef5f4}
+button.primary{background:var(--accent);color:#fff}
+button.primary:hover{background:var(--accent-dark)}
+button:disabled{opacity:.45;cursor:default}
+#status{margin-top:14px;font-size:14px;color:var(--muted);min-height:1.8em}
+.block-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.block-head h2{font-size:20px;margin:0 auto 0 0}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:13px;background:#faf6e6;white-space:nowrap}
+tbody tr:hover{background:#fdfbf2}
+td.id{white-space:nowrap;color:var(--muted)}
+td.kw{color:var(--hit)}
+td.act{white-space:nowrap}
+td.act a,td.act button{margin-right:6px}
+button.small{font-size:12px;padding:2px 10px}
+#errorBlock h3{font-size:17px;margin:0 0 10px;color:#8a4b2a}
 </style>
 </head>
 <body>
+<div class="wrap">
+<h2 class="page-title">纸媒涉及广东内容检索页</h2>
+<div class="kicker">人民日报 · 光明日报 · 经济日报</div>
 
-<h2>纸媒涉及广东内容检索页</h2>
+<div class="panel">
+<div class="bar">
 <input type="text" id="urlInput" placeholder="请输入各报以node_01.html结尾的头版链接">
-<br>
-<button onclick="start()">开始检测</button>
+<button id="btnStart" class="primary" onclick="start()">开始检测</button>
 <button onclick="pause()">暂停</button>
 <button onclick="resume()">继续</button>
-
+<button onclick="stop()">停止</button>
+</div>
 <div id="status"></div>
+</div>
 
-<div id="hitBlock" style="display:none; margin-top: 20px; border-top: 2px solid #ccc; padding-top: 20px;">
-    <div style="display: flex; align-items: center; margin-bottom: 10px;">
-        <h2 style="margin: 0;">命中结果</h2>
-        <button onclick="copyToClipboard()" style="margin-left: 20px; background: #4CAF50; color: white; border: none; padding: 6px 15px; cursor: pointer; border-radius: 4px;">一键复制简报</button>
-        <button onclick="exportToTxt()" style="margin-left: 10px; background: #2196F3; color: white; border: none; padding: 6px 15px; cursor: pointer; border-radius: 4px;">导出 TXT</button>
+<div id="hitBlock" class="panel" style="display:none">
+    <div class="block-head">
+        <h2>命中结果</h2>
+        <button onclick="copyToClipboard()">一键复制简报</button>
+        <button onclick="exportToTxt()">导出 TXT</button>
     </div>
-    
-    <table id="hitTable" border="1" border-collapse: collapse;">
+    <table id="hitTable">
         <thead>
-            <tr style="background: #f2f2f2;">
+            <tr>
                 <th>ID (版面)</th>
                 <th>文章标题 (字数)</th>
                 <th>命中关键词(频次)</th>
-                <th style="width: 60px;">链接</th>
-                <th style="width: 80px;">高亮预览</th>
+                <th>链接</th>
+                <th>高亮预览</th>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 </div>
 
-<div id="errorBlock" style="display:none">
+<div id="errorBlock" class="panel" style="display:none">
 <h3>抓取异常请人工检索</h3>
 <table id="errorTable">
 <tr><th>序号</th><th>URL</th></tr>
 </table>
+</div>
 </div>
 
 <script>
@@ -111,29 +141,34 @@ async function fetchPage(url) {
 
 function addHit(title, matches, url, version) {
     document.getElementById("hitBlock").style.display = "block";
-    let table = document.getElementById("hitTable");
-    let row = table.insertRow(-1);
-    
+    let tbody = document.querySelector("#hitTable tbody");
+    let row = tbody.insertRow(-1);
+
     // 0. ID 和 版面
     let displayId = url.match(/content_(\d+)/) ? url.match(/content_(\d+)/)[1] : "N/A";
-    row.insertCell(0).innerText = displayId + " (" + (version || '未知') + ")";
+    let c0 = row.insertCell(0); c0.className = "id";
+    c0.innerText = displayId + " (" + (version || '未知') + ")";
 
     // 1. 标题
     row.insertCell(1).innerText = title;
 
     // 2. 关键词
-    row.insertCell(2).innerText = matches.join(", ");
+    let c2 = row.insertCell(2); c2.className = "kw";
+    c2.innerText = matches.join(", ");
 
-    // 3. 原文链接 (保留原有功能)
-    row.insertCell(3).innerHTML = "<a href='" + url + "' target='_blank'>打开原文</a>";
+    // 3. 原文链接
+    let c3 = row.insertCell(3); c3.className = "act";
+    let a = document.createElement("a");
+    a.href = url; a.target = "_blank"; a.rel = "noopener"; a.innerText = "打开原文";
+    c3.appendChild(a);
 
-    // 4. 【新增】套红预览按钮
-    let btnCell = row.insertCell(4);
+    // 4. 套红预览
+    let c4 = row.insertCell(4); c4.className = "act";
     let btn = document.createElement("button");
+    btn.className = "small";
     btn.innerText = "套红预览";
-    btn.style = "padding:2px 8px; cursor:pointer; background:#FFEB3B; border:1px solid #cebe25; border-radius:3px; font-size:12px;";
-    btn.onclick = function() { openRedContent(url, title); };
-    btnCell.appendChild(btn);
+    btn.onclick = function() { openRedContent(url, title, matches); };
+    c4.appendChild(btn);
 }
 
 function addError(id, url) {
@@ -141,11 +176,14 @@ function addError(id, url) {
     let table = document.getElementById("errorTable");
     let row = table.insertRow(-1);
     row.insertCell(0).innerText = id;
-    row.insertCell(1).innerHTML = "<a href='" + url + "' target='_blank'>" + url + "</a>";
+    let a = document.createElement("a");
+    a.href = url; a.target = "_blank"; a.rel = "noopener"; a.innerText = url;
+    row.insertCell(1).appendChild(a);
 }
 
 function pause() { paused = true; document.getElementById("status").innerText = "检测已暂停"; }
-function resume() { paused = false; } // 这里不需要重新调loop，loop内部在跑
+function resume() { paused = false; }
+function stop() { running = false; paused = false; document.getElementById("status").innerText = "正在停止..."; } // 这里不需要重新调loop，loop内部在跑
 
 async function scanFullDay(startNodeUrl) {
     let allTaskLinks = [];
@@ -226,8 +264,19 @@ async function scanFullDay(startNodeUrl) {
 }
 
 async function start() {
+    // 防止重复点击：上一轮还在跑时不再开新一轮
+    if (running) { alert("检测正在进行中，请先停止或等待完成"); return; }
+    const inputUrl0 = document.getElementById("urlInput").value.trim();
+    if (!inputUrl0) { alert("请输入起始链接"); return; }
+    document.getElementById("btnStart").disabled = true;
+    try { await startInner(); }
+    finally { running = false; paused = false; document.getElementById("btnStart").disabled = false; }
+}
+
+async function startInner() {
     // 1. 强制重置所有全局变量
     running = true; 
+    endCount = 0;
     paused = false;
     completedCount = 0; 
     errorCount = 0;
@@ -315,7 +364,7 @@ async function executeIncremental(startUrl) {
 function incrementContentId(url) {
     return url.replace(/content_(\d+)/, (match, id) => "content_" + (parseInt(id) + 1));
 }
-    
+
 // 光明日报把作者简介、图片说明放在 HTML 注释 <!-- --> 里，页面上看不到，但对检索很重要
 function commentText(root) {
     let out = [];
@@ -327,7 +376,7 @@ function commentText(root) {
     }
     return out.join(" ");
 }
-    
+
 function processArticle(html, url) {
     let doc = new DOMParser().parseFromString(html, "text/html");
 
@@ -353,17 +402,15 @@ function processArticle(html, url) {
     let body = "";
     let ozoom = doc.querySelector("#ozoom");               // 人民日报
     let artContent = doc.querySelector("#articleContent"); // 经济日报PC
-    // let gmrContent = doc.querySelector(".m-article-main"); // 光明日报
     // 光明日报：用 .m-article-text（外层容器，含注释里的作者简介、图片说明）
     let gmrContent = doc.querySelector(".m-article-text") || doc.querySelector(".m-article-content") || doc.querySelector(".m-article-main");
     let padContent = doc.querySelector("founder-content"); // 经济日报移动版(PAD)
     
     if (ozoom) { body = ozoom.innerText; } 
     else if (artContent) { body = artContent.innerText; } 
-    // else if (gmrContent) { body = gmrContent.innerText; }
     else if (gmrContent) { body = gmrContent.innerText + " " + commentText(gmrContent); }
     else if (padContent) { body = padContent.innerText; }
-    
+
     // 清理多余空格，进行长度校验
     let text = (title + " " + body).replace(/\s+/g, "");
     if (text.length < 15) return; 
@@ -372,10 +419,12 @@ function processArticle(html, url) {
     let matches = [];
     // 将排除规则定义在循环外，提高效率
     const excludeRules = {
-        "中山": [/孙中山/g, /中山装/g],
+        "中山": [/孙中山/g, /中山装/g, /中山陵/g],
         "南海": [/南海问题/g, /南海仲裁/g, /南海观音/g],
         "南沙": [/南沙群岛/g],
-        "河源": [/江河源头/g, /大河源头/g, /渭河源/g]
+        "河源": [/江河源头/g, /大河源头/g, /渭河源/g],
+        "前海": [/目前海/g],          // “目前海外”“目前海南”等
+        "江门": [/长江门户/g]
     };
     
     for (let keyword of keywords) {
@@ -455,53 +504,108 @@ function copyToClipboard() {
     navigator.clipboard.writeText(content).then(() => alert("已成功复制！")).catch(err => alert("复制失败"));
 }
 
-async function openRedContent(url, title) {
+// ---------- 套红预览：只取正文区域，排成干净的阅读页 ----------
+function escapeHtml(t) {
+    return String(t).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+// 只在文字节点里套红，不碰标签和属性；长词优先（中山大学 先于 中山）
+function highlightNode(root, doc) {
+    const sorted = [...keywords].sort((a, b) => b.length - a.length);
+    const reg = new RegExp("(" + sorted.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|") + ")", "g");
+    const walker = doc.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    let n;
+    while ((n = walker.nextNode())) {
+        if (n.parentNode && /^(SCRIPT|STYLE)$/.test(n.parentNode.nodeName)) continue;
+        reg.lastIndex = 0;
+        if (reg.test(n.nodeValue)) nodes.push(n);
+    }
+    nodes.forEach(node => {
+        const frag = doc.createDocumentFragment();
+        node.nodeValue.split(reg).forEach((part, idx) => {
+            if (!part) return;
+            if (idx % 2 === 1) {
+                const mark = doc.createElement("mark");
+                mark.textContent = part;
+                frag.appendChild(mark);
+            } else {
+                frag.appendChild(doc.createTextNode(part));
+            }
+        });
+        node.parentNode.replaceChild(frag, node);
+    });
+}
+
+async function openRedContent(url, title, matches) {
     const statusBox = document.getElementById("status");
     const oldStatus = statusBox.innerText;
     statusBox.innerText = "正在抓取并处理套红页面...";
 
+    // 先开窗口（在点击事件里同步打开，避免被浏览器拦截弹窗）
+    const newWin = window.open("", "_blank");
+    if (!newWin) { alert("请允许浏览器弹窗！"); statusBox.innerText = oldStatus; return; }
+    newWin.document.write("<meta charset='utf-8'><p style='font:15px sans-serif;color:#7d776a;padding:40px'>正在载入…</p>");
+
     try {
         let html = await fetchPage(url);
         if (!html || html.length < 100) throw new Error("内容获取失败");
+        let doc = new DOMParser().parseFromString(html, "text/html");
 
-        // 1. 移除所有 <script> 标签，防止弹窗逻辑执行
-        // 2. 移除所有 <iframe> 标签，防止广告或嵌套
-        let cleanHtml = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-                            .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "");
+        // 与检测时相同的正文容器
+        let box = doc.querySelector("#ozoom") || doc.querySelector("#articleContent") ||
+                  doc.querySelector(".m-article-text") || doc.querySelector(".m-article-content") ||
+                  doc.querySelector(".m-article-main") || doc.querySelector("founder-content");
+        if (!box) box = doc.body;
 
-        // 2b. 光明日报的作者简介/图片说明被注释掉了，预览时放出来
-        cleanHtml = cleanHtml.replace(/<!--([\s\S]*?m-article-pic-wrap[\s\S]*?)-->/g, "$1");
-        // 3. 注入套红样式
-        const redStyle = `
-            <style>
-                .hit-highlight { color: red !important; font-weight: bold !important; background: yellow !important; padding: 0 2px; }
-                /* 补一点基础样式防止由于删了脚本导致排版太乱 */
-                body { font-family: "Microsoft YaHei", sans-serif; line-height: 1.6; padding: 20px; max-width: 900px; margin: auto; }
-            </style>`;
-
-        // 4. 关键词套红替换
-        keywords.forEach(kw => {
-            const reg = new RegExp(kw, 'g');
-            cleanHtml = cleanHtml.replace(reg, '<span class="hit-highlight">' + kw + '</span>');
+        // 光明日报：把注释里的作者简介/图片说明放出来
+        const cw = doc.createTreeWalker(box, NodeFilter.SHOW_COMMENT);
+        const comments = [];
+        let c;
+        while ((c = cw.nextNode())) comments.push(c);
+        comments.forEach(cm => {
+            const tpl = doc.createElement("template");
+            tpl.innerHTML = cm.nodeValue;
+            cm.parentNode.replaceChild(tpl.content, cm);
         });
 
-        // 5. 补全图片路径
-        const urlObj = new URL(url);
-        const baseUrl = urlObj.origin + urlObj.pathname.substring(0, urlObj.pathname.lastIndexOf('/') + 1);
-        cleanHtml = cleanHtml.replace(/src="(?!(http|https|\/\/))/gi, 'src="' + baseUrl);
+        // 去掉脚本、iframe、样式；补全图片链接
+        box.querySelectorAll("script,iframe,style,link").forEach(e => e.remove());
+        box.querySelectorAll("img").forEach(img => {
+            const src = img.getAttribute("src");
+            if (src) img.setAttribute("src", new URL(src, url).href);
+            img.removeAttribute("style"); img.removeAttribute("width"); img.removeAttribute("height");
+        });
+        box.querySelectorAll("a[href]").forEach(a => { a.href = new URL(a.getAttribute("href"), url).href; a.target = "_blank"; });
 
-        // 6. 组合并展示
-        cleanHtml = "<html><head><meta charset='utf-8'><title>【套红检测】" + title + "</title>" + redStyle + "</head><body>" + cleanHtml + "</body></html>";
+        highlightNode(box, doc);
 
-        const newWin = window.open("", "_blank");
-        if (!newWin) {
-            alert("请允许浏览器弹窗！");
-            return;
-        }
-        newWin.document.write(cleanHtml);
+        const page = `<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>【套红】${escapeHtml(title)}</title>
+<style>
+body{margin:0;background:#fbf8ea;color:#333;font:17px/2 "PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif}
+.wrap{max-width:820px;margin:0 auto;padding:40px 24px 60px}
+.head{border-bottom:1px solid #e3dcc4;padding-bottom:16px;margin-bottom:24px}
+h1{font-family:"Songti SC","STSong","Noto Serif SC","SimSun",serif;font-size:26px;line-height:1.5;color:#222;margin:0 0 10px}
+.meta{font-size:13px;color:#7d776a;line-height:1.8}
+.meta b{color:#b3261e;font-weight:600}
+.meta a{color:#1f6f6b}
+.body{background:#fff;border:1px solid #e3dcc4;padding:28px 36px}
+.body p{margin:0 0 1em}
+.body img{max-width:100%;height:auto;display:block;margin:12px auto}
+.body table{max-width:100%}
+mark{background:#ffe866;color:#b3261e;font-weight:700;padding:0 2px;border-radius:2px}
+</style></head><body><div class="wrap">
+<div class="head"><h1>${escapeHtml(title)}</h1>
+<div class="meta">命中：<b>${escapeHtml((matches || []).join("，"))}</b><br><a href="${escapeHtml(url)}" target="_blank">打开原文</a></div></div>
+<div class="body">${box.innerHTML}</div></div></body></html>`;
+
+        newWin.document.open();
+        newWin.document.write(page);
         newWin.document.close();
-
     } catch (e) {
+        newWin.close();
         alert("预览失败：" + e.message);
     } finally {
         statusBox.innerText = oldStatus;
