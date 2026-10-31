@@ -20,7 +20,8 @@
 <p>这一页是 <strong>86 版</strong>：包括 <strong>念青五笔</strong>（86 版五笔）和 <strong>念青五筆</strong>（86 版，繁體字碼表）。一个下载包里简体、繁体都有，安装时选一个装，也可以两个都装。98 版请看 <a href="linuxnqwb98.htm">念青五笔98版 for Linux</a>。</p>
 </section>
 
-<section>
+<section class="split dl-row">
+<div>
 <h2 class="h2">下载 · Linux 1.0.0 · 86 版</h2>
 <p class="note" style="margin:0 0 14px">版本 1.0.0 · 版本特征词：相爱相杀 · 发布日期 2026/10/31。一个包里 <strong>IBus 和 Fcitx5 都带了，不用分开下载</strong>：安装脚本自己看系统里有什么就装什么，两个框架都有就两个都装，只有一个就装那一个；想只装一个就加 <code>--ibus</code> 或 <code>--fcitx5</code>。两个都装也不会改掉你当前正在用的框架。</p>
 
@@ -57,7 +58,8 @@
 </table>
 
 <p>不知道自己的 CPU？打开终端（按 <code>Ctrl+Alt+T</code>，或者点应用菜单、搜索“终端”打开），运行 <code>uname -m</code>：显示 <code>x86_64</code> 就是一般电脑（amd64），显示 <code>aarch64</code> 就是 ARM 电脑（arm64）。同一套包通用：Ubuntu 22.04、24.04、25.10、26.04 LTS、Debian 12、13 都能用，系统升级后也不用重装；.rpm 用于 Fedora 43、44。</p>
-<p><a class="shot" href="https://nianqingnet.github.io/nqwb/images/setlinux.png"><img src="https://nianqingnet.github.io/nqwb/images/setlinux.png" width="760" height="688" alt="念青五笔设置"></a></p>
+</div>
+<a class="shot" href="https://nianqingnet.github.io/nqwb/images/ibusx11nqwb86.png"><img src="https://nianqingnet.github.io/nqwb/images/ibusx11nqwb86.png" width="535" height="313" alt="IBus 下念青五笔 86 版打字"></a>
 </section>
 
 <div class="ad-slot" style="margin:24px auto;text-align:center">
@@ -117,11 +119,11 @@ ls</code></pre>
 <p><strong>X11 桌面</strong>（Ubuntu 选“Ubuntu on Xorg”登录、Xfce、MATE、Cinnamon、KDE X11 等）：用念青五笔时屏幕左下角出现和 Windows 一样的<strong>浮动状态栏</strong>：</p>
 <p><code>[青 中/英] [念青五笔] [● 全/半角] [。， 中/英标点] [简/繁] [▾]</code></p>
 <p>点各个按钮切换；<strong>▾</strong>（或在状态栏上点右键）打开菜单：设置…、关于、状态栏回到左下角、隐藏状态栏。按住拖动可以挪位置，下次还在那里。切到别的输入法时状态栏自动隐藏。不想要：设置 → 外观 → 取消“显示状态栏”。配色可选 经典 / 简洁 / 可爱粉色 / 海洋蓝。</p>
-<p><a class="shot" href="https://nianqingnet.github.io/nqwb/images/ibusx11nqwb86.png"><img src="https://nianqingnet.github.io/nqwb/images/ibusx11nqwb86.png" width="760" height="445" alt="IBus 下念青五笔 86 版打字"></a></p>
 <p><strong>Wayland 桌面</strong>（Ubuntu 22.04 起、Fedora 的默认 GNOME 登录）：Wayland 不允许程序自己把窗口放在固定位置、一直在最上面，所以<strong>不显示浮动状态栏</strong>，改为在<strong>候选窗顶行编码前面显示“念青五笔”</strong>，不是默认状态时跟在名称后面，如“念青五笔·全角·英文标点·繁”（设置 → 外观 → “Wayland 下在候选窗显示名称”可以关掉）。中/英状态看屏幕右上角面板上的输入法图标，也可以在那里点菜单切换；切换用的快捷键和 X11 下一样。</p>
 </section>
 
-<section>
+<section class="split">
+<div>
 <h2 class="h2">怎么打字（和 Windows 版一样）</h2>
 <table>
 <tr><th>按键</th><th>作用</th></tr>
@@ -142,6 +144,8 @@ ls</code></pre>
 <tr><td><code>;</code> <code>'</code></td><td>选第 2 / 3 个重码（设置里打开“启用 ；' 选二三重码”才有）</td></tr>
 </table>
 <p>编码字母显示在候选窗顶上（和 Windows 3.1.0 r4 起一样）；想让编码显示在程序里，打开设置“编码显示在程序里”。候选后面灰色的字母是<strong>编码提示</strong>；带“猜”的是空码猜词 / 重码补词猜出来的词。</p>
+</div>
+<a class="shot" href="https://nianqingnet.github.io/nqwb/images/setlinux.png"><img src="https://nianqingnet.github.io/nqwb/images/setlinux.png" width="535" height="484" alt="念青五笔设置"></a>
 </section>
 
 <section>
@@ -187,6 +191,10 @@ ls</code></pre>
 </ul>
 </div>
 <div>
+<h2 class="h2">怀旧版本</h2>
+<ul class="plain">
+<li><a href="/nqwb/nqlinux.htm">念青五笔 form miniChinput</a></li>
+</ul>
 <h2 class="h2">意见与反馈</h2>
 <p class="note" style="margin:0">用家在使用时遇到字词不够、不当的地方，或有任何其它意见，烦请加入念青五筆QQ群（群號碼：7709014）提出，以便本輸入法能夠得以不斷完善，非常感謝。</p>
 </div>
