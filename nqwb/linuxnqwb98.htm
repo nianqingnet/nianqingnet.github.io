@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>念青五笔98版 for Linux · 念青小筑</title>
+<meta name="keywords" content="念青五笔,输入法,Linux,98版五笔,念青五筆98,IBus,Fcitx5,NianQingWubi Input Method" />
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/assets/css/site.css?2026">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7973762468428054"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="wrap">
+<header class="site"><nav class="site"><a href="/">首页</a><a href="/nqwb/" class="on">念青五笔</a><a href="/nqwb/help.htm">帮助系统</a><a href="/nqwb/thanks.htm">特别鸣谢</a><a href="/nqwb/skill.htm">输入法技巧</a><a href="/nqwb/links.htm">工具与链接</a><a href="/nqwb/typing.html">指法练习</a></nav></header>
+<section class="hero">
+<div class="kicker">NIANQING WUBI · LINUX 1.0.0 · 98</div>
+<h1>念青五笔 for Linux · 98 版</h1>
+<p>念青五笔 Linux 版 1.0.0，和 Windows 版念青五笔98（98 r9）用<strong>同一份打字引擎和同一份码表</strong>：候选顺序、逐键提示、联想、空码猜词、重码补词、zz 临时拼音、简繁输出、自造词、调整词序、自定义短语，打出来的结果和 Windows 上一样。</p>
+<p>这一页是 <strong>98 版</strong>：包括 <strong>念青五笔98</strong> 和 <strong>念青五筆98</strong>（98 版，繁體字碼表）。一个下载包里简体、繁体都有，安装时选一个装，也可以两个都装。86 版请看 <a href="linuxnqwb86.htm">念青五笔86版 for Linux</a>。</p>
+</section>
+
+<section>
+<h2 class="h2">下载 · Linux 1.0.0 · 98 版</h2>
+<p class="note" style="margin:0 0 14px">版本 1.0.0 · 版本特征词：相爱相杀 · 发布日期 2026/10/31。一个包里 <strong>IBus 和 Fcitx5 都带了，不用分开下载</strong>：安装脚本自己看系统里有什么就装什么，两个框架都有就两个都装，只有一个就装那一个；想只装一个就加 <code>--ibus</code> 或 <code>--fcitx5</code>。两个都装也不会改掉你当前正在用的框架。</p>
+
+<table>
+<tr><th>适用系统</th><td>Ubuntu / Debian · 一般电脑（amd64）</td></tr>
+<tr><th>文件</th><td>nqwb98-linux_v1.0.0_deb_amd64.tar.gz</td></tr>
+<tr><th>大小</th><td>7.63 MB</td></tr>
+<tr><th>解压后文件夹</th><td>nqwb98-linux_v1.0.0_deb_amd64</td></tr>
+<tr><th>下载</th><td><a class="btn" href="https://github.com/nianqingnet/nianqingnet.github.io/releases/download/V1.0.0/nqwb98-linux_v1.0.0_deb_amd64.tar.gz">下载</a></td></tr>
+</table>
+
+<table>
+<tr><th>适用系统</th><td>Ubuntu / Debian · ARM 电脑（arm64，如树莓派、ARM 笔记本）</td></tr>
+<tr><th>文件</th><td>nqwb98-linux_v1.0.0_deb_arm64.tar.gz</td></tr>
+<tr><th>大小</th><td>7.62 MB</td></tr>
+<tr><th>解压后文件夹</th><td>nqwb98-linux_v1.0.0_deb_arm64</td></tr>
+<tr><th>下载</th><td><a class="btn" href="https://github.com/nianqingnet/nianqingnet.github.io/releases/download/V1.0.0/nqwb98-linux_v1.0.0_deb_arm64.tar.gz">下载</a></td></tr>
+</table>
+
+<table>
+<tr><th>适用系统</th><td>Fedora · 一般电脑（x86_64）</td></tr>
+<tr><th>文件</th><td>nqwb98-linux_v1.0.0_rpm_x86_64.tar.gz</td></tr>
+<tr><th>大小</th><td>7.6 MB</td></tr>
+<tr><th>解压后文件夹</th><td>nqwb98-linux_v1.0.0_rpm_x86_64</td></tr>
+<tr><th>下载</th><td><a class="btn" href="https://github.com/nianqingnet/nianqingnet.github.io/releases/download/V1.0.0/nqwb98-linux_v1.0.0_rpm_x86_64.tar.gz">下载</a></td></tr>
+</table>
+
+<table>
+<tr><th>适用系统</th><td>Fedora · ARM 电脑（aarch64）</td></tr>
+<tr><th>文件</th><td>nqwb98-linux_v1.0.0_rpm_aarch64.tar.gz</td></tr>
+<tr><th>大小</th><td>7.59 MB</td></tr>
+<tr><th>解压后文件夹</th><td>nqwb98-linux_v1.0.0_rpm_aarch64</td></tr>
+<tr><th>下载</th><td><a class="btn" href="https://github.com/nianqingnet/nianqingnet.github.io/releases/download/V1.0.0/nqwb98-linux_v1.0.0_rpm_aarch64.tar.gz">下载</a></td></tr>
+</table>
+
+<p>不知道自己的 CPU？打开终端（按 <code>Ctrl+Alt+T</code>，或者点应用菜单、搜索“终端”打开），运行 <code>uname -m</code>：显示 <code>x86_64</code> 就是一般电脑（amd64），显示 <code>aarch64</code> 就是 ARM 电脑（arm64）。同一套包通用：Ubuntu 22.04、24.04、25.10、26.04 LTS、Debian 12、13 都能用，系统升级后也不用重装；.rpm 用于 Fedora 43、44。</p>
+<p><a class="shot" href="https://nianqingnet.github.io/nqwb/images/setlinux.png"><img src="https://nianqingnet.github.io/nqwb/images/setlinux.png" width="760" height="688" alt="念青五笔设置"></a></p>
+</section>
+
+<div class="ad-slot" style="margin:24px auto;text-align:center">
+<!-- 300x250,09-11-2 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-7973762468428054"
+     data-ad-slot="0849495859"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+
+<section>
+<h2 class="h2">安装（用安装脚本，最简单）</h2>
+<p><strong>第一步：下载并解压。</strong>上面按你的系统和 CPU 下载一个包。下载好后，在文件管理器里对着压缩包点右键 → “解压缩到这里”。也可以在终端里解压（以 Ubuntu / Debian 一般电脑那个包为例）：</p>
+<pre><code>tar xf nqwb98-linux_v1.0.0_deb_amd64.tar.gz
+ls</code></pre>
+<p>解压后会得到一个同名文件夹（去掉 <code>.tar.gz</code>，就是上面下载表里“解压后文件夹”那一行）。</p>
+<p><strong>第二步：进到解压出来的文件夹。</strong></p>
+<pre><code>cd nqwb98-linux_v1.0.0_deb_amd64</code></pre>
+<p>其它三个包就把文件夹名换成你那个包对应的（见上面下载表）。</p>
+<p><strong>第三步：运行安装脚本。</strong></p>
+<pre><code>./install.sh</code></pre>
+<p>它会问装哪个版本，直接回车就是第一个（念青五笔98，简体）；想装繁體就选念青五筆98，想两个都装就选“全部都装”。它自己认出是 Ubuntu / Debian（用 apt 装 .deb）还是 Fedora（用 dnf 装 .rpm）和 CPU，装的时候要输一次 sudo 密码：<strong>输入密码时屏幕上什么都不显示（连 * 都没有），这是正常的，输完按回车就行。</strong></p>
+<p>常用写法：</p>
+<pre><code>./install.sh --edition 98        # 只装念青五笔98
+./install.sh --edition 98 --edition 98t    # 简体、繁體两个都装
+./install.sh --ibus               # 只装 IBus 版
+./install.sh --fcitx5             # 只装 Fcitx5 版
+./install.sh -y                   # 不问，直接装简体版</code></pre>
+<p>如果这个包和你的系统、CPU 对不上，脚本会直接告诉你该下载哪一个包，不会硬装。</p>
+<p><strong>第四步：让输入法生效。</strong>注销再登录一次，或者运行 <code>ibus restart</code>（IBus 用户），然后看下面“启用输入法”。</p>
+
+<h2 class="h2">安装（自己用 apt / dnf 装，不用脚本也行）</h2>
+<p>Ubuntu / Debian（一般电脑），只装念青五笔98：</p>
+<pre><code>sudo apt install ./deb/amd64/nqwb-common_*.deb ./deb/amd64/ibus-nqwb_*.deb ./deb/amd64/nqwb98_*.deb</code></pre>
+<p>用 Fcitx5 的把 <code>ibus-nqwb</code> 换成 <code>fcitx5-nqwb</code>；装繁體版把 <code>nqwb98</code> 换成 <code>nqwb98t</code>；ARM 电脑把 <code>deb/amd64</code> 换成 <code>deb/arm64</code>。Fedora（一般电脑）：</p>
+<pre><code>sudo dnf install ./rpm/x86_64/nqwb-common-*.rpm ./rpm/x86_64/ibus-nqwb-*.rpm ./rpm/x86_64/nqwb98-*.rpm</code></pre>
+<p>ARM 机器把 <code>rpm/x86_64</code> 换成 <code>rpm/aarch64</code>。</p>
+</section>
+
+<section>
+<h2 class="h2">启用输入法（只做一次）</h2>
+<h3>IBus（Ubuntu / Debian / Fedora 的 GNOME 桌面）</h3>
+<p>打开 <strong>设置 → 键盘 → 输入源</strong>，点 <strong>＋</strong>，选 <strong>汉语（中国）</strong>，再选 <strong>念青五笔98</strong>，点“添加”。繁體版在 <strong>汉语（台湾）</strong> 下面：念青五筆98。打字时按 <strong>Super（Windows 键）+ 空格</strong> 切换到念青五笔98。</p>
+<p class="note">KDE、Xfce、MATE 等用 IBus 的桌面：运行 <code>ibus-setup</code> → 输入法 → 添加 → 汉语 → 念青五笔98。系统里还没启用 IBus：Ubuntu / Debian 运行 <code>im-config -n ibus</code> 后注销再登录。设置里找不到念青五笔98：先注销再登录；还不行运行 <code>sudo ibus write-cache --system</code> 再 <code>ibus restart</code>。</p>
+<h3>Fcitx5（Kubuntu / KDE、Deepin 等）</h3>
+<p>运行 <code>fcitx5-configtool</code>（或 系统设置 → 输入法）。右边取消勾选“<strong>仅显示当前语言</strong>”，搜索“<strong>念青</strong>”，把 念青五笔98 移到左边。默认 <strong>Ctrl+空格</strong> 打开 / 关闭输入法。Ubuntu / Debian 想让 Fcitx5 当默认框架：运行 <code>im-config -n fcitx5</code>，注销再登录。</p>
+<p class="note">GNOME + Wayland 下用 Fcitx5，要先装 GNOME 扩展“Input Method Panel”（kimpanel），不然看不到候选窗。Fcitx5 的左 Shift：Fcitx5 自己默认用左 Shift“临时切换到第一个输入法”，所以 Fcitx5 里左 Shift 由 Fcitx5 处理，右 Shift 才由念青五笔切中/英。想让左 Shift 也交给念青五笔：在 Fcitx5 的“全局选项 → 临时在当前和第一个输入法之间切换”里把左 Shift 去掉。</p>
+</section>
+
+<section>
+<h2 class="h2">状态栏和输入法名称</h2>
+<p><strong>X11 桌面</strong>（Ubuntu 选“Ubuntu on Xorg”登录、Xfce、MATE、Cinnamon、KDE X11 等）：用念青五笔98时屏幕左下角出现和 Windows 一样的<strong>浮动状态栏</strong>，名字显示为 <strong>念青五笔98</strong>：</p>
+<p><code>[青 中/英] [念青五笔98] [● 全/半角] [。， 中/英标点] [简/繁] [▾]</code></p>
+<p>点各个按钮切换；<strong>▾</strong>（或在状态栏上点右键）打开菜单：设置…、关于、状态栏回到左下角、隐藏状态栏。按住拖动可以挪位置，下次还在那里。切到别的输入法时状态栏自动隐藏。不想要：设置 → 外观 → 取消“显示状态栏”。配色可选 经典 / 简洁 / 可爱粉色 / 海洋蓝。</p>
+<p><strong>Wayland 桌面</strong>（Ubuntu 22.04 起、Fedora 的默认 GNOME 登录）：Wayland 不允许程序自己把窗口放在固定位置、一直在最上面，所以<strong>不显示浮动状态栏</strong>，改为在<strong>候选窗顶行编码前面显示“念青五笔98”</strong>，不是默认状态时跟在名称后面，如“念青五笔98·全角·英文标点·繁”（设置 → 外观 → “Wayland 下在候选窗显示名称”可以关掉）。中/英状态看屏幕右上角面板上的输入法图标，也可以在那里点菜单切换；切换用的快捷键和 X11 下一样。</p>
+</section>
+
+<section>
+<h2 class="h2">怎么打字（和 Windows 版一样）</h2>
+<table>
+<tr><th>按键</th><th>作用</th></tr>
+<tr><td>编码字母 a～y，z 是万能键</td><td>四码唯一自动上屏；重码时列出候选</td></tr>
+<tr><td>空格</td><td>上屏第一个（或方向键选中的）候选</td></tr>
+<tr><td>1～9、0</td><td>选候选</td></tr>
+<tr><td><code>-</code> <code>=</code>、PgUp PgDn、← →</td><td>翻页</td></tr>
+<tr><td>↑ ↓</td><td>在本页候选里移动</td></tr>
+<tr><td>Enter</td><td>清空编码（设置“Enter 英文上屏”打开时编码字母上屏）</td></tr>
+<tr><td>Esc</td><td>清空编码 / 关掉联想</td></tr>
+<tr><td><strong>Shift</strong>（单按）</td><td>中 / 英切换；打着编码时编码字母上屏</td></tr>
+<tr><td>Shift+空格</td><td>全角 / 半角</td></tr>
+<tr><td>Ctrl+.</td><td>中文 / 英文标点</td></tr>
+<tr><td>Ctrl+,</td><td>简体 / 繁体输出（只对当前窗口）</td></tr>
+<tr><td>Ctrl+`</td><td>开始造词，再按一次结束：打出来的字组成一个自造词</td></tr>
+<tr><td>Ctrl+数字</td><td>把这个重码候选往前挪（记住词序）</td></tr>
+<tr><td>z z</td><td>临时拼音：zz 后面打拼音，候选旁显示五笔编码</td></tr>
+<tr><td><code>;</code> <code>'</code></td><td>选第 2 / 3 个重码（设置里打开“启用 ；' 选二三重码”才有）</td></tr>
+</table>
+<p>编码字母显示在候选窗顶上（和 Windows 3.1.0 r4 起一样）；想让编码显示在程序里，打开设置“编码显示在程序里”。候选后面灰色的字母是<strong>编码提示</strong>；带“猜”的是空码猜词 / 重码补词猜出来的词。</p>
+</section>
+
+<section>
+<h2 class="h2">设置（念青五笔设置）</h2>
+<p>打开方法：应用菜单里的 <strong>念青五笔设置</strong>；或状态栏 ▾ → 设置…；或 GNOME 面板输入法菜单 → 念青五笔98 → 设置…；IBus 首选项 / Fcitx5 配置里的“配置”按钮；或终端运行 <code>nqwb-setup</code>。</p>
+<table>
+<tr><th>页</th><th>内容</th></tr>
+<tr><td>基本设置</td><td>词语联想、词语输入、逐键提示、编码提示、启动英文状态、上屏后插入空格；检索字符集；按键（二三码重码直接上屏、Enter 英文上屏、取消空码锁定、；' 选二三重码、编码显示在程序里、Shift 切换中英的方式）</td></tr>
+<tr><td>候选与联想</td><td>重码自动调频、自造词优先、zz 临时拼音、小键盘选候选；联想按码表原顺序、联想时回车上屏</td></tr>
+<tr><td>猜词</td><td>空码猜词、重码补词、无重码猜词</td></tr>
+<tr><td>标点与符号</td><td>启动默认英文标点、中文标点“/”→“、”、小键盘点号半角、默认输出繁体字</td></tr>
+<tr><td>外观</td><td>显示状态栏、界面风格（带预览）、Wayland 下候选窗显示名称、候选横排 / 竖排、每页候选个数、候选窗字体和字号（IBus、Fcitx5 都改）、候选窗配色（Fcitx5：经典 / 简洁 / 可爱粉色 / 海洋蓝）</td></tr>
+<tr><td>词库</td><td>自造词管理（列表、添加、删除、导入、导出，和 Windows 的 <code>Nqwb98.usr.txt</code> 同一格式）、编码反查、编辑自定义短语、编辑置后词（联想靠后词表）、打开用户文件夹、打开设置文件、导入 Windows 注册表设置</td></tr>
+<tr><td>关于</td><td>版本、已安装的版本和码表条数</td></tr>
+</table>
+<p>只列出<strong>装了的版本</strong>。装了两个以上版本时，顶上“设置适用于”可以选“所有版本”或“只对 念青五笔98”这样的单个版本。按“确定”或“应用”保存，输入法 2 秒内自动生效，不用重启。</p>
+<p>全部设置、自造词都在 <code>~/.config/nqwb/</code>：<code>nqwb.conf</code>（设置，每一项都有中文说明，键名就是 Windows 注册表里的值名）、<code>Nqwb98.usr.txt</code>（自造词）、<code>Nqwb98.ord.txt</code>（调整过的词序）、<code>Nqwb98.phrase.txt</code>（自定义短语）、<code>Nqwb98.MB</code>（可选，自己做的码表，放在这里就优先用它）、<code>status.pos</code>（状态栏位置）。<strong>从 Windows 搬过来：</strong>把 Windows 上“念青五笔98”文件夹里的 <code>Nqwb98.usr.txt</code>、<code>Nqwb98.ord.txt</code>、<code>Nqwb98.phrase.txt</code> 拷到 <code>~/.config/nqwb/</code>；设置：在 Windows 上用 regedit 导出念青五笔98的注册表项，在设置窗口“词库”页点“导入 Windows 注册表设置…”选这个 .reg 文件（或终端运行 <code>nqwb-import-reg 念青五笔98.reg</code>）。命令行工具：<code>nqwb-cli</code>（终端里试打，98 版加 <code>-e 98</code>）、<code>nqwb-cli -r</code>（编码反查）、<code>nqwb-mbtotxt</code> / <code>nqwb-mbpack</code>（码表 MB ↔ TXT）。</p>
+</section>
+
+<section>
+<h2 class="h2">常见问题</h2>
+<ul>
+<li><strong>设置里找不到念青五笔98：</strong>注销再登录；还不行运行 <code>sudo ibus write-cache --system</code> 后 <code>ibus restart</code>。</li>
+<li><strong>候选窗不出来：</strong>确认当前框架真的是 IBus（<code>echo $GTK_IM_MODULE</code> 应为 <code>ibus</code>）或 Fcitx5（<code>fcitx</code>）。</li>
+<li><strong>状态栏不出来：</strong>Wayland 下本来就不显示（看候选窗顶行的名称）；X11 下看设置 → 外观 → 显示状态栏。</li>
+<li><strong>候选顺序乱了：</strong>念青五笔有名称校验（同 Windows），不要改 <code>/usr/share/ibus/component/nqwb98.xml</code>、<code>/usr/share/fcitx5/inputmethod/nqwb98.conf</code> 里的输入法名称；改了就重新安装那个版本的包。</li>
+<li><strong>Flatpak / Snap 程序：</strong>IBus 通过门户（portal）工作，一般能用；个别 Snap 程序只认系统的输入法设置。</li>
+<li><strong>密码框里念青五笔自动不工作</strong>（按键直接给程序）。</li>
+<li><strong>置后词表（联想靠后词表）改了以后要重新启动输入法</strong>（<code>ibus restart</code> / <code>fcitx5 -r</code>）才生效；其余设置 2 秒内自动生效。</li>
+<li><strong>出问题时可以把 <code>nqwb-cli -v 按键</code> 的输出和 <code>~/.config/nqwb/nqwb.conf</code> 一起发给作者。</strong></li>
+</ul>
+<h2 class="h2">卸载</h2>
+<p><code>./install.sh --uninstall</code>（全部），<code>./install.sh --edition 98 --uninstall</code>（只卸念青五笔98，繁體用 <code>--edition 98t</code>）。或：<code>sudo apt remove nqwb98 nqwb98t ibus-nqwb fcitx5-nqwb nqwb-common</code>（Fedora 用 <code>sudo dnf remove</code>）。设置和自造词在 <code>~/.config/nqwb/</code>，不会被删除。</p>
+</section>
+
+<section class="split">
+<div>
+<h2 class="h2">其它版本</h2>
+<ul class="plain">
+<li><a href="/">念青五笔86、98版输入法 for 简体中文Windows</a></li>
+<li><a href="/nqwb/big5nqwb.htm">念青五筆86、98版输入法 for 繁體中文Windows</a></li>
+<li><a href="linuxnqwb86.htm">念青五笔86版 for Linux</a></li>
+</ul>
+</div>
+<div>
+<h2 class="h2">意见与反馈</h2>
+<p class="note" style="margin:0">用家在使用时遇到字词不够、不当的地方，或有任何其它意见，烦请加入念青五筆QQ群（群號碼：7709014）提出，以便本輸入法能夠得以不斷完善，非常感謝。</p>
+</div>
+</section>
+<footer class="site">版权所有 © 1998–2026 <a href="/">念青小筑</a> · 保留全部权利 · <a href="/cdn-cgi/l/email-protection#6f494c5e5e5a54494c5e5e5854494c5e5e5d54494c5e5e5d54494c5e5e5e54494c5e5e5b54494c5e5e5954494c595b54494c5e5e5f54494c5e5f5a54494c565854494c5e5e5f54494c5e5e5c54494c5e5f5a54494c5e5e5f54494c5e5f5c54494c5b5954494c5e5e5f54494c5e5f5e54494c5e5e5954">联系念青</a> · <a href="/privacy.html">隐私政策</a></footer>
+</div>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+</html>
