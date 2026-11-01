@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>指法练习 Typing Trainer</title>
+<title>指法练习 · 念青小筑</title>
+<meta name="keywords" content="念青五笔,输入法,指法练习,打字练习,NianQingWubi Input Method" />
+<link rel="icon" href="/favicon.ico">
 <style>
 :root{--bg:#fbf8ea;--ink:#1d2b2a;--acc:#1f6f6b;--muted:#8a8a7a;--card:#fffdf4;
 --lp:#e76f51;--lr:#f4a261;--lm:#e9c46a;--li:#8ab17d;--ri:#2a9d8f;--rm:#4c8fd6;--rr:#8e6cc7;--rp:#d16ba5;--th:#6c63ff}
@@ -48,12 +50,18 @@ small.tip{color:var(--muted)}
 footer.site{font-size:12px;color:#888;padding-top:14px;margin-top:6px;text-align:center;line-height:2;border-top:1px solid #e4dfc8;width:100%}
 footer.site a{color:#888}
 label{font-size:14px;color:var(--muted)}
+.intro{font-size:14px;color:var(--muted);margin:2px 0 0;text-align:center}
+aside.adcol{width:300px;flex:none;border-left:1px solid #e4dfc8;padding:14px 10px}
+.adwrap{position:sticky;top:14px;text-align:center}
 </style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7973762468428054"
+     crossorigin="anonymous"></script>
 </head>
 <body>
 <div class="wrap">
 <aside><h1 data-t="app"></h1><div id="list"></div></aside>
 <main>
+  <p class="intro" data-t="intro"></p>
   <div class="bar">
     <button id="prev" data-t="prev"></button>
     <span class="title" id="ltitle"></span>
@@ -76,6 +84,18 @@ label{font-size:14px;color:var(--muted)}
   <small class="tip" data-t="tip"></small>
   <footer class="site" id="foot"></footer>
 </main>
+<aside class="adcol"><div class="adwrap">
+<!-- typing -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-7973762468428054"
+     data-ad-slot="1568683131"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></aside>
 </div>
 <div class="msg" id="msg"><div><div id="msgtxt"></div><button class="sec" id="mRedo" data-t="again"></button><button id="mNext" data-t="next2"></button></div></div>
 <script>
@@ -85,18 +105,20 @@ const I18N={
  zh:{app:'指法练习',prev:'◀ 上一课',next:'下一课 ▶',redo:'重练',sTele:'音效：电报',sType:'音效：打字机',sMusic:'音效：音乐音阶',sOff:'音效：关',
   strict:'打错必须改正',hands:'显示手',speed:'速度',cpm:'字/分',acc:'正确率',prog:'进度',again:'再练一次',next2:'下一课',
   tip:'快捷键：Ctrl+→ 下一课，Ctrl+← 上一课，Esc 重练，完成后按 Enter 进下一课。请切换到英文输入法。',
+  intro:'指法是五笔的基础，先把英文字母练熟。',ime:'请切换到英文输入法再打',
   fing:{lp:'左手 小指',lr:'左手 无名指',lm:'左手 中指',li:'左手 食指',ri:'右手 食指',rm:'右手 中指',rr:'右手 无名指',rp:'右手 小指'},
   short:{lp:'小指',lr:'无名指',lm:'中指',li:'食指',ri:'食指',rm:'中指',rr:'无名指',rp:'小指',thl:'拇指',thr:'拇指'},
   space:'右手拇指 按空格',shiftL:'＋ 左手小指按 Shift',shiftR:'＋ 右手小指按 Shift',spaceKey:'空格',
-  foot:'版权所有 © 1998–2026 <a href="/">念青小筑</a> · 保留全部权利 · <a href="mailto:&#115;&#117;&#112;&#112;&#111;&#114;&#116;&#64;&#110;&#105;&#97;&#110;&#113;&#105;&#110;&#103;&#46;&#110;&#101;&#116;">联系念青</a>',
+  foot:'版权所有 © 1998–2026 <a href="/">念青小筑</a> · 保留全部权利 · <a href="/cdn-cgi/l/email-protection#6f494c5e5e5a54494c5e5e5854494c5e5e5d54494c5e5e5d54494c5e5e5e54494c5e5e5b54494c5e5e5954494c595b54494c5e5e5f54494c5e5f5a54494c565854494c5e5e5f54494c5e5e5c54494c5e5f5a54494c5e5e5f54494c5e5f5c54494c5b5954494c5e5e5f54494c5e5f5e54494c5e5e5954">联系念青</a> · <a href="/privacy.html">隐私政策</a>',
   done:(w,a)=>`本课完成！<br>速度 ${w} 字/分，正确率 ${a}%<br><small class="tip">按 Enter 进入下一课</small>`},
  en:{app:'Typing Trainer',prev:'◀ Prev',next:'Next ▶',redo:'Restart',sTele:'Sound: Telegraph',sType:'Sound: Typewriter',sMusic:'Sound: Music',sOff:'Sound: Off',
   strict:'Must fix errors',hands:'Show hands',speed:'Speed',cpm:'CPM',acc:'Accuracy',prog:'Progress',again:'Again',next2:'Next lesson',
   tip:'Shortcuts: Ctrl+→ next lesson, Ctrl+← previous, Esc restart, Enter after finishing goes to the next lesson.',
+  intro:'Good fingering is the foundation of Wubi. Master the English keys first.',ime:'Please switch to English input method',
   fing:{lp:'Left pinky',lr:'Left ring',lm:'Left middle',li:'Left index',ri:'Right index',rm:'Right middle',rr:'Right ring',rp:'Right pinky'},
   short:{lp:'Pinky',lr:'Ring',lm:'Middle',li:'Index',ri:'Index',rm:'Middle',rr:'Ring',rp:'Pinky',thl:'Thumb',thr:'Thumb'},
   space:'Right thumb → Space',shiftL:'+ left pinky on Shift',shiftR:'+ right pinky on Shift',spaceKey:'Space',
-  foot:'Copyright © 1998–2026 <a href="/">Nianqing</a> · All rights reserved · <a href="mailto:&#115;&#117;&#112;&#112;&#111;&#114;&#116;&#64;&#110;&#105;&#97;&#110;&#113;&#105;&#110;&#103;&#46;&#110;&#101;&#116;">Contact</a>',
+  foot:'Copyright © 1998–2026 <a href="/">Nianqing</a> · All rights reserved · <a href="mailto:&#115;&#117;&#112;&#112;&#111;&#114;&#116;&#64;&#110;&#105;&#97;&#110;&#113;&#105;&#110;&#103;&#46;&#110;&#101;&#116;">Contact</a> · <a href="/privacy.html">Privacy</a>',
   done:(w,a)=>`Lesson complete!<br>${w} CPM, ${a}% accuracy<br><small class="tip">Press Enter for the next lesson</small>`}
 };
 let lang=localStorage.tLang||'zh';const T=()=>I18N[lang];
@@ -129,28 +151,28 @@ function layout(){
     board.insertBefore(el,svg);const info={el,f,cx:px+pw/2,cy:py+ph/2,id:ch,lab};KEYS[ch]=info;
     if(ch.length===1){CHAR[ch]={key:info,shift:false};if(sh)CHAR[sh]={key:info,shift:true}}
     if(ch==='SPACE')CHAR[' ']={key:info,shift:false};x+=w;})});
-  const BW=15*U,BH=5*U,H=BH+2.6*U;
+  const BW=15*U,BH=5*U,H=$('showhands').checked?BH+2.6*U:BH;
   board.style.width=BW+'px';board.style.height=H+'px';svg.setAttribute('width',BW);svg.setAttribute('height',H);
   buildHands(BH);
 }
 
 // ---------- 纤细的手（平滑轮廓、渐细手指、美甲）----------
-const OUTLINE='#b98263';
+const OUTLINE='rgba(146,94,66,.55)';
 function lighten(h,k){const n=parseInt(h.slice(1),16),c=[n>>16,n>>8&255,n&255].map(v=>Math.round(v+(255-v)*k));return '#'+c.map(v=>v.toString(16).padStart(2,'0')).join('')}
 function defs(){
   const d=mk('defs');
   const g=mk('linearGradient',{id:'skin',x1:0,y1:0,x2:1,y2:0});
   [['0','#f3cdb3'],['.45','#fde6d6'],['1','#efc3a6']].forEach(([o,c])=>g.appendChild(mk('stop',{offset:o,'stop-color':c})));d.appendChild(g);
   const pg=mk('linearGradient',{id:'palm',x1:0,y1:0,x2:0,y2:1});
-  [['0','#fbe0cf',1],['.6','#f3caae',1],['1','#f0c4a7',0]].forEach(([o,c,op])=>pg.appendChild(mk('stop',{offset:o,'stop-color':c,'stop-opacity':op})));d.appendChild(pg);
+  [['0','#fbe0cf',1],['.7','#f3caae',1],['1','#eec6a9',1]].forEach(([o,c,op])=>pg.appendChild(mk('stop',{offset:o,'stop-color':c,'stop-opacity':op})));d.appendChild(pg);
   const ng=mk('linearGradient',{id:'nail',x1:0,y1:0,x2:1,y2:1});
-  [['0','#f7a8bd'],['1','#d9577d']].forEach(([o,c])=>ng.appendChild(mk('stop',{offset:o,'stop-color':c})));d.appendChild(ng);
+  [['0','#f6c3d0'],['1','#dd8ba1']].forEach(([o,c])=>ng.appendChild(mk('stop',{offset:o,'stop-color':c})));d.appendChild(ng);
   Object.keys(COLORS).forEach(z=>{const zg=mk('linearGradient',{id:'z_'+z,x1:0,y1:0,x2:1,y2:0});
-    [['0',css(z)],['.5',lighten(css(z),.35)],['1',css(z)]].forEach(([o,c])=>zg.appendChild(mk('stop',{offset:o,'stop-color':c})));d.appendChild(zg)});
+    [['0',css(z)],['.5',lighten(css(z),.5)],['1',css(z)]].forEach(([o,c])=>zg.appendChild(mk('stop',{offset:o,'stop-color':c})));d.appendChild(zg)});
   const f=mk('filter',{id:'soft',x:'-30%',y:'-30%',width:'160%',height:'160%'});
-  f.appendChild(mk('feDropShadow',{dx:0,dy:2,stdDeviation:2.2,'flood-color':'#6b4a35','flood-opacity':.35}));d.appendChild(f);
+  f.appendChild(mk('feDropShadow',{dx:0,dy:2,stdDeviation:2.2,'flood-color':'#6b4a35','flood-opacity':.28}));d.appendChild(f);
   const f2=mk('filter',{id:'glow',x:'-50%',y:'-50%',width:'200%',height:'200%'});
-  f2.appendChild(mk('feDropShadow',{dx:0,dy:0,stdDeviation:5,'flood-color':'#1d2b2a','flood-opacity':.55}));d.appendChild(f2);
+  f2.appendChild(mk('feDropShadow',{dx:0,dy:0,stdDeviation:4,'flood-color':'#1d2b2a','flood-opacity':.4}));d.appendChild(f2);
   svg.appendChild(d);
 }
 function buildHands(BH){
@@ -185,7 +207,7 @@ function newFinger(id,f,base,hx,hy,w,thumb){
   const body=mk('path');g.appendChild(body);
   const crease=mk('path',{fill:'none','stroke-linecap':'round'});g.appendChild(crease);
   const nail=mk('path');g.appendChild(nail);
-  const shine=mk('ellipse',{fill:'#fff',opacity:.55});g.appendChild(shine);
+  const shine=mk('ellipse',{fill:'#fff',opacity:.45});g.appendChild(shine);
   const lab=mk('text',{'text-anchor':'middle','font-weight':'800','paint-order':'stroke'});g.appendChild(lab);
   return {id,f,base,hx,hy,x:hx,y:hy,tx:hx,ty:hy,w,thumb,g,body,crease,nail,shine,lab,active:false,bend:id[0]==='l'||id==='thl'?1:-1};
 }
@@ -209,20 +231,20 @@ function drawFinger(F){
   const act=F.active;
   F.body.setAttribute('d',d);
   F.body.setAttribute('fill',act?`url(#z_${F.f})`:'url(#skin)');
-  F.body.setAttribute('stroke',act?'#1d2b2a':OUTLINE);F.body.setAttribute('stroke-width',act?3:1.6);F.body.setAttribute('stroke-linejoin','round');
+  F.body.setAttribute('stroke',act?'#1d2b2a':OUTLINE);F.body.setAttribute('stroke-width',act?2.5:1.3);F.body.setAttribute('stroke-linejoin','round');
   F.g.setAttribute('filter',act?'url(#glow)':'url(#soft)');
   // 关节纹（很淡）
   let cd='';(F.thumb?[.55]:[.48,.76]).forEach(t=>{const i=Math.round(t*N),p=C[i],hw=p.w*.22;
     cd+=`M${p.x+nx*hw},${p.y+ny*hw} Q${p.x+ux*hw*.5},${p.y+uy*hw*.5} ${p.x-nx*hw},${p.y-ny*hw} `});
-  F.crease.setAttribute('d',cd);F.crease.setAttribute('stroke',act?'rgba(0,0,0,.3)':'rgba(170,110,80,.45)');F.crease.setAttribute('stroke-width',1.3);
+  F.crease.setAttribute('d',cd);F.crease.setAttribute('stroke',act?'rgba(0,0,0,.22)':'rgba(170,110,80,.32)');F.crease.setAttribute('stroke-width',1.3);
   // 杏仁形美甲
-  const nl=tw*1.75,nw=tw*.68,tipx=C[N].x+ux*tw*.55,tipy=C[N].y+uy*tw*.55,bxn=tipx-ux*nl,byn=tipy-uy*nl;
+  const nl=tw*1.55,nw=tw*.6,tipx=C[N].x+ux*tw*.55,tipy=C[N].y+uy*tw*.55,bxn=tipx-ux*nl,byn=tipy-uy*nl;
   const nd=`M${bxn+nx*nw},${byn+ny*nw} C${bxn+nx*nw+ux*nl*.7},${byn+ny*nw+uy*nl*.7} ${tipx+nx*nw*.5},${tipy+ny*nw*.5} ${tipx},${tipy} C${tipx-nx*nw*.5},${tipy-ny*nw*.5} ${bxn-nx*nw+ux*nl*.7},${byn-ny*nw+uy*nl*.7} ${bxn-nx*nw},${byn-ny*nw} Q${bxn-ux*nw*.5},${byn-uy*nw*.5} ${bxn+nx*nw},${byn+ny*nw} Z`;
-  F.nail.setAttribute('d',nd);F.nail.setAttribute('fill','url(#nail)');F.nail.setAttribute('stroke',act?'#1d2b2a':'#c05b78');F.nail.setAttribute('stroke-width',act?1.5:.8);
+  F.nail.setAttribute('d',nd);F.nail.setAttribute('fill','url(#nail)');F.nail.setAttribute('stroke',act?'#1d2b2a':'#c98a9b');F.nail.setAttribute('stroke-width',act?1.2:.7);
   const sx=bxn+ux*nl*.45+nx*nw*.35,sy=byn+uy*nl*.45+ny*nw*.35,ang=Math.atan2(uy,ux)*180/Math.PI;
   F.shine.setAttribute('cx',sx);F.shine.setAttribute('cy',sy);F.shine.setAttribute('rx',nl*.22);F.shine.setAttribute('ry',nw*.18);F.shine.setAttribute('transform',`rotate(${ang} ${sx} ${sy})`);
   F.lab.style.display=act?'':'none';
-  if(act){F.lab.textContent=T().short[F.id];F.lab.setAttribute('x',ex);F.lab.setAttribute('y',ey-F.w*1.0);F.lab.setAttribute('font-size',U*.25);
+  if(act){F.lab.textContent=T().short[F.id];F.lab.setAttribute('x',ex);F.lab.setAttribute('y',ey-F.w*1.0);F.lab.setAttribute('font-size',U*.23);
     F.lab.setAttribute('fill','#1d2b2a');F.lab.setAttribute('stroke','#fff');F.lab.setAttribute('stroke-width',4)}
 }
 function loop(){
@@ -293,14 +315,19 @@ function renderText(){if(!text)return;$('text').innerHTML=[...text].map((c,i)=>`
   else{const F=FING.find(F=>F.id===k.f);F.active=true;F.tx=k.cx;F.ty=k.cy+U*.12;msg=T().fing[k.f]+' → '+k.lab;col=css(k.f);
     if(m.shift){const left=k.f[0]==='l';const s=KEYS[left?'RSHIFT':'LSHIFT'];s.el.classList.add('shift2');const P=FING.find(F=>F.id===(left?'rp':'lp'));P.active=true;P.tx=s.cx+(left?-.6:.6)*U;P.ty=s.cy+U*.1;msg+='　'+(left?T().shiftR:T().shiftL)}}
   $('hint').innerHTML=`<span class="dot" style="background:${col}"></span>${msg}`}
-function stats(){const min=t0?(Date.now()-t0)/60000:0;$('wpm').textContent=pos>=5?Math.round(pos/min):0;$('acc').textContent=typed?Math.round((typed-errs)/typed*100):100}
+function stats(){const min=t0?(Date.now()-t0)/60000:0;$('wpm').textContent=pos>=10?Math.round(pos/min):0;$('acc').textContent=typed?Math.round((typed-errs)/typed*100):100}
 document.addEventListener('keydown',e=>{
   if(e.target.tagName==='SELECT')return;
   if(e.ctrlKey&&e.key==='ArrowRight'){go(li+1);e.preventDefault();return}
   if(e.ctrlKey&&e.key==='ArrowLeft'){go(li-1);e.preventDefault();return}
   if(e.key==='Escape'){start();return}
   if($('msg').style.display==='flex'){if(e.key==='Enter')go(li+1);return}
-  if(e.ctrlKey||e.altKey||e.metaKey||e.key.length!==1)return;
+  if(e.key==='Backspace'){e.preventDefault();
+    if(wrongAt===pos)wrongAt=-1;else if(pos>0){pos--;if(wrongAt>=pos)wrongAt=-1}
+    renderText();stats();return}
+  if(e.ctrlKey||e.altKey||e.metaKey)return;
+  if(e.key.length===1&&e.key.charCodeAt(0)>127){$('hint').innerHTML=`<span class="dot" style="background:#e63946"></span>${T().ime}`;return}
+  if(e.key.length!==1)return;
   e.preventDefault();if(!t0)t0=Date.now();typed++;
   const m=CHAR[e.key];if(m){m.key.el.classList.add('press');setTimeout(()=>m.key.el.classList.remove('press'),100)}
   if(e.key===text[pos]){sfx('ok',e.key);pos++;wrongAt=-1}else{sfx('err');errs++;wrongAt=pos;if(!$('strict').checked)pos++}
@@ -310,7 +337,7 @@ document.addEventListener('keydown',e=>{
 });
 $('prev').onclick=e=>{go(li-1);e.currentTarget.blur()};$('next').onclick=e=>{go(li+1);e.currentTarget.blur()};$('redo').onclick=e=>{start();e.currentTarget.blur()};
 $('mRedo').onclick=start;$('mNext').onclick=()=>go(li+1);
-$('showhands').onchange=e=>{svg.style.display=e.target.checked?'':'none';e.target.blur()};
+$('showhands').onchange=e=>{svg.style.display=e.target.checked?'':'none';layout();applyDim();renderText();e.target.blur()};
 let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{layout();applyDim();renderText()},120)});
 layout();start();applyLang();loop();
 </script>
