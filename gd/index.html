@@ -35,17 +35,20 @@ td.kw{color:var(--hit)}
 td.act{white-space:nowrap}
 td.act a,td.act button{margin-right:6px}
 button.small{font-size:12px;padding:2px 10px}
+.kicker .paper{display:inline-block;padding:0 10px;border-radius:3px;transition:all .2s}
+.kicker .paper.on{background:var(--accent);color:#fff;font-weight:600}
+.kicker .dot{margin:0 2px}
 #errorBlock h3{font-size:17px;margin:0 0 10px;color:#8a4b2a}
 </style>
 </head>
 <body>
 <div class="wrap">
 <h2 class="page-title">纸媒涉及广东内容检索页</h2>
-<div class="kicker">人民日报 · 光明日报 · 经济日报</div>
+<div class="kicker"><span class="paper" id="p-rmrb">人民日报</span><span class="dot">·</span><span class="paper" id="p-gmrb">光明日报</span><span class="dot">·</span><span class="paper" id="p-jjrb">经济日报</span></div>
 
 <div class="panel">
 <div class="bar">
-<input type="text" id="urlInput" placeholder="请输入各报以node_01.html结尾的头版链接">
+<input type="text" id="urlInput" oninput="markPaper(this.value)" placeholder="请输入各报以node_01.html结尾的头版链接">
 <button id="btnStart" class="primary" onclick="start()">开始检测</button>
 <button onclick="pause()">暂停</button>
 <button onclick="resume()">继续</button>
@@ -106,8 +109,29 @@ function parseId(url) { let m = url.match(/content_(\d+)/); return m ? parseInt(
 function buildUrl(url, id) { return url.replace(/content_\d+/, "content_" + id); }
 
 // --- 配置区 ---
-const myWorker = "https://readpaper.nianqing.net/?url=";
+// 自用抓取 Worker：轮流使用。第二套部署好后把地址填进来即可，留空会自动忽略
+const myWorkers = [
+    "https://readpaper.nianqing.net/?url=",
+    "https://gd.nqwb.net/?url="   // 备用抓取（Vercel 或第二个 Worker），例如 "https://readpaper2.nianqing.net/?url="
+].filter(Boolean);
 const publicProxies = ["https://api.allorigins.win/raw?url=", "https://corsproxy.io/?"];
+const FETCH_TIMEOUT = 15000;   // 单次请求超时（毫秒）。抓取端 12 秒放弃并返回 502，这里多留 3 秒，超时或 403/502 都会换下一个抓取点
+
+// 每个抓取点各自记"下次可用时间"：同一个点仍按原来的间隔，几个点轮流，总速度随之提升
+const nextFree = {};
+let rr = 0;
+
+// 根据网址高亮顶部报名
+function paperOf(url) {
+    if (/people\.com\.cn/i.test(url)) return "rmrb";
+    if (/gmw\.cn/i.test(url)) return "gmrb";
+    if (/(^|[\/.])ce\.cn|jjrb/i.test(url)) return "jjrb";
+    return "";
+}
+function markPaper(url) {
+    const p = paperOf(url || "");
+    ["rmrb", "gmrb", "jjrb"].forEach(k => document.getElementById("p-" + k).classList.toggle("on", k === p));
+}
 
 function isPaper404(html) {
     if (!html || html.trim() === "404") return true;
@@ -118,23 +142,40 @@ function isPaper404(html) {
     return false;
 }
 
-async function fetchPage(url) {
-    const MAX_RETRIES = 5;
-    let attempt = 0;
-    while (attempt < MAX_RETRIES) {
-        const proxyList = [myWorker, ...publicProxies.sort(() => Math.random() - 0.5)];
-        for (let proxy of proxyList) {
-            try {
-                const requestUrl = proxy + encodeURIComponent(url);
-                let r = await fetch(requestUrl);
-                if (r.ok || r.status === 404) {
-                    const text = await r.text();
-                    return text || "404";
-                }
-            } catch (e) { console.warn(`${proxy} 连接失败`); }
+async function fetchVia(proxy, url, gap) {
+    const wait = (nextFree[proxy] || 0) - Date.now();
+    if (wait > 0) await sleep(wait);
+    nextFree[proxy] = Date.now() + gap;
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), FETCH_TIMEOUT);
+    try {
+        const r = await fetch(proxy + encodeURIComponent(url), { signal: ctrl.signal, cache: "no-store" });
+        if (r.ok || r.status === 404) {
+            const text = await r.text();
+            return text || "404";
         }
-        attempt++;
-        await sleep(1000 + (attempt * 500));
+        console.warn(`${proxy} 返回 ${r.status}`);
+        return null;
+    } catch (e) {
+        console.warn(`${proxy} 连接失败`, e.name);
+        return null;
+    } finally { clearTimeout(timer); }
+}
+
+// gap：同一抓取点两次请求的最小间隔，默认沿用原来的 0.8–1.8 秒随机间隔
+async function fetchPage(url, gap) {
+    const MAX_RETRIES = 5;
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+        // 自用 Worker 轮流打头，失败再换下一个；公用代理只作最后兜底
+        const n = myWorkers.length;
+        const own = myWorkers.map((_, i) => myWorkers[(rr + i) % n]);
+        rr = (rr + 1) % n;
+        const pub = [...publicProxies].sort(() => Math.random() - 0.5);
+        for (const proxy of [...own, ...pub]) {
+            const text = await fetchVia(proxy, url, gap === undefined ? randomDelay() : gap);
+            if (text !== null) return text;
+        }
+        await sleep(1000 + ((attempt + 1) * 500));
     }
     throw new Error("全部代理失效");
 }
@@ -225,7 +266,7 @@ async function scanFullDay(startNodeUrl) {
             
             try {
                 // 如果是第1版，直接复用刚才抓过的 html，省一次请求
-                let pageHtml = (i === 1) ? html : await fetchPage(currentLayoutUrl);
+                let pageHtml = (i === 1) ? html : await fetchPage(currentLayoutUrl, 300);
                 
                 // 判定为 404 或空版面
                 if (isPaper404(pageHtml) || pageHtml.length < 500) {
@@ -250,7 +291,6 @@ async function scanFullDay(startNodeUrl) {
                         if (!allTaskLinks.includes(absoluteUrl)) allTaskLinks.push(absoluteUrl);
                     }
                 });
-                await sleep(300); 
             } catch (e) {
                 emptyPageCount++;
                 if (emptyPageCount >= 2) break;
@@ -291,6 +331,7 @@ async function startInner() {
     // 3. 获取输入
     const inputEl = document.getElementById("urlInput");
     let inputUrl = inputEl.value.trim();
+    markPaper(inputUrl);
     if (!inputUrl) { alert("请输入起始链接"); return; }
 
     // 4. 执行逻辑
@@ -322,7 +363,6 @@ async function executeTaskQueue(list) {
             console.error("抓取失败", url); 
             errorCount++; 
         }
-        await sleep(randomDelay());
     }
     document.getElementById("status").innerHTML = 
         `<span style="color:green;">目录检索模式：全部完成！</span><br>` +
@@ -354,7 +394,6 @@ async function executeIncremental(startUrl) {
             addError(id, url); 
         }
         id++;
-        await sleep(randomDelay());
     }
     document.getElementById("status").innerHTML = 
         `<span style="color:green;">递增检索结束！</span><br>` +
