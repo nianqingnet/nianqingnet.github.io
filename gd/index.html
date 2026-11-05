@@ -112,7 +112,9 @@ function buildUrl(url, id) { return url.replace(/content_\d+/, "content_" + id);
 // 自用抓取 Worker：轮流使用。第二套部署好后把地址填进来即可，留空会自动忽略
 const myWorkers = [
     "https://readpaper.nianqing.net/?url=",
-    "https://gd.nqwb.net/?url="   // 备用抓取（Vercel 或第二个 Worker），例如 "https://readpaper2.nianqing.net/?url="
+    "https://sensational-queijadas-fc66d9.netlify.app/?url=",   // Netlify 备用（AWS 出口）。打不开就绑个子域名
+    "https://gd.nqwb.net/?url=",   // 备用抓取，例如 "https://readpaper2.example.com/?url="
+    ""   // 还可以继续加，例如其他站点的 Cloudflare Worker
 ].filter(Boolean);
 const publicProxies = ["https://api.allorigins.win/raw?url=", "https://corsproxy.io/?"];
 const FETCH_TIMEOUT = 15000;   // 单次请求超时（毫秒）。抓取端 12 秒放弃并返回 502，这里多留 3 秒，超时或 403/502 都会换下一个抓取点
