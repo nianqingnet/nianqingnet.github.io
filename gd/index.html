@@ -38,6 +38,10 @@ button.small{font-size:12px;padding:2px 10px}
 .kicker .paper{display:inline-block;padding:0 10px;border-radius:3px;transition:all .2s}
 .kicker .paper.on{background:var(--accent);color:#fff;font-weight:600}
 .kicker .dot{margin:0 2px}
+#workers{font-size:13px;color:var(--muted);margin-top:4px}
+#workers b{color:var(--accent);font-weight:600}
+#workers .bad{color:var(--hit)}
+#wlog{font-size:12px;color:var(--hit);line-height:1.7;margin-top:4px}
 #errorBlock h3{font-size:17px;margin:0 0 10px;color:#8a4b2a}
 </style>
 </head>
@@ -55,6 +59,8 @@ button.small{font-size:12px;padding:2px 10px}
 <button onclick="stop()">停止</button>
 </div>
 <div id="status"></div>
+<div id="workers"></div>
+<div id="wlog"></div>
 </div>
 
 <div id="hitBlock" class="panel" style="display:none">
@@ -112,9 +118,8 @@ function buildUrl(url, id) { return url.replace(/content_\d+/, "content_" + id);
 // 自用抓取 Worker：轮流使用。第二套部署好后把地址填进来即可，留空会自动忽略
 const myWorkers = [
     "https://readpaper.nianqing.net/?url=",
-    "https://sensational-queijadas-fc66d9.netlify.app/?url=",   // Netlify 备用（AWS 出口）。打不开就绑个子域名
-    "https://gd.nqwb.net/?url=",   // 备用抓取，例如 "https://readpaper2.example.com/?url="
-    ""   // 还可以继续加，例如其他站点的 Cloudflare Worker
+    "https://sensational-queijadas-fc66d9.netlify.app/?url=",   // Netlify 备用（AWS 出口）。国内打不开就绑个 nianqing.net 子域名再换掉
+    ""   // 还可以继续加，例如第二个 Cloudflare Worker
 ].filter(Boolean);
 const publicProxies = ["https://api.allorigins.win/raw?url=", "https://corsproxy.io/?"];
 const FETCH_TIMEOUT = 15000;   // 单次请求超时（毫秒）。抓取端 12 秒放弃并返回 502，这里多留 3 秒，超时或 403/502 都会换下一个抓取点
@@ -144,6 +149,35 @@ function isPaper404(html) {
     return false;
 }
 
+// ---------- 抓取点状态：A/B/C 各自在抓哪一篇、失败几次 ----------
+const LETTERS = "ABCDEFGH";
+let wState = {};
+let wLog = [];
+function wLabel(proxy) { const i = myWorkers.indexOf(proxy); return i >= 0 ? LETTERS[i] : "公用"; }
+function resetWorkers() {
+    wState = {}; wLog = [];
+    myWorkers.forEach((p, i) => wState[LETTERS[i]] = { cur: "待命", fail: 0, host: p.replace(/^https?:\/\//, "").split("/")[0] });
+    renderWorkers();
+}
+function setCur(L, txt) { if (wState[L]) { wState[L].cur = txt; renderWorkers(); } }
+function renderWorkers() {
+    document.getElementById("workers").innerHTML = Object.keys(wState).map(L => {
+        const w = wState[L];
+        return `<span title="${escapeHtml(w.host)}"><b>${L}</b> ${escapeHtml(w.cur)}` +
+               (w.fail ? `<span class="bad">（失败${w.fail}）</span>` : "") + `</span>`;
+    }).join(" · ");
+    document.getElementById("wlog").innerHTML = wLog.map(escapeHtml).join("<br>");
+}
+function noteFail(proxy, why, url) {
+    const L = wLabel(proxy);
+    if (wState[L]) wState[L].fail++;
+    const t = new Date().toTimeString().slice(0, 8);
+    const m = url.match(/(node|content)_\d+/);
+    wLog.unshift(`${t} ${L} 抓取失败（${why}）${m ? " " + m[0] : ""}${L === "公用" ? "" : "，已转交其他点"}`);
+    wLog = wLog.slice(0, 6);
+    renderWorkers();
+}
+
 async function fetchVia(proxy, url, gap) {
     const wait = (nextFree[proxy] || 0) - Date.now();
     if (wait > 0) await sleep(wait);
@@ -157,11 +191,76 @@ async function fetchVia(proxy, url, gap) {
             return text || "404";
         }
         console.warn(`${proxy} 返回 ${r.status}`);
+        noteFail(proxy, r.status === 502 ? "502 报社超时或出错" : "HTTP " + r.status, url);
         return null;
     } catch (e) {
         console.warn(`${proxy} 连接失败`, e.name);
+        noteFail(proxy, e.name === "AbortError" ? "超时" : "连不上", url);
         return null;
     } finally { clearTimeout(timer); }
+}
+
+async function fetchPublic(url) {
+    for (const proxy of [...publicProxies].sort(() => Math.random() - 0.5)) {
+        const text = await fetchVia(proxy, url, randomDelay());
+        if (text !== null) return text;
+    }
+    return null;
+}
+
+// ---------- 并行：各自领活 ----------
+// 每个抓取点各守自己的间隔，谁空了就领下一篇，慢的不拖快的。
+// 某点失败，这一篇退回队列给别的点；所有自用点都失败过，再用公用代理兜底一次。
+// 某点连续失败 3 次，暂停 30 秒。
+// 结果一律按原顺序交给 onResult（processArticle 在里面），命中表顺序、检测结果与逐篇抓取完全一样。
+async function runPool(total, urlAt, labelAt, gapFn, onResult) {
+    const members = myWorkers.length ? myWorkers : [null];
+    const LOOK = members.length * 3;            // 最多领先已处理位置几篇，递增模式免得冲过报纸末尾太多
+    const done = new Map(), failedBy = {}, retry = [];
+    let next = 0, flushAt = 0, stopAt = Infinity;
+    const end = () => Math.min(total, stopAt);
+    function flush() {
+        while (flushAt < end() && done.has(flushAt)) {
+            const h = done.get(flushAt); done.delete(flushAt);
+            if (onResult(flushAt, h) === false) stopAt = flushAt + 1;
+            flushAt++;
+        }
+    }
+    function take(L) {
+        const k = retry.findIndex(i => !failedBy[i].has(L));
+        if (k >= 0) return retry.splice(k, 1)[0];
+        if (next < end() && next < flushAt + LOOK) return next++;
+        return -1;
+    }
+    async function member(proxy, k) {
+        const L = proxy ? LETTERS[k] : "公用";
+        let streak = 0;
+        while (running && flushAt < end()) {
+            while (paused && running) { setCur(L, "暂停"); await sleep(500); }
+            const i = take(L);
+            if (i < 0) { setCur(L, "等待"); await sleep(200); continue; }
+            if (i >= end()) continue;
+            setCur(L, labelAt(i));
+            const url = urlAt(i);
+            let html = proxy ? await fetchVia(proxy, url, gapFn()) : await fetchPublic(url);
+            if (html !== null) { streak = 0; done.set(i, html); flush(); continue; }
+            (failedBy[i] = failedBy[i] || new Set()).add(L);
+            if (!proxy || failedBy[i].size >= members.length) {
+                done.set(i, proxy ? await fetchPublic(url) : null);   // 公用代理兜底，仍失败则记异常
+                flush();
+            } else retry.push(i);
+            if (proxy && ++streak >= 3) {
+                wLog.unshift(`${new Date().toTimeString().slice(0, 8)} ${L} 连续失败 ${streak} 次，暂停 30 秒`);
+                wLog = wLog.slice(0, 6);
+                setCur(L, "歇30秒");
+                for (let t = 0; t < 30 && running && flushAt < end(); t++) await sleep(1000);
+                streak = 0;
+            }
+        }
+        setCur(L, running ? "完成" : "已停");
+    }
+    await Promise.all(members.map(member));
+    flush();
 }
 
 // gap：同一抓取点两次请求的最小间隔，默认沿用原来的 0.8–1.8 秒随机间隔
@@ -257,6 +356,45 @@ async function scanFullDay(startNodeUrl) {
             }
         }
 
+        // --- 头版自带全部版面清单（人民日报“01版：要闻”、经济日报 PC“第01版”等）：照单读，不用猜到第25版 ---
+        const sel = ".news-list a, .newsList a, .m-list-wrap a, map area, .list_t a";
+        let nodes = [];
+        doc.querySelectorAll("a[href]").forEach(el => {
+            const h = el.getAttribute("href");
+            const m = h && h.match(/node_(\d+)\.html?$/);
+            if (!m) return;
+            let abs; try { abs = new URL(h, startNodeUrl).href; } catch (e) { return; }
+            if (abs.substring(0, abs.lastIndexOf('/') + 1) !== baseUrl) return;   // 排除手机版、前一天等
+            const n = parseInt(m[1]);
+            if (!nodes.some(x => x.n === n)) nodes.push({ n, url: abs });
+        });
+        nodes.sort((a, b) => a.n - b.n);
+        if (nodes.length >= 2) {
+            const perPage = new Array(nodes.length);
+            const collect = (k, pageHtml) => {
+                perPage[k] = [];
+                if (pageHtml === null) { errorCount++; addError("第" + String(nodes[k].n).padStart(2, "0") + "版目录", nodes[k].url); return; }
+                if (!pageHtml || isPaper404(pageHtml) || pageHtml.length < 500) return;
+                const pageDoc = new DOMParser().parseFromString(pageHtml, "text/html");
+                pageDoc.querySelectorAll(sel).forEach(el => {
+                    const href = el.getAttribute('href');
+                    if (href && href.includes('content_')) perPage[k].push(new URL(href, nodes[k].url).href);
+                });
+            };
+            const k0 = nodes.findIndex(x => x.url === startNodeUrl);
+            if (k0 >= 0) collect(k0, html);           // 起始版已抓过，省一次请求
+            const rest = nodes.map((_, k) => k).filter(k => k !== k0);
+            let read = k0 >= 0 ? 1 : 0;
+            document.getElementById("status").innerText = `头版列出 ${nodes.length} 个版，正在读取各版目录...`;
+            await runPool(rest.length, j => nodes[rest[j]].url, j => "第" + String(nodes[rest[j]].n).padStart(2, "0") + "版", () => 300,
+                (j, pageHtml) => {
+                    collect(rest[j], pageHtml);
+                    document.getElementById("status").innerText = `正在扫描目录：已读 ${++read} / ${nodes.length} 版`;
+                });
+            perPage.forEach(list => (list || []).forEach(u => { if (!allTaskLinks.includes(u)) allTaskLinks.push(u); }));
+            return allTaskLinks;
+        }
+
         // --- 保底方案：你原本的逐版循环逻辑 (适配人民、光明等) ---
         for (let i = 1; i <= 25; i++) {
             if (!running) break;
@@ -329,6 +467,9 @@ async function startInner() {
     if (hitTableBody) hitTableBody.innerHTML = ""; // 清空表格内容
     document.getElementById("hitBlock").style.display = "none";
     document.getElementById("errorBlock").style.display = "none";
+    const errT = document.getElementById("errorTable");
+    while (errT.rows.length > 1) errT.deleteRow(1);
+    resetWorkers();
 
     // 3. 获取输入
     const inputEl = document.getElementById("urlInput");
@@ -353,50 +494,42 @@ async function startInner() {
 // --- 执行器 A：按清单爬取 (光明日报常用) ---
 async function executeTaskQueue(list) {
     let count = 0;
-    for (let url of list) {
-        if (!running) break;
-        while (paused) await sleep(500);
-        document.getElementById("status").innerText = `进度：${count + 1} / ${list.length}`;
+    await runPool(list.length, i => list[i], i => `第${i + 1}篇`, randomDelay, (i, html) => {
+        document.getElementById("status").innerText = `进度：已完成 ${i + 1} / ${list.length}`;
+        if (html === null) { console.error("抓取失败", list[i]); errorCount++; addError(i + 1, list[i]); return; }
         try {
-            let html = await fetchPage(url);
-            processArticle(html, url); 
+            processArticle(html, list[i]);
             count++;
-        } catch (e) { 
-            console.error("抓取失败", url); 
-            errorCount++; 
+        } catch (e) {
+            console.error("处理失败", list[i]);
+            errorCount++;
         }
-    }
+    });
     document.getElementById("status").innerHTML = 
-        `<span style="color:green;">目录检索模式：全部完成！</span><br>` +
+        `<span style="color:green;">目录检索模式：${running ? "全部完成！" : "已停止"}</span><br>` +
         `共处理：${count} 篇，命中：${completedCount} 篇，异常：${errorCount} 篇`;
 }
 
 // --- 执行器 B：按 ID 递增爬取 (人日/经济常用) ---
+// 连续 2 个 ID 为空即判定报纸结束；并行时按 ID 顺序判断，结尾最多多抓几篇空页
 async function executeIncremental(startUrl) {
     baseUrl = startUrl; // 记录基础URL
-    id = parseId(startUrl);
+    const first = parseId(startUrl);
     let foundCount = 0;
-    while (running) {
-        if (!running) break;
-        while (paused) await sleep(500);
-        let url = buildUrl(baseUrl, id);
-        document.getElementById("status").innerText = `递增模式：正在检测 ID ${id} ...`;
-        try {
-            let html = await fetchPage(url);
-            if (isPaper404(html)) {
-                endCount++;
-                if (endCount >= 2) break;
-            } else {
-                endCount = 0;
-                foundCount++;
-                processArticle(html, url);
-            }
-        } catch (e) { 
-            errorCount++; 
-            addError(id, url); 
+    await runPool(Infinity, i => buildUrl(baseUrl, first + i), i => `ID ${first + i}`, randomDelay, (i, html) => {
+        id = first + i;
+        const url = buildUrl(baseUrl, id);
+        document.getElementById("status").innerText = `递增模式：已检测到 ID ${id}`;
+        if (html === null) { errorCount++; addError(id, url); return; }
+        if (isPaper404(html)) {
+            endCount++;
+            if (endCount >= 2) return false;
+        } else {
+            endCount = 0;
+            foundCount++;
+            try { processArticle(html, url); } catch (e) { errorCount++; addError(id, url); }
         }
-        id++;
-    }
+    });
     document.getElementById("status").innerHTML = 
         `<span style="color:green;">递增检索结束！</span><br>` +
         `共分析：${foundCount} 篇，命中：${completedCount} 篇，异常：${errorCount} 篇`;
@@ -621,6 +754,15 @@ async function openRedContent(url, title, matches) {
 
         highlightNode(box, doc);
 
+        // 命中词跳转：按正文出现顺序，前 9 处做成可点的词，点了滚到那里并闪一下
+        const kws = (matches || []).map(m => m.replace(/\(\d+次\)$/, ""));
+        const marks = [...box.querySelectorAll("mark")].filter(m => kws.includes(m.textContent));
+        marks.forEach((m, i) => m.id = "hit" + (i + 1));
+        const JUMP_MAX = 9;
+        let jump = marks.slice(0, JUMP_MAX).map((m, i) => `<a href="#" data-t="hit${i + 1}">${escapeHtml(m.textContent)}</a>`).join("");
+        if (marks.length > JUMP_MAX) jump += `<span class="more">另有 ${marks.length - JUMP_MAX} 处</span>`;
+        if (jump) jump += `<a href="#" data-t="top" class="top">回顶部</a>`;
+
         const page = `<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>【套红】${escapeHtml(title)}</title>
@@ -636,11 +778,31 @@ h1{font-family:"Songti SC","STSong","Noto Serif SC","SimSun",serif;font-size:26p
 .body p{margin:0 0 1em}
 .body img{max-width:100%;height:auto;display:block;margin:12px auto}
 .body table{max-width:100%}
-mark{background:#ffe866;color:#b3261e;font-weight:700;padding:0 2px;border-radius:2px}
+mark{background:#ffe866;color:#b3261e;font-weight:700;padding:0 2px;border-radius:2px;scroll-margin:90px}
+mark.flash{outline:3px solid #1f6f6b;outline-offset:2px}
+.jump{position:sticky;top:0;z-index:5;background:#fbf8ea;border-bottom:1px solid #e3dcc4;padding:8px 0;margin:-8px 0 20px;font-size:14px;line-height:2}
+.jump a{display:inline-block;margin-right:14px;color:#b3261e;border-bottom:1px dashed #b3261e}
+.jump a:hover{text-decoration:none;color:#1f6f6b;border-color:#1f6f6b}
+.jump .more{color:#7d776a;margin-right:14px}
+.jump a.top{color:#1f6f6b;border-color:#1f6f6b;float:right;margin-right:0}
 </style></head><body><div class="wrap">
 <div class="head"><h1>${escapeHtml(title)}</h1>
 <div class="meta">命中：<b>${escapeHtml((matches || []).join("，"))}</b><br><a href="${escapeHtml(url)}" target="_blank">打开原文</a></div></div>
-<div class="body">${box.innerHTML}</div></div></body></html>`;
+${jump ? `<div class="jump">${jump}</div>` : ""}
+<div class="body">${box.innerHTML}</div></div>
+<script>
+document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest(".jump a");
+    if (!a) return;
+    e.preventDefault();
+    if (a.dataset.t === "top") { window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+    var m = document.getElementById(a.dataset.t);
+    if (!m) return;
+    m.scrollIntoView({ behavior: "smooth", block: "center" });
+    m.classList.add("flash");
+    setTimeout(function () { m.classList.remove("flash"); }, 1500);
+});
+<\/script></body></html>`;
 
         newWin.document.open();
         newWin.document.write(page);
