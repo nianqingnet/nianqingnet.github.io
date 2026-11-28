@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<!-- 更新日期 2026/11/28 -->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APPLE ][ BASIC 部分命令、函数</title>
+<meta name="keywords" content="APPLE ][,APPLE II,Apple II,苹果机,模拟器,,念青五笔,输入法,下载" />
+<meta property="article:modified_time" content="2026-11-28" />
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/assets/css/site.css?2026">
+<style>
+/* APPLE ][ 栏目组：颜色与首页 / 念青五笔略作区分，自成一组；组前细线分隔 */
+nav.site a.apple{color:#9c4a1f}
+nav.site a.apple.on{border-bottom-color:#9c4a1f}
+.nav-sep{display:inline-block;width:1px;height:14px;background:var(--line);margin-left:26px;vertical-align:-2px}
+</style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7973762468428054"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="wrap">
+<header class="site"><nav class="site"><a href="/">首页</a><a href="/nqwb/">念青五笔</a><span class="nav-sep" aria-hidden="true"></span><a href="/apple2/" class="apple">APPLE ][</a><a href="/apple2/applegames.htm" class="apple">游戏镜像</a><a href="/apple2/tools.htm" class="apple">工具镜像</a><a href="/apple2/command.htm" class="apple on">编程指令</a><a href="/apple2/links.htm" class="apple">相关网站</a></nav></header>
+<section class="hero">
+<div class="kicker">APPLE ][ · 编程指令</div>
+<h1>APPLE ][ BASIC 部分命令、函数</h1>
+<p>另见 <a href="6502.htm">6502 汇编指令集</a>。</p>
+</section>
+<section>
+<div class="doc">
+
+                        <table cellspacing="1" cellpadding="1" width="100%" border="0">
+                         
+
+                            <tr>
+                              <td width="33%">&nbsp; </td>
+                              <td colspan="2">&nbsp; </td>
+                            </tr>
+                            <tr bgcolor="#ccccff">
+                              <td colspan="3">Statements and Lines</td>
+                            </tr>
+                            <tr>
+                              <td colspan="3">A line typed without a line number is executed immediately; those   lines typed with a line number are saved for execution with the RUN   command.</td>
+                            </tr>
+                            <tr>
+                              <td>&nbsp;</td>
+                              <td colspan="2">&nbsp;</td>
+                            </tr>
+                            <tr>
+                              <td>:</td>
+                              <td colspan="2">Separates multiple statements on the same line.</td>
+                            </tr>
+                            <tr>
+                              <td>REM</td>
+                              <td colspan="2">Designates a remark for comments.</td>
+                            </tr>
+                            <tr>
+                              <td>&nbsp;</td>
+                              <td colspan="2">&nbsp;</td>
+                            </tr>
+                            <tr bgcolor="#ccccff">
+                              <td colspan="3">Operations on Whole Programs</td>
+                            </tr>
+                            <tr>
+                              <td valign="top">NEW</td>
+                              <td colspan="2">Erases the current program and clears all variables.</td>
+                            </tr>
+                            <tr>
+                              <td>CLEAR</td>
+                              <td colspan="2">Resets all variables.</td>
+                            </tr>
+                            <tr>
+                              <td>LIST</td>
+                              <td colspan="2">Displays the entire current program.</td>
+                            </tr>
+                            <tr>
+                              <td>LIST 11-12</td>
+                              <td colspan="2">Displays the lines from 11 to 12.</td>
+                            </tr>
+                            <tr>
+                              <td>RUN</td>
+                              <td colspan="2">Executes the current program.</td>
+                            </tr>
+                            <tr>
+                              <td>RUN n</td>
+                              <td colspan="2">Executes the current program from line n.</td>
+                            </tr>
+                            <tr>
+                              <td>RUN name</td>
+                              <td colspan="2">Executes the program name from disk.</td>
+                            </tr>
+                            <tr>
+                              <td>LOAD name</td>
+                              <td colspan="2">Loads the program name from disk.</td>
+                            </tr>
+                            <tr>
+                              <td>SAVE name</td>
+                              <td colspan="2">Saves the program on the disk as name.</td>
+                            </tr>
+                            <tr>
+                              <td>&nbsp;</td>
+                              <td colspan="2">&nbsp;</td>
+                            </tr>
+                            <tr bgcolor="#ccccff">
+                              <td colspan="3">Variables</td>
+                            </tr>
+                            <tr>
+                              <td>Real</td>
+                              <td width="13%">AB </td>
+                              <td width="54%">+/- 9.9999999 E+37</td>
+                            </tr>
+                            <tr>
+                              <td>Integer</td>
+                              <td>AB%</td>
+                              <td>+/- 32767</td>
+                            </tr>
+                            <tr>
+                              <td>String</td>
+                              <td>AB$</td>
+                              <td>0 to 255 characters</td>
+                            </tr>
+                            <tr>
+                              <td>&nbsp;</td>
+                              <td colspan="2">&nbsp;</td>
+                            </tr>
+                            <tr bgcolor="#ccccff">
+                              <td colspan="3">Arrays</td>
+                            </tr>
+                            <tr>
+                              <td>Real</td>
+                              <td colspan="2">AB(x,y,z)</td>
+                            </tr>
+                            <tr>
+                              <td>Integer</td>
+                              <td colspan="2">AB%(x,y,z)</td>
+                            </tr>
+                            <tr>
+                              <td>String</td>
+                              <td colspan="2">AB$(x,y,z)</td>
+                            </tr>
+                            <tr>
+                              <td>&nbsp;</td>
+                              <td colspan="2">&nbsp;</td>
+                            </tr>
+                            <tr>
+                              <td colspan="3"><p>Where A is a letter, B is a letter or digit. The size of an array is limited   only by the available memory.<br />
+                                    <br />
+                              </p></td>
+                            </tr>
+                            <tr>
+                              <td valign="top">DIM a (x,y,z)</td>
+                              <td colspan="2">Defines the array a with maximum subscripts of x, y and   z.</td>
+                            </tr>
+                            <tr>
+                              <td>&nbsp; </td>
+                              <td colspan="2">&nbsp;</td>
+                            </tr>
+                            <tr bgcolor="#ccccff">
+                              <td colspan="3">Arithmetic Operators</td>
+                            </tr>
+                            <tr>
+                              <td>=</td>
+                              <td colspan="2">Assigns a value to a variable</td>
+                            </tr>
+                            <tr>
+                              <td>-</td>
+                              <td colspan="2">Subtraction</td>
+                            </tr>
+                            <tr>
+                              <td>+</td>
+                              <td colspan="2">Addition</td>
+                            </tr>
+                            <tr>
+                              <td>/</td>
+                              <td colspan="2">Division</td>
+                            </tr>
+                            <tr>
+                              <td>*</td>
+                              <td colspan="2">Multiplication</td>
+                            </tr>
+                            <tr>
+                              <td>^</td>
+                              <td colspan="2">Exponentiation</td>
+                            </tr>
+                            <tr>
+                              <td>&nbsp; </td>
+                              <td colspan="2">&nbsp; </td>
+                            </tr>
+                            <tr bgcolor="#ccccff">
+                              <td colspan="3">Logical Operators</td>
+                            </tr>
+                            <tr>
+                              <td>AND</td>
+                              <td colspan="2">Both true</td>
+                            </tr>
+                            <tr>
+                              <td>OR</td>
+                              <td colspan="2">Either one or both true</td>
+                            </tr>
+                            <tr>
+                              <td>NOT</td>
+                              <td colspan="2">Is false</td>
+                            </tr>
+                            <tr>
+                              <td>&nbsp; </td>
+                              <td colspan="2">&nbsp; </td>
+                            </tr>
+                            <tr bgcolor="#ccccff">
+                              <td colspan="3">Relational Operators</td>
+                            </tr>
+                            <tr>
+                              <td>=</td>
+                              <td colspan="2">Equal to</td>
+                            </tr>
+                            <tr>
+                              <td>&lt;</td>
+                              <td colspan="2">Less than</td>
+                            </tr>
+                            <tr>
+                              <td>&gt;</td>
+                              <td colspan="2">Greater than</td>
+                            </tr>
+                            <tr>
+                              <td>&lt;= =&lt;</td>
+                              <td colspan="2">Less than or equal to</td>
+                            </tr>
+                            <tr>
+                              <td>&gt;= =&gt;</td>
+                              <td colspan="2">Greater than or equal to</td>
+                            </tr>
+                            <tr>
+                              <td>&lt;&gt; &gt;&lt;</td>
+                              <td colspan="2">Not equal to</td>
+                            </tr>
+                            <tr>
+                              <td>&nbsp; </td>
+                              <td colspan="2">&nbsp; </td>
+                            </tr>
+                            <tr bgcolor="#ccccff">
+                              <td colspan="3">Arithmetic Functions</td>
+                            </tr>
+                            <tr>
+                              <td>ABS(x)</td>
+                              <td colspan="2">Absolute value of x</td>
+                            </tr>
+                            <tr>
+                              <td>SGN(x)</td>
+                              <td colspan="2">-1 if x&lt;0, 0 if x=0, 1 if x&gt;0</td>
+                            </tr>
+                            <tr>
+                              <td>INT(x)</td>
+                              <td colspan="2">Integer portion of x</td>
+                            </tr>
+                            <tr>
+                              <td>SQR(x)</td>
+                              <td colspan="2">Square root of x</td>
+                            </tr>
+                            <tr>
+                              <td>SIN(x)</td>
+                              <td colspan="2">Sine of x</td>
+                            </tr>
+                            <tr>
+                              <td>COS(x)</td>
+                              <td colspan="2">Cosine of x</td>
+                            </tr>
+                            <tr>
+                              <td>TAN(x)</td>
+                              <td colspan="2">Tangent of x</td>
+                            </tr>
+                            <tr>
+                              <td>ATN(x)</td>
+                              <td colspan="2">Arctangent of x</td>
+                            </tr>
+                            <tr>
+                              <td>EXP(x)</td>
+                              <td colspan="2">e raised to the xth power</td>
+                            </tr>
+                            <tr>
+                              <td>LOG(x)</td>
+                              <td colspan="2">Natural logarithm of x</td>
+                            </tr>
+                            <tr>
+                              <td valign="top">RND(x)</td>
+                              <td colspan="2">if x&gt;0, random number between 0 and 1<br />
+                                if x=0, repeats last   random number<br />
+                                if x&lt;0, begins new repeatable sequence</td>
+                            </tr>
+                            <tr>
+                              <td>DEF FN (x) = expr</td>
+                              <td colspan="2">Defines a function</td>
+                            </tr>
+                            <tr>
+                              <td>&nbsp; </td>
+                              <td colspan="2">&nbsp; </td>
+                            </tr>
+                            <tr bgcolor="#ccccff">
+                              <td colspan="3">String Operations</td>
+                            </tr>
+                            <tr>
+                              <td>+</td>
+                              <td colspan="2">Concatenates Strings</td>
+                            </tr>
+                            <tr>
+                              <td>LEN(s)</td>
+                              <td colspan="2">Length of string s</td>
+                            </tr>
+                            <tr>
+                              <td>LEFT$(s,x)</td>
+                              <td colspan="2">Leftmost x characters of string s</td>
+                            </tr>
+                            <tr>
+                              <td>MID$(s,x,y)</td>
+                              <td colspan="2">y characters from s, beginning at position x</td>
+                            </tr>
+                            <tr>
+                              <td>RIGHT$(s,x)</td>
+                              <td colspan="2">Rightmost x characters of string s</td>
+                            </tr>
+                            <tr>
+                              <td>STR$(x)</td>
+                              <td colspan="2">String representing x</td>
+                            </tr>
+                            <tr>
+                              <td>VAL(s)</td>
+                              <td colspan="2">Numeric value of string s</td>
+                            </tr>
+                            <tr>
+                              <td>CHR$(x)</td>
+                              <td colspan="2">Character with ASCII code x</td>
+                            </tr>
+                            <tr>
+                              <td>ASC(s)</td>
+                              <td colspan="2">ASCII code for first character in string s</td>
+                            </tr>
+                            <tr>
+                              <td>&nbsp; </td>
+                              <td colspan="2">&nbsp; </td>
+                            </tr>
+                            <tr bgcolor="#ccccff">
+                              <td colspan="3">Control</td>
+                            </tr>
+                            <tr>
+                              <td>GOTO n</td>
+                              <td colspan="2">Branches to line n</td>
+                            </tr>
+                            <tr>
+                              <td>ON expr GOTO n1,n2,n3...</td>
+                              <td colspan="2">Branches to line n1,n2,n3...depending on the value of   expr</td>
+                            </tr>
+                            <tr>
+                              <td>IF cond THEN s1:s2:s3</td>
+                              <td colspan="2">Executes statements s1,s2,s3...if expr is true</td>
+                            </tr>
+                            <tr>
+                              <td valign="top">FOR v=x TO y STEP z</td>
+                              <td colspan="2">Begins a loop for all values of v from x to y by z; if step is   omitted, 1 is understood.</td>
+                            </tr>
+                            <tr>
+                              <td>NEXT v</td>
+                              <td colspan="2">Repeats loop for next value of v</td>
+                            </tr>
+                            <tr>
+                              <td>GOSUB n</td>
+                              <td colspan="2">Branches to subroutine at line n</td>
+                            </tr>
+                            <tr>
+                              <td>RETURN</td>
+                              <td colspan="2">Returns to point of call from a subroutine</td>
+                            </tr>
+                            <tr>
+                              <td>ON expr GOSUB n1,n2,n3...</td>
+                              <td colspan="2">Branches to subroutine at line n1,n2,n3...depending on the value   of expr</td>
+                            </tr>
+                            <tr>
+                              <td>POP</td>
+                              <td colspan="2">Removes one address from the return stack</td>
+                            </tr>
+                            <tr>
+                              <td valign="top">ONERR GOTO n</td>
+                              <td colspan="2">Sets the line number branched to when an error occurs.</td>
+                            </tr>
+                            <tr>
+                              <td>RESUME</td>
+                              <td colspan="2">Re-executes statement causing an error.</td>
+                            </tr>
+                            <tr>
+                              <td>STOP</td>
+                              <td colspan="2">Halts program and print line number</td>
+                            </tr>
+                            <tr>
+                              <td>CONT</td>
+                              <td colspan="2">Resumes program execution</td>
+                            </tr>
+                            <tr>
+                              <td>END</td>
+                              <td colspan="2">Halts program execution</td>
+                            </tr>
+                            <tr>
+                              <td>&nbsp; </td>
+                              <td colspan="2">&nbsp; </td>
+                            </tr>
+                            <tr bgcolor="#ccccff">
+                              <td colspan="3">Utility Statements</td>
+                            </tr>
+                            <tr>
+                              <td>PEEK(addr)</td>
+                              <td colspan="2">Value of memory location addr</td>
+                            </tr>
+                            <tr>
+                              <td>POKE addr,x</td>
+                              <td colspan="2">Sets memory location addr to x</td>
+                            </tr>
+                            <tr>
+                              <td>CALL addr</td>
+                              <td colspan="2">Executes machine language routine at addr</td>
+                            </tr>
+                            <tr>
+                              <td>USR(x)</td>
+                              <td colspan="2">Passes argument to machine language routine</td>
+                            </tr>
+                            <tr>
+                              <td>HIMEM:addr</td>
+                              <td colspan="2">Sets highest available memory to addr</td>
+                            </tr>
+                            <tr>
+                              <td>LOMEM:addr</td>
+                              <td colspan="2">Sets lowest available memory to addr.</td>
+                            </tr>
+                            <tr>
+                              <td>FRE(0)</td>
+                              <td colspan="2">Amount of available storage</td>
+                            </tr>
+                            <tr>
+                              <td>TRACE</td>
+                              <td colspan="2">Displays the number of each executed line</td>
+                            </tr>
+                            <tr>
+                              <td>NOTRACE</td>
+                              <td colspan="2">Turns line numbering off</td>
+                            </tr>
+                            <tr>
+                              <td>&nbsp; </td>
+                              <td colspan="2">&nbsp; </td>
+                            </tr>
+                            <tr bgcolor="#ccccff">
+                              <td colspan="3">Graphics</td>
+                            </tr>
+                            <tr>
+                              <td>GR</td>
+                              <td colspan="2">Sets lores graphics mode and clears screen</td>
+                            </tr>
+                            <tr>
+                              <td>COLOR=x</td>
+                              <td colspan="2">Sets lores drawing color to x</td>
+                            </tr>
+                            <tr>
+                              <td>PLOT x,y</td>
+                              <td colspan="2">Draws a dot at location x,y</td>
+                            </tr>
+                            <tr>
+                              <td>HLIN x1,x2 at y</td>
+                              <td colspan="2">Draws a horizontal line from x1,y to x2,y</td>
+                            </tr>
+                            <tr>
+                              <td>VLIN y1,y2 at x</td>
+                              <td colspan="2">Draws a vertical line from x,y1 to x,y2</td>
+                            </tr>
+                            <tr>
+                              <td>SCRN(x,y)</td>
+                              <td colspan="2">Color on the screen at x,y</td>
+                            </tr>
+                            <tr>
+                              <td>HGR</td>
+                              <td colspan="2">Displays hires page1, mixed mode.</td>
+                            </tr>
+                            <tr>
+                              <td>HGR2</td>
+                              <td colspan="2">Displays hires page2, full screen graphics</td>
+                            </tr>
+                            <tr>
+                              <td>HCOLOR=x</td>
+                              <td colspan="2">Sets hires drawing color to x</td>
+                            </tr>
+                            <tr>
+                              <td>HPLOT x,y</td>
+                              <td colspan="2">Plots a dot at coordinate x,y</td>
+                            </tr>
+                            <tr>
+                              <td>HPLOT x1,y1 TO x2,y2</td>
+                              <td valign="top" colspan="2">Draws a hires line from x1,y1 to x2,y2</td>
+                            </tr>
+                            <tr>
+                              <td>DRAW n AT x,y</td>
+                              <td colspan="2">Draws shape n at coordinate x,y</td>
+                            </tr>
+                            <tr>
+                              <td>XDRAW n AT x,y</td>
+                              <td colspan="2">Draws shape n at x,y using exclusive-or</td>
+                            </tr>
+                            <tr>
+                              <td>SCALE=x</td>
+                              <td colspan="2">Sets scale to x for shape drawing</td>
+                            </tr>
+                            <tr>
+                              <td>ROT=x</td>
+                              <td colspan="2">Sets rotation to x for shape drawing</td>
+                            </tr>
+                            <tr>
+                              <td>&nbsp; </td>
+                              <td colspan="2">&nbsp; </td>
+                            </tr>
+                            <tr bgcolor="#ccccff">
+                              <td colspan="3">Input/Output</td>
+                            </tr>
+                            <tr>
+                              <td>IN# n</td>
+                              <td colspan="2">Re-directs input from slot number n</td>
+                            </tr>
+                            <tr>
+                              <td>INPUT s;x,y,...</td>
+                              <td colspan="2">Prompts with string s, then reads x,y,...</td>
+                            </tr>
+                            <tr>
+                              <td>GET c</td>
+                              <td colspan="2">Reads a single character from keyboard</td>
+                            </tr>
+                            <tr>
+                              <td>READ x,y,...</td>
+                              <td colspan="2">Reads values from DATA list into x,y,...</td>
+                            </tr>
+                            <tr>
+                              <td>DATA x,y,...</td>
+                              <td colspan="2">List of data value</td>
+                            </tr>
+                            <tr>
+                              <td>RESTORE</td>
+                              <td colspan="2">Restarts DATA list from beginning</td>
+                            </tr>
+                            <tr>
+                              <td>PDL(n)</td>
+                              <td colspan="2">Value of paddle n, either 0 or 1</td>
+                            </tr>
+                            <tr>
+                              <td>PR# n</td>
+                              <td colspan="2">Re-directs output to slot number n</td>
+                            </tr>
+                            <tr>
+                              <td>PRINT x,y,...</td>
+                              <td colspan="2">Prints values x,y,...</td>
+                            </tr>
+                            <tr>
+                              <td>TEXT</td>
+                              <td colspan="2">Sets text mode</td>
+                            </tr>
+                            <tr>
+                              <td>HOME</td>
+                              <td colspan="2">Clears the text screen</td>
+                            </tr>
+                            <tr>
+                              <td>HTAB x</td>
+                              <td colspan="2">Sets cursor horizontal to x</td>
+                            </tr>
+                            <tr>
+                              <td>VTAB x</td>
+                              <td colspan="2">Sets cursor vertical to x</td>
+                            </tr>
+                            <tr>
+                              <td>INVERSE</td>
+                              <td colspan="2">Sets text printing to black on white</td>
+                            </tr>
+                            <tr>
+                              <td>NORMAL</td>
+                              <td colspan="2">Sets text printing to white on black</td>
+                            </tr>
+                            <tr>
+                              <td>&nbsp; </td>
+                              <td colspan="2">&nbsp; </td>
+                            </tr>
+                        </table>
+						下一篇：<a href="6502.htm" class="font2">6502汇编指令集</a>
+<div class="ad-slot" style="margin:24px auto;text-align:center">
+<!-- 300x250 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-7973762468428054"
+     data-ad-slot="0849495859"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+</div>
+</section>
+<footer class="site">版权所有 © 1998–2026 <a href="/">念青小筑</a> · 保留全部权利 · <a href="mailto:&#115;&#117;&#112;&#112;&#111;&#114;&#116;&#64;&#110;&#105;&#97;&#110;&#113;&#105;&#110;&#103;&#46;&#110;&#101;&#116;">联系念青</a> · <a href="/privacy.html">隐私政策</a></footer>
+</div>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+</html>

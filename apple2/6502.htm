@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<!-- 更新日期 2026/11/28 -->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APPLE ][ 6502 汇编指令集</title>
+<meta name="keywords" content="APPLE ][,APPLE II,Apple II,苹果机,模拟器,,念青五笔,输入法,下载" />
+<meta property="article:modified_time" content="2026-11-28" />
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/assets/css/site.css?2026">
+<style>
+/* APPLE ][ 栏目组：颜色与首页 / 念青五笔略作区分，自成一组；组前细线分隔 */
+nav.site a.apple{color:#9c4a1f}
+nav.site a.apple.on{border-bottom-color:#9c4a1f}
+.nav-sep{display:inline-block;width:1px;height:14px;background:var(--line);margin-left:26px;vertical-align:-2px}
+</style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7973762468428054"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="wrap">
+<header class="site"><nav class="site"><a href="/">首页</a><a href="/nqwb/">念青五笔</a><span class="nav-sep" aria-hidden="true"></span><a href="/apple2/" class="apple">APPLE ][</a><a href="/apple2/applegames.htm" class="apple">游戏镜像</a><a href="/apple2/tools.htm" class="apple">工具镜像</a><a href="/apple2/command.htm" class="apple on">编程指令</a><a href="/apple2/links.htm" class="apple">相关网站</a></nav></header>
+<section class="hero">
+<div class="kicker">APPLE ][ · 编程指令</div>
+<h1>APPLE ][ 6502 汇编指令集</h1>
+<p>6502 处理器指令速查。</p>
+</section>
+<section>
+<div class="doc">
+
+                        <p>ADC Add Memory to Accumulator with Carry 使用Carry位，把内存值与累加器相加 <br />
+                          AND &quot;AND&quot; Memory with Accumulator 内存值与累加器进行“与”运算 <br />
+                          ASL Shift Left One Bit (Memory or Accumulator) 左移一个位（内存或者累加器） <br />
+                          BCC Branch on Carry Clear Carry位为空的时候跳转 <br />
+                          BCS Branch on Carry Set Carry位被设置时跳转 <br />
+                          BEQ Branch on Result Zero 结果为零的时候跳转 <br />
+                          BIT Test Bits in Memory with Accumulator 在内存中与累加器测试位 <br />
+                          BMI Branch on Result Minus 结果为负的时候跳转 <br />
+                          BNE Branch on Result not Zero 结果不为零时候跳转 <br />
+                          BPL Branch on Result Plus 结果为正的时候跳转 <br />
+                          BRK Force Break 强制中断 <br />
+                          BVC Branch on Overflow Clear 溢出位为空的时候跳转 <br />
+                          BVS Branch on Overflow Set 溢出位被设置的时候跳转 <br />
+                          CLC Clear Carry Flag 清空Carry标志（位） <br />
+                          CLD Clear Decimal Mode 清空十进制模式 <br />
+                          CLI Clear interrupt Disable Bit 清空禁止中断位 <br />
+                          CLV Clear Overflow Flag 清空溢出标志 <br />
+                          CMP Compare Memory and Accumulator 内存和累加器比较 <br />
+                          CPX Compare Memory and Index X 内存和X寄存器比较 <br />
+                          CPY Compare Memory and Index Y 内存和Y寄存器比较 <br />
+                          DEC Decrement Memory by One 内存值步减 <br />
+                          DEX Decrement Index X by One X寄存器步减 <br />
+                          DEY Decrement Index Y by One Y寄存器步减 <br />
+                          EOR &quot;Exclusive-Or&quot; Memory with Accumulator 内存和累加器“异或” <br />
+                          INC Increment Memory by One 内存值步增 <br />
+                          INX Increment Index X by One X寄存器步增 <br />
+                          INY Increment Index Y by One Y寄存器步增 <br />
+                          JMP Jump to New Location 跳转到新的位置 <br />
+                          JSR 跳转到新位置并保存原来地址 <br />
+                          LDA Load Accumulator with Memory用内存值载入累加器 <br />
+                          LDX Load Index X with Memory 用内存值载入X寄存器 <br />
+                          LDY Load Index Y with Memory 用内存值载入Y寄存器 <br />
+                          LSR Shift Right One Bit (Memory or Accumulator) 右移一位（内存或者累加器） <br />
+                          NOP No Operation 无操作 <br />
+                          ORA &quot;OR&quot; Memory with Accumulator 内存值和累加器“或”运算<br />
+                          PHA Push Accumulator on Stack 把累加器的值压入栈<br />
+                          PHP Push Processor Status on Stack 把处理器状态压入栈<br />
+                          PLA Pull Accumulator from Stack 把栈顶值弹出到累加器中 <br />
+                          PLP Pull Processor Status from Stack 把栈顶值弹出到处理器状态寄存器<br />
+                          ROL Rotate One Bit Left (Memory or Accumulator) 循环左移一位（内存或者累加器）<br />
+                          ROR Rotate One Bit Right (Memory or Accumulator) 循环右移一位（内存或者累加器）<br />
+                          RTI Return from Interrupt 从中断返回<br />
+                          RTS Return from Subroutine 从子程序返回<br />
+                          SBC Subtract Memory from Accumulator with Borrow 带借位的从累加器中减去内存值<br />
+                          SEC Set Carry Flag 设置Carry标志|<br />
+                          SED Set Decimal Mode 设置十进制模式<br />
+                          SEI Set Interrupt Disable Status 设置禁止中断状态<br />
+                          STA Store Accumulator in Memory 把累加器的值存入内存<br />
+                          STX Store Index X in Memory 把X寄存器的值存入内存<br />
+                          STY Store Index Y in Memory 把Y寄存器的值存入内存 <br />
+                          TAX Transfer Accumulator to Index X 把累加器的值转入X寄存器<br />
+                          TAY Transfer Accumulator to Index Y 把累加器的值转入Y寄存器<br />
+                          TSX Transfer Stack Pointer to Index X 把栈顶指针转入X寄存器<br />
+                          TXA Transfer Index X to Accumulator 把X寄存器的值转入累加器<br />
+                          TXS Transfer Index X to Stack Pointer 把X寄存器的值转入栈顶指针寄存器(S)<br />
+                          TYA Transfer Index Y to Accumulator 把Y寄存器的值转入累加器</p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <p>ADC 加法 <br />
+                          AND 与运算 <br />
+                          ASL 算术左移位 </p>
+                        <p>&nbsp;</p>
+                        <p>BCC § <br />
+                          BCS § <br />
+                          BEQ § <br />
+                          BIT §条件分支 <br />
+                          BMI § <br />
+                          BNE § <br />
+                          BPL § </p>
+                        <p>&nbsp;</p>
+                        <p>BRK 中断 </p>
+                        <p>&nbsp;</p>
+                        <p>BVC § <br />
+                          BVS §条件分支 </p>
+                        <p>&nbsp;</p>
+                        <p>CLC | <br />
+                          CLD | <br />
+                          CLI |标志位操作 <br />
+                          CLV | </p>
+                        <p>&nbsp;</p>
+                        <p>CMP §比较指令 <br />
+                          CPX § <br />
+                          CPY § </p>
+                        <p>&nbsp;</p>
+                        <p>DEC | <br />
+                          DEX |步减 <br />
+                          DEY | </p>
+                        <p>&nbsp;</p>
+                        <p>EOR 异或运算 </p>
+                        <p>&nbsp;</p>
+                        <p>INC | <br />
+                          INX |步增 <br />
+                          INY | </p>
+                        <p>&nbsp;</p>
+                        <p>JMP 无条件跳转 </p>
+                        <p>&nbsp;</p>
+                        <p>JSR 子程序进入 </p>
+                        <p>&nbsp;</p>
+                        <p>LDA § <br />
+                          LDX §寄存器载入值 <br />
+                          LDY § </p>
+                        <p>&nbsp;</p>
+                        <p>LSR 逻辑右移 </p>
+                        <p>&nbsp;</p>
+                        <p>NOP 空 </p>
+                        <p>&nbsp;</p>
+                        <p>ORA 或运算 </p>
+                        <p>&nbsp;</p>
+                        <p>PHA | <br />
+                          PHP | <br />
+                          PLA |栈操作 <br />
+                          PLP | </p>
+                        <p>&nbsp;</p>
+                        <p>ROL 循环左移 </p>
+                        <p>&nbsp;</p>
+                        <p>ROR 循环右移 </p>
+                        <p>&nbsp;</p>
+                        <p>RTI 从中断返回 </p>
+                        <p>&nbsp;</p>
+                        <p>RTS 子程序返回 </p>
+                        <p>&nbsp;</p>
+                        <p>SBC 减法 </p>
+                        <p>&nbsp;</p>
+                        <p>SEC § <br />
+                          SED §标志位设置 <br />
+                          SEI § </p>
+                        <p>&nbsp;</p>
+                        <p>STA | <br />
+                          STX |保存寄存器值 <br />
+                          STY | </p>
+                        <p>&nbsp;</p>
+                        <p>TAX § <br />
+                          TAY §寄存器之间传输 <br />
+                          TSX § <br />
+                          TXA § <br />
+                          TXS § <br />
+                          TYA § </p>
+<div class="ad-slot" style="margin:24px auto;text-align:center">
+<!-- 300x250 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-7973762468428054"
+     data-ad-slot="0849495859"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+</div>
+</section>
+<footer class="site">版权所有 © 1998–2026 <a href="/">念青小筑</a> · 保留全部权利 · <a href="mailto:&#115;&#117;&#112;&#112;&#111;&#114;&#116;&#64;&#110;&#105;&#97;&#110;&#113;&#105;&#110;&#103;&#46;&#110;&#101;&#116;">联系念青</a> · <a href="/privacy.html">隐私政策</a></footer>
+</div>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+</html>
