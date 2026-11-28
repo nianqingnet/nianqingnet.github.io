@@ -41,6 +41,14 @@ nav.site .sub a.apple{color:#9c4a1f}
  nav.site .has-sub{margin:0 16px 0 0}
  nav.site .sub{left:0}
 }
+/* 首页：设置图贯穿导语与下载区，图贴右侧从导语一直到下载，下载区不再因图太高留空行 */
+.hero-dl{align-items:start;padding:80px 0 52px}
+.hero-dl h1{font-size:52px;line-height:1.3;margin:0 0 24px;letter-spacing:6px;color:var(--ink)}
+.hero-dl .intro{max-width:960px;margin:0 0 14px;text-indent:2em}
+@media (max-width:760px){
+ .hero-dl{padding:48px 0 36px}
+ .hero-dl h1{font-size:38px}
+}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7973762468428054"
      crossorigin="anonymous"></script>
@@ -48,13 +56,11 @@ nav.site .sub a.apple{color:#9c4a1f}
 <body>
 <div class="wrap">
 <header class="site"><nav class="site"><a href="/" class="on">首页</a><span class="has-sub"><a href="/nqwb/">念青五笔 <span class="caret" aria-hidden="true">▾</span></a><span class="sub"><a href="/nqwb/help.htm">帮助系统</a><a href="/nqwb/skill.htm">输入法技巧</a><a href="/nqwb/links.htm">工具与链接</a><a href="/nqwb/thanks.htm">特别鸣谢</a></span></span><span class="has-sub"><a href="/apple2/" class="apple">APPLE ][ <span class="caret" aria-hidden="true">▾</span></a><span class="sub"><a href="/apple2/applegames.htm" class="apple">游戏镜像</a><a href="/apple2/tools.htm" class="apple">工具镜像</a><a href="/apple2/command.htm" class="apple">编程指令</a><a href="/apple2/links.htm" class="apple">相关网站</a></span></span><a href="/nqwb/typing.html">指法练习</a></nav></header>
-<section class="hero">
+<section class="split hero-dl">
+<div>
 <div class="kicker">NIANQING WUBI · 86 / 98</div>
 <h1>念青五笔</h1>
-<p>念青五笔输入法是一个遵循五笔编码规则的中文输入法，本来包括有简体和繁體、86版和98版五笔编码等不同版本，适用于多种中文Windows操作系统。在五笔输入日渐式微的今天，念青五笔推出了一个更新版本，既是情怀，也为责任。新版本继续沿袭了当年的简洁风格，亦不断的在新旧词目之间作艰难取舍。功能上尽可能周全各方需求的同时，在设置中也尽可能的体现最初的传承。我们可以不再依赖于打字，但是如果需要动手，那必须行云流水，了无挂碍。</p>
-</section>
-<section class="split dl-row">
-<div>
+<p class="intro"><a href="/nqwb/">念青五笔输入法</a>是一个遵循五笔编码规则的中文输入法，本来包括有简体和繁體、86版和98版五笔编码等不同版本，适用于多种中文Windows操作系统。在五笔输入日渐式微的今天，念青五笔推出了一个更新版本，既是情怀，也为责任。新版本继续沿袭了当年的简洁风格，亦不断的在新旧词目之间作艰难取舍。功能上尽可能周全各方需求的同时，在设置中也尽可能的体现最初的传承。我们可以不再依赖于打字，但是如果需要动手，那必须行云流水，了无挂碍。</p>
 <h2 class="h2">下载 · Windows All</h2>
 <p class="note" style="margin:0 0 14px">念青五笔简/繁体 GB 输入法，32/64bit 3.2.1.2611，安装时需要系统管理员权限。</p>
 <div class="dl"><div><div class="name">念青五笔 86 版</div><div class="meta">Windows All · 32/64bit · 3.2.1.2611 · 7.15 MB<br>版本特征词：识图（yklt） · 更新日期 <time datetime="2026-11-21">2026/11/21</time></div></div><a class="btn" href="https://github.com/nianqingnet/nianqingnet.github.io/releases/latest/download/Nqwb86.exe">下载</a></div>
